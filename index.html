@@ -266,13 +266,14 @@ $('#sz').oninput=e=>setScale(+e.target.value);$('#sz2').oninput=e=>setScale(+e.t
 $('#em').onclick=()=>{$('#st').classList.remove('on');$('#ed').classList.add('on');mountPad($('#padE'),true)};
 $('#ex').onclick=()=>{$('#ed').classList.remove('on');$('#st').classList.add('on')};
 $('#rs').onclick=()=>{cfg.pos={};cfg.scale=1;saveCfg();setScale(100);mountPad($('#padE'),true)};
+const PERF={gba:{mgba_frameskip:'auto',mgba_interframe_blending:'disabled',mgba_audio_low_pass_filter:'disabled'},gb:{gambatte_mix_frames:'disabled'},n64:{'mupen64plus-43screensize':'320x240'},psp:{ppsspp_internal_resolution:'480x272',ppsspp_frameskip:'1',ppsspp_auto_frameskip:'enabled',ppsspp_skip_buffer_effects:'enabled'},psx:{pcsx_rearmed_frameskip:'1'},nds:{desmume_frameskip:'1'}};
 const CORES={'.gba':'gba','.gb':'gb','.gbc':'gb','.nes':'nes','.sfc':'snes','.smc':'snes','.z64':'n64','.n64':'n64','.v64':'n64','.nds':'nds','.md':'segaMD','.gen':'segaMD','.smd':'segaMD'};
 function play(i){
  const fd=fo(i.folder),core=(fd&&fd.core)||CORES[ext(i.name)];
  if(!core||core==='none'){say(t('uns'));return}
  $('#player').classList.add('on');onPlay(core,i.name);wl();
  if(['psx','psp','segaSaturn','n64','nds'].includes(core))note(ta('heavy'));
- if(cfg.perf)window.EJS_defaultOptions={shader:'disabled'};
+ if(cfg.perf)window.EJS_defaultOptions=Object.assign({shader:'disabled'},PERF[core]||{});
  if(cfg.custom&&['gba','gb','nes','snes'].includes(core)){window.EJS_VirtualGamepadSettings=[];document.body.classList.add('cp');mountPad($('#pad'),false,core);$('#pad').classList.add('on')}
  const url=URL.createObjectURL(new File([i.blob],i.name));
  window.EJS_player='#game';window.EJS_core=core;window.EJS_gameUrl=url;
