@@ -40,19 +40,19 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 small{color:var(--mut);display:block;margin-top:18px}
 
 #pad{position:fixed;inset:0;z-index:12;pointer-events:none;display:none}#pad.on{display:block}
-body.cp [class*="ejs_virtualGamepad"]{display:none!important}
+body.cp .ejs_virtualGamepad_parent{display:none!important}
 .pc{position:absolute;transform:translate(-50%,-50%);touch-action:none;user-select:none;-webkit-user-select:none;pointer-events:auto;display:flex;align-items:center;justify-content:center;color:#fff;font:800 calc(var(--u)*.3)/1 system-ui;background:rgba(40,20,70,.55);border:2px solid rgba(181,139,255,.75);border-radius:50%}
 .bt{width:var(--u);height:var(--u)}
 .bt[data-k=sel],.bt[data-k=sta]{border-radius:999px;width:calc(var(--u)*1.3);height:calc(var(--u)*.5);font-size:calc(var(--u)*.2)}
-.dp{width:calc(var(--u)*2.4);height:calc(var(--u)*2.4);display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);background:none;border:0;border-radius:0}
-.dp i{display:flex;align-items:center;justify-content:center;background:rgba(40,20,70,.55);border:2px solid rgba(181,139,255,.75);border-radius:12px;font-style:normal;touch-action:none}
+.dp{width:calc(var(--u)*2.4);height:calc(var(--u)*2.4);display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:0;background:none;border:0;border-radius:0}
+.dp i{align-self:stretch;justify-self:stretch;box-sizing:border-box;display:flex;align-items:center;justify-content:center;background:rgba(40,20,70,.55);border:2px solid rgba(181,139,255,.75);border-radius:12px;font-style:normal;touch-action:none}
 .d0{grid-area:1/2}.d1{grid-area:3/2}.d2{grid-area:2/1}.d3{grid-area:2/3}
 .pc.on,.dp i.on{background:rgba(181,139,255,.85)}.ed{outline:2px dashed #fff;outline-offset:3px}
 #st,#ed{position:fixed;inset:0;z-index:20;display:none}#st.on,#ed.on{display:block}
 #st{background:rgba(0,0,0,.6);overflow:auto;padding:20px 16px}
 .card{max-width:420px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:14px}
 .card h2{margin:0;font:800 22px 'Bricolage Grotesque',system-ui}.card label{display:grid;gap:6px}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-#ed{background:#0b0614}#padE{position:absolute;inset:0}
+#ed{background:#0b0614}#padE{position:absolute;inset:0}#pc{z-index:30!important}#mn{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:124px;z-index:30;display:none;background:rgba(20,10,35,.85);color:#fff;border-color:#7a2fe0}body.cp #mn{display:block}
 .scr{position:absolute;left:22%;top:18%;width:56%;height:56%;border:2px dashed #4a3a78;border-radius:8px}
 .eb{position:absolute;top:calc(env(safe-area-inset-top,0px) + 6px);left:50%;transform:translateX(-50%);z-index:3;display:flex;gap:8px;align-items:center;background:rgba(20,10,35,.9);color:#fff;border-radius:12px;padding:6px 10px;font-size:13px}
 .eb input{width:110px}
@@ -69,7 +69,7 @@ body.cp [class*="ejs_virtualGamepad"]{display:none!important}
 <div id="drop"><div id="list"></div></div>
 <small data-i="foot"></small>
 </main>
-<div id="player"><div id="game"></div></div><button id="pc" data-i="cl"></button><div id="pad"></div>
+<div id="player"><div id="game"></div></div><button id="pc" data-i="cl"></button><button id="mn">☰ Menu</button><div id="pad"></div>
 <div id="st"><div class="card"><h2 data-i="set"></h2>
 <label><span data-i="lang"></span><select id="lg"><option value="pt">Português (BR)</option><option value="es">Español (ES)</option><option value="en">English (US)</option></select></label>
 <label class="row"><input type="checkbox" id="cu"><span data-i="ctl"></span></label>
@@ -167,7 +167,7 @@ $('#fc').onclick=()=>{
  if(!n){say(t('nn'));return}
  if(fo(n)||n==='Todos'){say(t('dup'));return}
  folders.push({name:n,exts:ex});cur=n;saveF();$('#fn').value='';$('#fe').value='';$('#nfbox').classList.remove('on');say(t('cre',n,ex.join(', ')));draw()};
-const DEF={dpad:[15,62],a:[88,52],b:[77,70],x:[88,30],y:[77,48],l:[9,12],r:[91,12],sel:[42,90],sta:[58,90]};
+const DEF={dpad:[15,62],a:[89,60],b:[78,78],x:[89,40],y:[78,58],l:[9,30],r:[91,22],sel:[42,90],sta:[58,90]};
 const BTN={a:['A',8],b:['B',0],x:['X',9],y:['Y',1],l:['L',10],r:['R',11],sel:['Select',2],sta:['Start',3]};
 const DIRS=[['▲',4],['▼',5],['◀',6],['▶',7]];
 const P=k=>cfg.pos[k]||DEF[k];
@@ -211,6 +211,7 @@ function play(i){
  s.onerror=()=>{$('#game').textContent=t('lerr');$('#game').style.cssText='color:#fff;padding:80px 20px;text-align:center'};
  document.body.append(s)}
 $('#pc').onclick=()=>location.reload();
+$('#mn').onclick=()=>{try{const m=window.EJS_emulator.menu;(m.open||m.toggle).call(m)}catch(e){}};
 const dr=$('#drop');
 dr.ondragover=e=>{e.preventDefault();dr.classList.add('over')};
 dr.ondragleave=()=>dr.classList.remove('over');
