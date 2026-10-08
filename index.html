@@ -71,7 +71,7 @@ body.cp .ejs_virtualGamepad_parent{display:none!important}
 </main>
 <div id="player"><div id="game"></div></div><button id="pc" data-i="cl"></button><button id="mn">☰ Menu</button><div id="pad"></div>
 <div id="st"><div class="card"><h2 data-i="set"></h2>
-<label><span data-i="lang"></span><select id="lg"><option value="pt">Português (BR)</option><option value="es">Español (ES)</option><option value="en">English (US)</option></select></label>
+<label><span data-i="lang"></span><select id="lg"><option value="pt">Português (BR)</option><option value="es">Español (ES)</option><option value="en">English (US)</option><option value="ru">Русский</option><option value="ja">日本語</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="it">Italiano</option></select></label>
 <label class="row"><input type="checkbox" id="cu"><span data-i="ctl"></span></label>
 <label><span><span data-i="size"></span>: <b id="szv"></b></span><input type="range" id="sz" min="60" max="160" step="5"></label>
 <div class="row"><button id="em" data-i="ed"></button><button class="p" id="sx" data-i="ok"></button></div></div></div>
@@ -103,6 +103,48 @@ lang:'Language',ctl:'Custom controls (experimental)',size:'Button size',ed:'Move
 uns:'This file type does not run in the emulator yet.',lerr:'Could not load the emulator. Check your internet and try again.',nn:'Type a name for the folder.',dup:'A folder with that name already exists.',
 cre:(n,x)=>'Folder '+n+' created'+(x?': only accepts '+x+'.':'.'),ad:(n,a)=>n+' added'+(a?' ('+a+' went to the right folder by themselves)':'')+'. ',
 rej:(l,f,x)=>'Not accepted: '+l+(x?'. Folder '+f+' only accepts '+x+'.':'.')}};
+Object.assign(L,{
+ru:{add:'Добавить игры',nf:'Новая папка',set:'Настройки',all:'Все',nof:'Без папки',play:'Играть',dl:'Скачать',rm:'Удалить',
+sub:'Добавьте файлы игр, которые у вас уже есть (ваши копии, homebrew, свободные игры), и разложите их по папкам. Нажмите «Играть», чтобы открыть эмулятор. Всё сохраняется на этом устройстве.',
+foot:'Файлы хранятся только в вашем браузере. Очистка данных сайта опустошит полку.',e0:'Здесь пока ничего нет. Нажмите «Добавить игры» или перетащите файлы сюда.',
+eF:'В эту папку можно добавлять только файлы ',fn:'Название папки',fe:'Расширения, напр.: .gba .zip',cr:'Создать папку',any:'Любой файл',oth:'Другое (ввести расширения)',cl:'Закрыть игру',
+lang:'Язык',ctl:'Свои элементы управления (экспериментально)',size:'Размер кнопок',ed:'Двигать кнопки',rs:'Сбросить',ok:'Готово',tip:'Перетаскивайте кнопки. Держите телефон горизонтально.',mv:'Переместить в папку',
+uns:'Этот тип файлов пока не запускается в эмуляторе.',lerr:'Не удалось загрузить эмулятор. Проверьте интернет и повторите.',nn:'Введите название папки.',dup:'Папка с таким названием уже есть.',
+cre:(n,x)=>'Папка '+n+' создана'+(x?': принимает только '+x+'.':'.'),ad:(n,a)=>'Добавлено: '+n+(a?' ('+a+' сами попали в нужную папку)':'')+'. ',
+rej:(l,f,x)=>'Не принято: '+l+(x?'. Папка '+f+' принимает только '+x+'.':'.')},
+ja:{add:'ゲームを追加',nf:'新しいフォルダ',set:'設定',all:'すべて',nof:'フォルダなし',play:'プレイ',dl:'ダウンロード',rm:'削除',
+sub:'お持ちのゲームファイル（自分で用意したコピー、ホームブリュー、フリーゲーム）を追加して、フォルダに整理しましょう。「プレイ」をタップするとエミュレーターが開きます。すべてこの端末に保存されます。',
+foot:'ファイルはお使いのブラウザにのみ保存されます。サイトデータを消去すると棚は空になります。',e0:'まだ何もありません。「ゲームを追加」をタップするか、ここにファイルをドロップしてください。',
+eF:'このフォルダには次のファイルのみ追加できます：',fn:'フォルダ名',fe:'拡張子（例：.gba .zip）',cr:'フォルダを作成',any:'すべてのファイル',oth:'その他（拡張子を入力）',cl:'ゲームを閉じる',
+lang:'言語',ctl:'カスタムコントローラー（試験的）',size:'ボタンの大きさ',ed:'ボタンを動かす',rs:'リセット',ok:'完了',tip:'ボタンをドラッグしてください。スマホを横向きにしてください。',mv:'フォルダに移動',
+uns:'このファイル形式はまだエミュレーターで動作しません。',lerr:'エミュレーターを読み込めませんでした。インターネット接続を確認してもう一度お試しください。',nn:'フォルダ名を入力してください。',dup:'同じ名前のフォルダがすでにあります。',
+cre:(n,x)=>'フォルダ「'+n+'」を作成しました'+(x?'（'+x+' のみ受け付けます）。':'。'),ad:(n,a)=>n+'件追加しました'+(a?'（'+a+'件は自動で正しいフォルダに入りました）':'')+'。',
+rej:(l,f,x)=>'追加できません：'+l+(x?'。フォルダ「'+f+'」は '+x+' のみ受け付けます。':'。')},
+de:{add:'Spiele hinzufügen',nf:'Neuer Ordner',set:'Einstellungen',all:'Alle',nof:'Ohne Ordner',play:'Spielen',dl:'Herunterladen',rm:'Entfernen',
+sub:'Füge die Spieldateien hinzu, die du bereits besitzt (eigene Kopien, Homebrew, freie Spiele), und sortiere sie in Ordner. Tippe auf Spielen, um den Emulator zu öffnen. Alles wird auf diesem Gerät gespeichert.',
+foot:'Die Dateien bleiben nur in deinem Browser. Löschst du die Websitedaten, ist das Regal leer.',e0:'Hier ist noch nichts. Tippe auf „Spiele hinzufügen“ oder ziehe Dateien in diesen Bereich.',
+eF:'Dieser Ordner akzeptiert nur Dateien: ',fn:'Ordnername',fe:'Endungen, z. B. .gba .zip',cr:'Ordner erstellen',any:'Beliebige Datei',oth:'Andere (Endungen eingeben)',cl:'Spiel schließen',
+lang:'Sprache',ctl:'Eigene Steuerung (experimentell)',size:'Tastengröße',ed:'Tasten verschieben',rs:'Zurücksetzen',ok:'Fertig',tip:'Ziehe die Tasten. Halte das Handy quer.',mv:'In Ordner verschieben',
+uns:'Dieser Dateityp läuft im Emulator noch nicht.',lerr:'Der Emulator konnte nicht geladen werden. Prüfe deine Internetverbindung und versuche es erneut.',nn:'Gib einen Ordnernamen ein.',dup:'Ein Ordner mit diesem Namen existiert bereits.',
+cre:(n,x)=>'Ordner '+n+' erstellt'+(x?': akzeptiert nur '+x+'.':'.'),ad:(n,a)=>n+' hinzugefügt'+(a?' ('+a+' sind von selbst im passenden Ordner gelandet)':'')+'. ',
+rej:(l,f,x)=>'Nicht akzeptiert: '+l+(x?'. Der Ordner '+f+' akzeptiert nur '+x+'.':'.')},
+fr:{add:'Ajouter des jeux',nf:'Nouveau dossier',set:'Paramètres',all:'Tous',nof:'Sans dossier',play:'Jouer',dl:'Télécharger',rm:'Supprimer',
+sub:'Ajoutez les fichiers de jeux que vous possédez déjà (vos propres copies, homebrew, jeux libres) et rangez-les dans des dossiers. Touchez Jouer pour ouvrir l’émulateur. Tout est enregistré sur cet appareil.',
+foot:'Les fichiers restent uniquement dans votre navigateur. Effacer les données du site vide l’étagère.',e0:'Rien ici pour l’instant. Touchez « Ajouter des jeux » ou déposez des fichiers dans cette zone.',
+eF:'Ce dossier n’accepte que les fichiers ',fn:'Nom du dossier',fe:'Extensions, ex. : .gba .zip',cr:'Créer le dossier',any:'Tout fichier',oth:'Autre (saisir les extensions)',cl:'Fermer le jeu',
+lang:'Langue',ctl:'Commandes personnalisées (expérimental)',size:'Taille des boutons',ed:'Déplacer les boutons',rs:'Réinitialiser',ok:'Terminé',tip:'Faites glisser les boutons. Tenez le téléphone à l’horizontale.',mv:'Déplacer vers le dossier',
+uns:'Ce type de fichier ne fonctionne pas encore dans l’émulateur.',lerr:'Impossible de charger l’émulateur. Vérifiez votre connexion et réessayez.',nn:'Saisissez un nom de dossier.',dup:'Un dossier portant ce nom existe déjà.',
+cre:(n,x)=>'Dossier '+n+' créé'+(x?' : accepte uniquement '+x+'.':'.'),ad:(n,a)=>n+' ajouté(s)'+(a?' ('+a+' sont allés seuls dans le bon dossier)':'')+'. ',
+rej:(l,f,x)=>'Refusé : '+l+(x?'. Le dossier '+f+' accepte uniquement '+x+'.':'.')},
+it:{add:'Aggiungi giochi',nf:'Nuova cartella',set:'Impostazioni',all:'Tutti',nof:'Senza cartella',play:'Gioca',dl:'Scarica',rm:'Rimuovi',
+sub:'Aggiungi i file dei giochi che già possiedi (tue copie, homebrew, giochi liberi) e organizzali in cartelle. Tocca Gioca per aprire l’emulatore. Tutto viene salvato su questo dispositivo.',
+foot:'I file restano solo nel tuo browser. Cancellare i dati del sito svuota lo scaffale.',e0:'Ancora niente qui. Tocca “Aggiungi giochi” o trascina i file in quest’area.',
+eF:'Questa cartella accetta solo file ',fn:'Nome della cartella',fe:'Estensioni, es.: .gba .zip',cr:'Crea cartella',any:'Qualsiasi file',oth:'Altro (scrivi le estensioni)',cl:'Chiudi gioco',
+lang:'Lingua',ctl:'Controlli personalizzati (sperimentale)',size:'Dimensione dei pulsanti',ed:'Sposta i pulsanti',rs:'Ripristina',ok:'Fatto',tip:'Trascina i pulsanti. Tieni il telefono in orizzontale.',mv:'Sposta nella cartella',
+uns:'Questo tipo di file non funziona ancora nell’emulatore.',lerr:'Impossibile caricare l’emulatore. Controlla la connessione e riprova.',nn:'Scrivi un nome per la cartella.',dup:'Esiste già una cartella con questo nome.',
+cre:(n,x)=>'Cartella '+n+' creata'+(x?': accetta solo '+x+'.':'.'),ad:(n,a)=>n+' aggiunto/i'+(a?' ('+a+' sono andati da soli nella cartella giusta)':'')+'. ',
+rej:(l,f,x)=>'Non accettato: '+l+(x?'. La cartella '+f+' accetta solo '+x+'.':'.')}
+});
 let cfg={lang:'pt',custom:false,scale:1,pos:{}};
 try{Object.assign(cfg,JSON.parse(localStorage.getItem('zeo.cfg')||'{}'))}catch(e){}
 const saveCfg=()=>{try{localStorage.setItem('zeo.cfg',JSON.stringify(cfg))}catch(e){}};
@@ -115,7 +157,7 @@ const ext=n=>{const i=n.lastIndexOf('.');return i<0?'':n.slice(i).toLowerCase()}
 const acc=(f,n)=>!f.exts.length||f.exts.includes(ext(n));
 const say=m=>{$('#msg').textContent=m};
 function applyLang(){
- document.documentElement.lang={pt:'pt-BR',es:'es',en:'en'}[cfg.lang];
+ document.documentElement.lang={pt:'pt-BR',es:'es',en:'en',ru:'ru',ja:'ja',de:'de',fr:'fr',it:'it'}[cfg.lang];
  document.querySelectorAll('[data-i]').forEach(e=>e.textContent=t(e.dataset.i));
  $('#fn').placeholder=t('fn');$('#fe').placeholder=t('fe');
  [...$('#fp').options].forEach(o=>o.textContent=o.value==='Qualquer arquivo'?t('any'):o.value.startsWith('Outro')?t('oth'):o.value);
@@ -206,7 +248,7 @@ function play(i){
  window.EJS_player='#game';window.EJS_core=core;window.EJS_gameUrl=url;
  window.EJS_gameName=i.name.replace(/\.[^.]+$/,'');
  window.EJS_pathtodata='https://cdn.emulatorjs.org/stable/data/';
- window.EJS_startOnLoaded=true;window.EJS_color='#7a2fe0';window.EJS_language={pt:'pt-BR',es:'es-ES',en:'en-US'}[cfg.lang];
+ window.EJS_startOnLoaded=true;window.EJS_color='#7a2fe0';window.EJS_language={pt:'pt-BR',es:'es-ES',en:'en-US',ru:'ru-RU',ja:'ja-JA',de:'de-GER',fr:'af-FR',it:'it-IT'}[cfg.lang];
  const s=document.createElement('script');s.src=window.EJS_pathtodata+'loader.js';
  s.onerror=()=>{$('#game').textContent=t('lerr');$('#game').style.cssText='color:#fff;padding:80px 20px;text-align:center'};
  document.body.append(s)}
