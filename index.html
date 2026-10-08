@@ -39,7 +39,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 #nfbox{display:none;gap:8px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:14px}#nfbox.on{display:flex}#nfbox input{flex:1 1 140px}#msg{min-height:22px;margin-bottom:8px;color:var(--acc);font-weight:600}.tag{color:var(--mut);font-size:12px}#player{position:fixed;inset:0;background:#000;z-index:10;display:none;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}#player.on{display:block}#game{width:100%;height:100%}#pc{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:8px;z-index:11;display:none;background:rgba(20,10,35,.85);color:#fff;border-color:#7a2fe0}#player.on~#pc{display:block}#perr{color:#fff;padding:80px 20px;text-align:center}
 small{color:var(--mut);display:block;margin-top:18px}
 
-#pad{position:fixed;inset:0;z-index:12;pointer-events:none;display:none}#pad.on{display:block}
+#pad{position:fixed;inset:0;z-index:50;pointer-events:none;display:none}#pad.on{display:block}
 body.cp .ejs_virtualGamepad_parent{display:none!important}
 .pc{position:absolute;transform:translate(-50%,-50%);touch-action:none;user-select:none;-webkit-user-select:none;pointer-events:auto;display:flex;align-items:center;justify-content:center;color:#fff;font:800 calc(var(--u)*.3)/1 system-ui;background:rgba(40,20,70,.55);border:2px solid rgba(181,139,255,.75);border-radius:50%}
 .bt{width:var(--u);height:var(--u)}
@@ -52,7 +52,7 @@ body.cp .ejs_virtualGamepad_parent{display:none!important}
 #st{background:rgba(0,0,0,.6);overflow:auto;padding:20px 16px}
 .card{max-width:420px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:14px}
 .card h2{margin:0;font:800 22px 'Bricolage Grotesque',system-ui}.card label{display:grid;gap:6px}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-#ed{background:#0b0614}#padE{position:absolute;inset:0}#pc{z-index:30!important}#mn{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:124px;z-index:30;display:none;background:rgba(20,10,35,.85);color:#fff;border-color:#7a2fe0}body.cp #mn{display:block}
+#ed{background:#0b0614}#padE{position:absolute;inset:0}#pc{z-index:60!important}#mn{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:124px;z-index:60;display:none;background:rgba(20,10,35,.85);color:#fff;border-color:#7a2fe0}body.cp #mn{display:block}
 .scr{position:absolute;left:22%;top:18%;width:56%;height:56%;border:2px dashed #4a3a78;border-radius:8px}
 .eb{position:absolute;top:calc(env(safe-area-inset-top,0px) + 6px);left:50%;transform:translateX(-50%);z-index:3;display:flex;gap:8px;align-items:center;background:rgba(20,10,35,.9);color:#fff;border-radius:12px;padding:6px 10px;font-size:13px}
 .eb input{width:110px}
@@ -254,6 +254,8 @@ function play(i){
  document.body.append(s)}
 $('#pc').onclick=()=>location.reload();
 $('#mn').onclick=()=>{try{const m=window.EJS_emulator.menu;(m.open||m.toggle).call(m)}catch(e){}};
+const fsMove=()=>{const fe=document.fullscreenElement||document.webkitFullscreenElement;(fe||document.body).append($('#pad'),$('#pc'),$('#mn'))};
+document.addEventListener('fullscreenchange',fsMove);document.addEventListener('webkitfullscreenchange',fsMove);
 const dr=$('#drop');
 dr.ondragover=e=>{e.preventDefault();dr.classList.add('over')};
 dr.ondragleave=()=>dr.classList.remove('over');
