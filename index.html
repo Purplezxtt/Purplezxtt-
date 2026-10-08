@@ -81,6 +81,7 @@ body.cp .ejs_virtualGamepad_parent{display:none!important}
 <label><span data-i="lang"></span><select id="lg"><option value="pt">Português (BR)</option><option value="es">Español (ES)</option><option value="en">English (US)</option><option value="ru">Русский</option><option value="ja">日本語</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="it">Italiano</option></select></label>
 <label class="row"><input type="checkbox" id="cu"><span data-i="ctl"></span></label>
 <label class="row"><input type="checkbox" id="ao"><span id="aol"></span></label>
+<label class="row"><input type="checkbox" id="pm"><span id="pml"></span></label>
 <label><span><span data-i="size"></span>: <b id="szv"></b></span><input type="range" id="sz" min="60" max="160" step="5"></label>
 <div class="row"><button id="em" data-i="ed"></button><button class="p" id="sx" data-i="ok"></button></div></div></div>
 <div id="pf"><div class="card"><h2 data-i="prof"></h2>
@@ -171,7 +172,7 @@ fr:{prof:'Profil',nm:'Nom',rn:'Aléatoire',ph:'Photo ou GIF',idl:'ID (jusqu’à
 it:{prof:'Profilo',nm:'Nome',rn:'Casuale',ph:'Foto o GIF',idl:'ID (fino a 7 cifre, 0–9)',sv:'Salva',bad:'L’ID deve avere da 1 a 7 cifre (0–9).',big:'L’immagine è troppo grande (max. 5 MB).',cx:'Chiudi'}};
 for(const k in PL)Object.assign(L[k],PL[k]);
 let prof={name:'',id:'',avatar:null},tmpAv=null;
-let cfg={lang:'pt',custom:false,scale:1,pos:{},achOn:true,ach:{u:{},plays:0,secs:0,cores:{},games:{}}};
+let cfg={lang:'pt',custom:false,scale:1,pos:{},perf:false,achOn:true,ach:{u:{},plays:0,secs:0,cores:{},games:{}}};
 try{Object.assign(cfg,JSON.parse(localStorage.getItem('zeo.cfg')||'{}'))}catch(e){}
 const saveCfg=()=>{try{localStorage.setItem('zeo.cfg',JSON.stringify(cfg))}catch(e){}};
 const t=(k,...a)=>{const v=(L[cfg.lang]||L.pt)[k];return typeof v==='function'?v(...a):v};
@@ -269,7 +270,9 @@ const CORES={'.gba':'gba','.gb':'gb','.gbc':'gb','.nes':'nes','.sfc':'snes','.sm
 function play(i){
  const fd=fo(i.folder),core=(fd&&fd.core)||CORES[ext(i.name)];
  if(!core||core==='none'){say(t('uns'));return}
- $('#player').classList.add('on');onPlay(core,i.name);
+ $('#player').classList.add('on');onPlay(core,i.name);wl();
+ if(['psx','psp','segaSaturn','n64','nds'].includes(core))note(ta('heavy'));
+ if(cfg.perf)window.EJS_defaultOptions={shader:'disabled'};
  if(cfg.custom&&['gba','gb','nes','snes'].includes(core)){window.EJS_VirtualGamepadSettings=[];document.body.classList.add('cp');mountPad($('#pad'),false,core);$('#pad').classList.add('on')}
  const url=URL.createObjectURL(new File([i.blob],i.name));
  window.EJS_player='#game';window.EJS_core=core;window.EJS_gameUrl=url;
@@ -285,11 +288,11 @@ const fsMove=()=>{const fe=document.fullscreenElement||document.webkitFullscreen
 document.addEventListener('fullscreenchange',fsMove);document.addEventListener('webkitfullscreenchange',fsMove);
 const AL={
 pt:{ac:'Conquistas',aon:'Ativar conquistas',aoff:'As conquistas estão desativadas.',unl:'Conquista desbloqueada:',
-n_first:'Primeiro jogo',d_first:'Abra um jogo pela primeira vez.',n_prof:'Identidade',d_prof:'Crie o seu perfil.',n_avatar:'Cara nova',d_avatar:'Escolha uma foto ou GIF de perfil.',n_min10:'Esquentando',d_min10:'Jogue 10 minutos no total.',n_hour1:'Viciado',d_hour1:'Jogue 1 hora no total.',n_cores3:'Colecionador',d_cores3:'Jogue em 3 consoles diferentes.',n_custom:'Do meu jeito',d_custom:'Mude a posição ou o tamanho dos botões.',n_lang:'Poliglota',d_lang:'Troque o idioma do site.',n_folder:'Organizado',d_folder:'Crie uma pasta.'},
+n_first:'Primeiro jogo',d_first:'Abra um jogo pela primeira vez.',n_prof:'Identidade',d_prof:'Crie o seu perfil.',n_avatar:'Cara nova',d_avatar:'Escolha uma foto ou GIF de perfil.',n_min10:'Esquentando',d_min10:'Jogue 10 minutos no total.',n_hour1:'Viciado',d_hour1:'Jogue 1 hora no total.',n_cores3:'Colecionador',d_cores3:'Jogue em 3 consoles diferentes.',n_custom:'Do meu jeito',d_custom:'Mude a posição ou o tamanho dos botões.',n_lang:'Poliglota',d_lang:'Troque o idioma do site.',n_folder:'Organizado',d_folder:'Crie uma pasta.',pm:'Modo desempenho (experimental)',heavy:'Console pesado: feche outros apps. Se travar, ative o Modo desempenho em Configurações.'},
 en:{ac:'Achievements',aon:'Enable achievements',aoff:'Achievements are turned off.',unl:'Achievement unlocked:',
-n_first:'First game',d_first:'Open a game for the first time.',n_prof:'Identity',d_prof:'Create your profile.',n_avatar:'New look',d_avatar:'Pick a profile photo or GIF.',n_min10:'Warming up',d_min10:'Play for 10 minutes in total.',n_hour1:'Hooked',d_hour1:'Play for 1 hour in total.',n_cores3:'Collector',d_cores3:'Play on 3 different consoles.',n_custom:'My way',d_custom:'Change the position or size of the buttons.',n_lang:'Polyglot',d_lang:'Change the site language.',n_folder:'Organized',d_folder:'Create a folder.'},
+n_first:'First game',d_first:'Open a game for the first time.',n_prof:'Identity',d_prof:'Create your profile.',n_avatar:'New look',d_avatar:'Pick a profile photo or GIF.',n_min10:'Warming up',d_min10:'Play for 10 minutes in total.',n_hour1:'Hooked',d_hour1:'Play for 1 hour in total.',n_cores3:'Collector',d_cores3:'Play on 3 different consoles.',n_custom:'My way',d_custom:'Change the position or size of the buttons.',n_lang:'Polyglot',d_lang:'Change the site language.',n_folder:'Organized',d_folder:'Create a folder.',pm:'Performance mode (experimental)',heavy:'Heavy console: close other apps. If it lags, turn on Performance mode in Settings.'},
 es:{ac:'Logros',aon:'Activar logros',aoff:'Los logros están desactivados.',unl:'Logro desbloqueado:',
-n_first:'Primer juego',d_first:'Abre un juego por primera vez.',n_prof:'Identidad',d_prof:'Crea tu perfil.',n_avatar:'Cara nueva',d_avatar:'Elige una foto o GIF de perfil.',n_min10:'Calentando',d_min10:'Juega 10 minutos en total.',n_hour1:'Enganchado',d_hour1:'Juega 1 hora en total.',n_cores3:'Coleccionista',d_cores3:'Juega en 3 consolas distintas.',n_custom:'A mi manera',d_custom:'Cambia la posición o el tamaño de los botones.',n_lang:'Políglota',d_lang:'Cambia el idioma del sitio.',n_folder:'Organizado',d_folder:'Crea una carpeta.'}};
+n_first:'Primer juego',d_first:'Abre un juego por primera vez.',n_prof:'Identidad',d_prof:'Crea tu perfil.',n_avatar:'Cara nueva',d_avatar:'Elige una foto o GIF de perfil.',n_min10:'Calentando',d_min10:'Juega 10 minutos en total.',n_hour1:'Enganchado',d_hour1:'Juega 1 hora en total.',n_cores3:'Coleccionista',d_cores3:'Juega en 3 consolas distintas.',n_custom:'A mi manera',d_custom:'Cambia la posición o el tamaño de los botones.',n_lang:'Políglota',d_lang:'Cambia el idioma del sitio.',n_folder:'Organizado',d_folder:'Crea una carpeta.',pm:'Modo rendimiento (experimental)',heavy:'Consola pesada: cierra otras apps. Si va lento, activa el Modo rendimiento en Ajustes.'}};
 const ta=k=>((AL[cfg.lang]||AL.en)[k])||AL.en[k];
 const ACH=[['first',()=>cfg.ach.plays>=1],['prof',()=>!!prof.id],['avatar',()=>!!prof.avatar],['min10',()=>cfg.ach.secs>=600],['hour1',()=>cfg.ach.secs>=3600],['cores3',()=>Object.keys(cfg.ach.cores).length>=3],['custom',()=>Object.keys(cfg.pos).length>0||cfg.scale!==1],['lang',()=>!!cfg.ach.lc],['folder',()=>folders.length>1]];
 let tt;const toast=m=>{const e=$('#toast');e.textContent='🏆 '+ta('unl')+' '+m;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),4000)};
@@ -300,12 +303,16 @@ function renderAchList(){const l=$('#achl');l.innerHTML='';const h=document.crea
  ACH.forEach(([k])=>{const r=document.createElement('div'),ok=cfg.ach.u[k];r.className='arow'+(ok?'':' lk');r.textContent=(ok?'🏆 ':'🔒 ')+ta('n_'+k)+' — '+ta('d_'+k);l.append(r)})}
 function onPlay(core,name){if(!cfg.achOn)return;cfg.ach.plays++;cfg.ach.cores[core]=1;cfg.ach.games[name]=1;saveCfg();checkAch();
  setInterval(()=>{if(document.visibilityState==='visible'){cfg.ach.secs+=15;saveCfg();checkAch()}},15000)}
+const note=m=>{const e=$('#toast');e.textContent=m;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),5000)};
+const wl=()=>{try{navigator.wakeLock&&navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}};
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&$('#player').classList.contains('on'))wl()});
+$('#pm').onchange=e=>{cfg.perf=e.target.checked;saveCfg()};
 $('#ao').onchange=e=>{cfg.achOn=e.target.checked;saveCfg();checkAch();renderProf()};
 const A1=['Roxo','Neon','Pixel','Turbo','Astro','Cosmo','Sombra','Nova','Lunar','Ninja'],A2=['Gamer','Fox','Dragon','Byte','Wolf','Comet','Ghost','Rider','Spark','Hero'];
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 const rndName=()=>pick(A1)+pick(A2)+(10+Math.floor(Math.random()*90));
 const setAv=(img,b)=>{img.src=b?URL.createObjectURL(b):'icon-192.png'};
-function renderProf(){$('#pnm').textContent=prof.id?prof.name:t('prof');$('#pid').textContent=prof.id?'ID '+prof.id+(cfg.achOn?' · 🏆 '+Object.keys(cfg.ach.u).length:''):'';$('#ao').checked=cfg.achOn;$('#aol').textContent=ta('aon');renderAchList();setAv($('#pav'),prof.avatar)}
+function renderProf(){$('#pnm').textContent=prof.id?prof.name:t('prof');$('#pid').textContent=prof.id?'ID '+prof.id+(cfg.achOn?' · 🏆 '+Object.keys(cfg.ach.u).length:''):'';$('#ao').checked=cfg.achOn;$('#aol').textContent=ta('aon');$('#pm').checked=cfg.perf;$('#pml').textContent=ta('pm');renderAchList();setAv($('#pav'),prof.avatar)}
 $('#prof').onclick=()=>{tmpAv=prof.avatar;$('#pn').value=prof.name;$('#pi').value=prof.id;$('#pmsg').textContent='';setAv($('#pav2'),tmpAv);$('#pf').classList.add('on')};
 $('#pph').onclick=()=>$('#pfile').click();
 $('#pfile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;if(f.size>5242880){$('#pmsg').textContent=t('big');return}tmpAv=f;setAv($('#pav2'),f);$('#pmsg').textContent=''};
