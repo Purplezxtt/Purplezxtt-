@@ -176,7 +176,8 @@ try{Object.assign(cfg,JSON.parse(localStorage.getItem('zeo.cfg')||'{}'))}catch(e
 const saveCfg=()=>{try{localStorage.setItem('zeo.cfg',JSON.stringify(cfg))}catch(e){}};
 const t=(k,...a)=>{const v=(L[cfg.lang]||L.pt)[k];return typeof v==='function'?v(...a):v};
 const lab=n=>n==='Todos'?t('all'):n==='Sem pasta'?t('nof'):n;
-const PRE={'Qualquer arquivo':[],'GBA':['.gba'],'Game Boy':['.gb'],'Game Boy Color':['.gbc'],'NES':['.nes'],'SNES':['.sfc','.smc'],'Nintendo 64':['.z64','.n64','.v64'],'Nintendo DS':['.nds'],'Mega Drive':['.md','.gen','.smd'],'Outro (digitar extensões)':null};
+const PRE={'Qualquer arquivo':[],'GBA':['.gba'],'Game Boy':['.gb'],'Game Boy Color':['.gbc'],'NES':['.nes'],'SNES':['.sfc','.smc'],'Nintendo 64':['.z64','.n64','.v64'],'Nintendo DS':['.nds'],'Mega Drive':['.md','.gen','.smd'],'PlayStation':['.cue','.bin','.iso','.chd','.pbp'],'PSP':['.iso','.cso','.pbp'],'Sega Saturn':['.cue','.chd','.iso'],'WonderSwan':['.ws','.wsc'],'Wii':['.wbfs','.iso','.rvz','.wad'],'Wii U':['.wua','.wud','.wux','.rpx'],'Xbox':['.iso','.xiso'],'PlayStation 2':['.iso','.bin','.chd','.cso'],'PlayStation 3':['.iso','.pkg'],'PlayStation 4':['.pkg'],'PS Vita':['.vpk','.vita'],'Outro (digitar extensões)':null};
+const PC={'GBA':'gba','Game Boy':'gb','Game Boy Color':'gb','NES':'nes','SNES':'snes','Nintendo 64':'n64','Nintendo DS':'nds','Mega Drive':'segaMD','PlayStation':'psx','PSP':'psp','Sega Saturn':'segaSaturn','WonderSwan':'ws','Wii':'none','Wii U':'none','Xbox':'none','PlayStation 2':'none','PlayStation 3':'none','PlayStation 4':'none','PS Vita':'none'};
 let db,cur='Todos',folders=[{name:'Sem pasta',exts:[]}],items=[];
 const fmt=b=>b>1048576?(b/1048576).toFixed(1)+' MB':Math.max(1,Math.round(b/1024))+' KB';
 const ext=n=>{const i=n.lastIndexOf('.');return i<0?'':n.slice(i).toLowerCase()};
@@ -220,7 +221,7 @@ async function addFiles(fs){
  let ok=0,bad=[],auto=0;const here=fo(cur);
  for(const f of fs){let tg;
   if(here){if(!acc(here,f.name)){bad.push(f.name);continue}tg=here.name}
-  else{const m=folders.find(x=>x.exts.length&&x.exts.includes(ext(f.name)));tg=m?m.name:'Sem pasta';if(m)auto++}
+  else{const ms=folders.filter(x=>x.exts.length&&x.exts.includes(ext(f.name))),m=ms.length===1?ms[0]:null;tg=m?m.name:'Sem pasta';if(m)auto++}
   try{const rec={name:f.name,size:f.size,folder:tg,blob:f};rec.id=await tx('games','readwrite',s=>s.add(rec));items.push(rec);ok++}catch(e){bad.push(f.name)}}
  say((ok?t('ad',ok,auto):'')+(bad.length?t('rej',bad.join(', '),here&&here.name,here&&here.exts.join(', ')):''));draw()}
 $('#add').onclick=()=>$('#file').click();
@@ -234,7 +235,7 @@ $('#fc').onclick=()=>{
  const n=($('#fn').value.trim()||(PRE[k]&&PRE[k].length?k:''));
  if(!n){say(t('nn'));return}
  if(fo(n)||n==='Todos'){say(t('dup'));return}
- folders.push({name:n,exts:ex});cur=n;saveF();checkAch();$('#fn').value='';$('#fe').value='';$('#nfbox').classList.remove('on');say(t('cre',n,ex.join(', ')));draw()};
+ folders.push({name:n,exts:ex,core:PC[k]||''});cur=n;saveF();checkAch();$('#fn').value='';$('#fe').value='';$('#nfbox').classList.remove('on');say(t('cre',n,ex.join(', ')));draw()};
 const DEF={dpad:[15,62],a:[89,60],b:[78,78],x:[89,40],y:[78,58],l:[9,30],r:[91,22],sel:[42,90],sta:[58,90]};
 const BTN={a:['A',8],b:['B',0],x:['X',9],y:['Y',1],l:['L',10],r:['R',11],sel:['Select',2],sta:['Start',3]};
 const DIRS=[['▲',4],['▼',5],['◀',6],['▶',7]];
@@ -266,8 +267,8 @@ $('#ex').onclick=()=>{$('#ed').classList.remove('on');$('#st').classList.add('on
 $('#rs').onclick=()=>{cfg.pos={};cfg.scale=1;saveCfg();setScale(100);mountPad($('#padE'),true)};
 const CORES={'.gba':'gba','.gb':'gb','.gbc':'gb','.nes':'nes','.sfc':'snes','.smc':'snes','.z64':'n64','.n64':'n64','.v64':'n64','.nds':'nds','.md':'segaMD','.gen':'segaMD','.smd':'segaMD'};
 function play(i){
- const core=CORES[ext(i.name)];
- if(!core){say(t('uns'));return}
+ const fd=fo(i.folder),core=(fd&&fd.core)||CORES[ext(i.name)];
+ if(!core||core==='none'){say(t('uns'));return}
  $('#player').classList.add('on');onPlay(core,i.name);
  if(cfg.custom&&['gba','gb','nes','snes'].includes(core)){window.EJS_VirtualGamepadSettings=[];document.body.classList.add('cp');mountPad($('#pad'),false,core);$('#pad').classList.add('on')}
  const url=URL.createObjectURL(new File([i.blob],i.name));
