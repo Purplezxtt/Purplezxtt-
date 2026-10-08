@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zeo Emulador</title>
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b0614">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;800&family=Figtree:wght@400;600&display=swap">
+<style>
+:root{--bg:#f3f1ec;--card:#fff;--ink:#1d2433;--mut:#6b7385;--acc:#7a2fe0;--line:#d9d6cf;--sel:#efe6ff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171f;--card:#1e222d;--ink:#eceef4;--mut:#9aa2b5;--acc:#b58bff;--line:#2e3445;--sel:#2c2347}}
+:root[data-theme="dark"]{--bg:#14171f;--card:#1e222d;--ink:#eceef4;--mut:#9aa2b5;--acc:#b58bff;--line:#2e3445;--sel:#2c2347}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 Figtree,system-ui,sans-serif}
+main{max-width:720px;margin:0 auto;padding:20px 16px 48px}
+.hd{display:flex;align-items:center;gap:14px;margin-bottom:8px}.hd h1{margin:0}.hd p.by{margin:2px 0 0}.logo{width:84px;height:84px;flex:none;image-rendering:pixelated}
+h1{font:800 30px/1.1 'Bricolage Grotesque',system-ui,sans-serif;margin:8px 0 6px}
+p.by{margin:0 0 8px;color:var(--acc);font-weight:600}p.sub{color:var(--mut);margin:0 0 20px;max-width:60ch}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+button,select,input[type=text]{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:9px 14px;min-height:44px}
+button{cursor:pointer}
+button.p{background:var(--acc);border-color:var(--acc);color:var(--bg);font-weight:600}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px}
+.tab{white-space:nowrap;border-radius:999px;padding:7px 14px;min-height:40px}
+.tab[aria-pressed=true]{background:var(--sel);border-color:var(--acc);font-weight:600}
+.item{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;flex-wrap:wrap}
+.item .n{flex:1 1 180px;min-width:0;overflow-wrap:anywhere;font-weight:600}
+.item .s{color:var(--mut);font-size:13px;font-weight:400;display:block}
+.item select{max-width:150px;padding:6px 8px;min-height:40px}
+.item button{padding:6px 12px;min-height:40px}
+.empty{border:2px dashed var(--line);border-radius:14px;padding:28px 16px;text-align:center;color:var(--mut)}
+#drop.over{background:var(--sel)}
+#nfbox{display:none;gap:8px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:14px}#nfbox.on{display:flex}#nfbox input{flex:1 1 140px}#msg{min-height:22px;margin-bottom:8px;color:var(--acc);font-weight:600}.tag{color:var(--mut);font-size:12px}#player{position:fixed;inset:0;background:#000;z-index:10;display:none;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}#player.on{display:block}#game{width:100%;height:100%}#pc{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:8px;z-index:11;display:none;background:rgba(20,10,35,.85);color:#fff;border-color:#7a2fe0}#player.on~#pc{display:block}#perr{color:#fff;padding:80px 20px;text-align:center}
+small{color:var(--mut);display:block;margin-top:18px}
+</style>
+</head>
+<body>
+<main>
+<div class="hd"><img class="logo" src="icon-192.png" alt="" width="84" height="84"><div><h1>Zeo Emulador</h1><p class="by">por purplezxtt</p></div></div>
+<p class="sub">Adicione os arquivos de jogos que você já tem (cópias suas, homebrew, jogos livres) e organize em pastas. Toque em Jogar para abrir no emulador. Tudo fica salvo neste aparelho.</p>
+<div class="bar">
+<button class="p" id="add">Adicionar jogos</button>
+<button id="nf">Nova pasta</button>
+<input id="file" type="file" multiple hidden>
+</div>
+<div id="nfbox"><input type="text" id="fn" placeholder="Nome da pasta" aria-label="Nome da pasta"><select id="fp" aria-label="Tipo de jogo"></select><input type="text" id="fe" placeholder="Extensões, ex: .gba .zip" aria-label="Extensões aceitas" hidden><button class="p" id="fc">Criar pasta</button></div>
+<div id="msg" role="status" aria-live="polite"></div>
+<div class="tabs" id="tabs" role="group" aria-label="Pastas"></div>
+<div id="drop"><div id="list"></div></div>
+<small>Os arquivos ficam só no seu navegador. Limpar os dados do site apaga a estante.</small>
+</main>
+<div id="player"><div id="game"></div></div><button id="pc" aria-label="Fechar jogo">Fechar jogo</button>
+<script>
+const $=s=>document.querySelector(s);
+const PRE={'Qualquer arquivo':[],'GBA':['.gba'],'Game Boy':['.gb'],'Game Boy Color':['.gbc'],'NES':['.nes'],'SNES':['.sfc','.smc'],'Nintendo 64':['.z64','.n64','.v64'],'Nintendo DS':['.nds'],'Mega Drive':['.md','.gen','.smd'],'Outro (digitar extensões)':null};
+let db,cur='Todos',folders=[{name:'Sem pasta',exts:[]}],items=[];
+const fmt=b=>b>1048576?(b/1048576).toFixed(1)+' MB':Math.max(1,Math.round(b/1024))+' KB';
+const ext=n=>{const i=n.lastIndexOf('.');return i<0?'':n.slice(i).toLowerCase()};
+const acc=(f,n)=>!f.exts.length||f.exts.includes(ext(n));
+const say=t=>{$('#msg').textContent=t};
+function open(){return new Promise((ok,no)=>{try{const r=indexedDB.open('estante',1);
+r.onupgradeneeded=()=>{r.result.createObjectStore('games',{keyPath:'id',autoIncrement:true});r.result.createObjectStore('meta')};
+r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)}catch(e){no(e)}})}
+const tx=(st,m,f)=>new Promise((ok,no)=>{try{const t=db.transaction(st,m),q=f(t.objectStore(st));t.oncomplete=()=>ok(q&&q.result);t.onerror=()=>no(t.error)}catch(e){no(e)}});
+async function load(){
+ try{db=await open();items=await tx('games','readonly',s=>s.getAll())||[];
+ const f=await tx('meta','readonly',s=>s.get('folders'));if(f)folders=f.map(x=>typeof x==='string'?{name:x,exts:[]}:x)}catch(e){$('#list').innerHTML='<div class="empty">Seu navegador não permite salvar aqui. Abra em uma aba normal.</div>';return}
+ draw()}
+const saveF=()=>tx('meta','readwrite',s=>s.put(folders,'folders')).catch(()=>{});
+const fo=n=>folders.find(f=>f.name===n);
+function draw(){
+ const t=$('#tabs');t.innerHTML='';
+ ['Todos',...folders.map(f=>f.name)].forEach(n=>{const b=document.createElement('button');b.className='tab';const f=fo(n);
+ b.textContent=n+(f&&f.exts.length?' · '+f.exts.join(' '):'')+' ('+items.filter(i=>n==='Todos'||i.folder===n).length+')';
+ b.setAttribute('aria-pressed',n===cur);b.onclick=()=>{cur=n;say('');draw()};t.append(b)});
+ const l=$('#list');l.innerHTML='';
+ const v=items.filter(i=>cur==='Todos'||i.folder===cur);
+ if(!v.length){const f=fo(cur);l.innerHTML='<div class="empty">'+(f&&f.exts.length?'Esta pasta só aceita arquivos '+f.exts.join(', ')+'. ':'Nada aqui ainda. ')+'Toque em “Adicionar jogos” ou solte arquivos nesta área.</div>';return}
+ v.forEach(i=>{const d=document.createElement('div');d.className='item';
+ const n=document.createElement('div');n.className='n';n.textContent=i.name;const s=document.createElement('span');s.className='s';s.textContent=fmt(i.size)+' · '+i.folder;n.append(s);
+ const sel=document.createElement('select');sel.setAttribute('aria-label','Mover para pasta');
+ folders.filter(f=>acc(f,i.name)||f.name===i.folder).forEach(f=>sel.add(new Option(f.name,f.name,false,f.name===i.folder)));
+ sel.onchange=async()=>{i.folder=sel.value;await tx('games','readwrite',s=>s.put(i));draw()};
+ const dl=document.createElement('button');dl.textContent='Baixar';dl.onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(i.blob);a.download=i.name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)};
+ const rm=document.createElement('button');rm.textContent='Remover';rm.onclick=async()=>{await tx('games','readwrite',s=>s.delete(i.id));items=items.filter(x=>x!==i);draw()};
+ const pl=document.createElement('button');pl.className='p';pl.textContent='Jogar';pl.onclick=()=>play(i);
+ d.append(n,pl,sel,dl,rm);l.append(d)})}
+async function addFiles(fs){
+ let ok=0,bad=[],auto=0;const here=fo(cur);
+ for(const f of fs){let target;
+  if(here){if(!acc(here,f.name)){bad.push(f.name);continue}target=here.name}
+  else{const m=folders.find(x=>x.exts.length&&x.exts.includes(ext(f.name)));target=m?m.name:'Sem pasta';if(m)auto++}
+  try{const rec={name:f.name,size:f.size,folder:target,blob:f};
+  rec.id=await tx('games','readwrite',s=>s.add(rec));items.push(rec);ok++}catch(e){bad.push(f.name)}}
+ let t=ok?ok+' adicionado(s)'+(auto?' ('+auto+' foram para a pasta certa sozinhos)':'')+'. ':'';
+ if(bad.length)t+='Não aceito'+(bad.length>1?'s':'')+': '+bad.join(', ')+(here&&here.exts.length?'. A pasta '+here.name+' só aceita '+here.exts.join(', ')+'.':'.');
+ say(t);draw()}
+$('#add').onclick=()=>$('#file').click();
+$('#file').onchange=e=>{addFiles([...e.target.files]);e.target.value=''};
+Object.keys(PRE).forEach(k=>$('#fp').add(new Option(k,k)));
+$('#fp').onchange=()=>{$('#fe').hidden=PRE[$('#fp').value]!==null;if(PRE[$('#fp').value]!==null){const k=$('#fp').value;if(k!=='Qualquer arquivo'&&!$('#fn').value)$('#fn').placeholder=k}};
+$('#nf').onclick=()=>{$('#nfbox').classList.toggle('on');$('#fn').focus()};
+$('#fc').onclick=()=>{
+ const k=$('#fp').value;let ex=PRE[k];
+ if(ex===null)ex=($('#fe').value.toLowerCase().match(/\.?[a-z0-9]+/g)||[]).map(x=>x[0]==='.'?x:'.'+x);
+ const n=($('#fn').value.trim()||(PRE[k]&&PRE[k].length?k:''));
+ if(!n){say('Digite um nome para a pasta.');return}
+ if(fo(n)||n==='Todos'){say('Já existe uma pasta com esse nome.');return}
+ folders.push({name:n,exts:ex});cur=n;saveF();$('#fn').value='';$('#fe').value='';$('#nfbox').classList.remove('on');
+ say('Pasta '+n+' criada'+(ex.length?': só aceita '+ex.join(', ')+'.':'.'));draw()};
+const CORES={'.gba':'gba','.gb':'gb','.gbc':'gb','.nes':'nes','.sfc':'snes','.smc':'snes','.z64':'n64','.n64':'n64','.v64':'n64','.nds':'nds','.md':'segaMD','.gen':'segaMD','.smd':'segaMD'};
+function play(i){
+ const core=CORES[ext(i.name)];
+ if(!core){say('Esse tipo de arquivo ainda não roda no emulador.');return}
+ $('#player').classList.add('on');
+ const url=URL.createObjectURL(new File([i.blob],i.name));
+ window.EJS_player='#game';window.EJS_core=core;window.EJS_gameUrl=url;
+ window.EJS_gameName=i.name.replace(/\.[^.]+$/,'');
+ window.EJS_pathtodata='https://cdn.emulatorjs.org/stable/data/';
+ window.EJS_startOnLoaded=true;window.EJS_color='#7a2fe0';window.EJS_language='pt-BR';
+ const s=document.createElement('script');s.src=window.EJS_pathtodata+'loader.js';
+ s.onerror=()=>{$('#game').innerHTML='<div id="perr">Não foi possível carregar o emulador. Conecte-se à internet e tente de novo.</div>'};
+ document.body.append(s)}
+$('#pc').onclick=()=>location.reload();
+const dr=$('#drop');
+dr.ondragover=e=>{e.preventDefault();dr.classList.add('over')};
+dr.ondragleave=()=>dr.classList.remove('over');
+dr.ondrop=e=>{e.preventDefault();dr.classList.remove('over');addFiles([...e.dataTransfer.files])};
+load();
+if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").catch(()=>{})}catch(e){}}
+</script>
+</body>
+</html>
