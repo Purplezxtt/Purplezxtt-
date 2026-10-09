@@ -59,9 +59,11 @@ body.cp .ejs_virtualGamepad_parent{display:none!important}
 #toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);transform:translateX(-50%);z-index:70;background:var(--card);color:var(--ink);border:1px solid var(--acc);border-radius:12px;padding:10px 16px;opacity:0;pointer-events:none;transition:opacity .3s;max-width:90vw;text-align:center}#toast.on{opacity:1}
 #achl{display:grid;gap:2px;max-height:30vh;overflow:auto}.arow{padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}.arow.lk{opacity:.55}
 #fps{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 6px);left:8px;z-index:60;font:600 12px system-ui;color:#fff;background:rgba(0,0,0,.55);padding:2px 6px;border-radius:6px;display:none}body.pf #fps{display:block}
+.fi{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}.fi .av{width:40px;height:40px}.fi .nm{flex:1 1 120px;min-width:0;overflow-wrap:anywhere}.fi button{padding:6px 10px;min-height:36px}
+#msgs{display:flex;flex-direction:column;gap:6px;max-height:42vh;overflow:auto;padding:6px;border:1px solid var(--line);border-radius:12px}.mb{max-width:80%;padding:6px 10px;border-radius:12px;background:var(--sel);align-self:flex-start;overflow-wrap:anywhere}.mb.me{align-self:flex-end;background:var(--acc);color:var(--bg)}
 .chip{display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:6px 16px 6px 6px;border-radius:999px}
 .av{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--acc);flex:none}
-#pf,#ot{position:fixed;inset:0;z-index:20;display:none;background:rgba(0,0,0,.6);overflow:auto;padding:20px 16px}#pf.on,#ot.on{display:block}
+#pf,#ot,#fr{position:fixed;inset:0;z-index:20;display:none;background:rgba(0,0,0,.6);overflow:auto;padding:20px 16px}#pf.on,#ot.on,#fr.on{display:block}
 #pf .av{width:72px;height:72px}#pf input[type=text]{flex:1 1 120px;min-width:0}
 </style>
 </head>
@@ -69,7 +71,7 @@ body.cp .ejs_virtualGamepad_parent{display:none!important}
 <main>
 <div class="hd"><img class="logo" src="icon-192.png" alt="" width="84" height="84"><div><h1>Zeo Emulador</h1><p class="by">por purplezxtt</p></div></div>
 <p class="sub" data-i="sub"></p>
-<button id="prof" class="chip"><img id="pav" class="av" alt="" src="icon-192.png"><span style="text-align:left"><b id="pnm"></b><br><span id="pid" style="color:var(--mut);font-size:13px"></span></span></button>
+<div class="row" style="margin-bottom:14px"><button id="prof" class="chip" style="margin:0"><img id="pav" class="av" alt="" src="icon-192.png"><span style="text-align:left"><b id="pnm"></b><br><span id="pid" style="color:var(--mut);font-size:13px"></span></span></button><button id="fr0"></button></div>
 <div class="bar"><button class="p" id="add" data-i="add"></button><button id="nf" data-i="nf"></button><button id="set" data-i="set"></button><input id="file" type="file" multiple hidden></div>
 <div id="nfbox"><input type="text" id="fn"><select id="fp"></select><input type="text" id="fe" hidden><button class="p" id="fc" data-i="cr"></button></div>
 <div id="msg" role="status" aria-live="polite"></div>
@@ -92,6 +94,7 @@ body.cp .ejs_virtualGamepad_parent{display:none!important}
 <div id="achl"></div>
 <div id="pmsg" role="status" style="color:var(--acc);min-height:20px"></div>
 <div class="row"><button class="p" id="psv" data-i="sv"></button><button id="pcl" data-i="cx"></button></div></div></div>
+<div id="fr"><div class="card"><div id="frb"></div><div class="row"><button class="p" id="frx" data-i="ok"></button></div></div></div>
 <div id="ot"><div class="card"><h2 id="oth"></h2><div id="otl"></div><div class="row"><button class="p" id="otx" data-i="ok"></button></div></div></div>
 <div id="ed"><div class="scr"></div><div id="padE"></div><div class="eb"><span data-i="tip"></span><input type="range" id="sz2" min="60" max="160" step="5"><button id="rs" data-i="rs"></button><button class="p" id="ex" data-i="ok"></button></div></div>
 <script>
@@ -201,7 +204,7 @@ const tx=(st,m,f)=>new Promise((ok,no)=>{try{const q0=db.transaction(st,m),q=f(q
 async function load(){
  try{db=await open();items=await tx('games','readonly',s=>s.getAll())||[];
  const f=await tx('meta','readonly',s=>s.get('folders'));if(f)folders=f.map(x=>typeof x==='string'?{name:x,exts:[]}:x);const p=await tx('meta','readonly',s=>s.get('profile'));if(p)prof=p}catch(e){}
- checkAch();applyLang()}
+ checkAch();applyLang();if(prof.id)publish().then(()=>startFr()).catch(e=>{if(String(e&&e.message||e).includes('taken'))note(ta('f_taken'))})}
 const saveF=()=>tx('meta','readwrite',s=>s.put(folders,'folders')).catch(()=>{});
 const fo=n=>folders.find(f=>f.name===n);
 function draw(){
@@ -296,15 +299,15 @@ const fsMove=()=>{const fe=document.fullscreenElement||document.webkitFullscreen
 document.addEventListener('fullscreenchange',fsMove);document.addEventListener('webkitfullscreenchange',fsMove);
 const AL={
 pt:{ac:'Conquistas',aon:'Ativar conquistas',aoff:'As conquistas estão desativadas.',unl:'Conquista desbloqueada:',
-n_first:'Primeiro jogo',d_first:'Abra um jogo pela primeira vez.',n_prof:'Identidade',d_prof:'Crie o seu perfil.',n_avatar:'Cara nova',d_avatar:'Escolha uma foto ou GIF de perfil.',n_min10:'Esquentando',d_min10:'Jogue 10 minutos no total.',n_hour1:'Viciado',d_hour1:'Jogue 1 hora no total.',n_cores3:'Colecionador',d_cores3:'Jogue em 3 consoles diferentes.',n_custom:'Do meu jeito',d_custom:'Mude a posição ou o tamanho dos botões.',n_lang:'Poliglota',d_lang:'Troque o idioma do site.',n_folder:'Organizado',d_folder:'Crie uma pasta.',pm:'Otimização automática (recomendado)',heavy:'Console pesado: feche outros apps. Se travar, tente um app nativo para esse console.',og:'Otimizar jogo',ogh:'Escolha um jogo. A otimização vale só para ele.',lv0:'Desligada',lv1:'Leve',lv2:'Máxima',ld0:'sem ajustes (qualidade total)',ld1:'ajustes leves (padrão)',ld2:'pula mais quadros e reduz a qualidade',hz:'Sua tela passa de 60 Hz. Para o jogo ficar estável, fixe a tela em 60 Hz nas configurações do celular.'},
+n_first:'Primeiro jogo',d_first:'Abra um jogo pela primeira vez.',n_prof:'Identidade',d_prof:'Crie o seu perfil.',n_avatar:'Cara nova',d_avatar:'Escolha uma foto ou GIF de perfil.',n_min10:'Esquentando',d_min10:'Jogue 10 minutos no total.',n_hour1:'Viciado',d_hour1:'Jogue 1 hora no total.',n_cores3:'Colecionador',d_cores3:'Jogue em 3 consoles diferentes.',n_custom:'Do meu jeito',d_custom:'Mude a posição ou o tamanho dos botões.',n_lang:'Poliglota',d_lang:'Troque o idioma do site.',n_folder:'Organizado',d_folder:'Crie uma pasta.',pm:'Otimização automática (recomendado)',heavy:'Console pesado: feche outros apps. Se travar, tente um app nativo para esse console.',og:'Otimizar jogo',ogh:'Escolha um jogo. A otimização vale só para ele.',lv0:'Desligada',lv1:'Leve',lv2:'Máxima',ld0:'sem ajustes (qualidade total)',ld1:'ajustes leves (padrão)',ld2:'pula mais quadros e reduz a qualidade',hz:'Sua tela passa de 60 Hz. Para o jogo ficar estável, fixe a tela em 60 Hz nas configurações do celular.',f_t:'Amigos',f_ph:'ID do amigo (até 7 números)',f_go:'Buscar',f_nf:'Nenhum perfil com esse ID.',f_me:'Esse é o seu próprio ID.',f_add:'Adicionar amigo',f_sent:'Pedido enviado',f_acc:'Aceitar',f_dec:'Recusar',f_req:'Pedidos recebidos',f_fr:'Seus amigos',f_none:'Nenhum amigo ainda.',f_chat:'Chat',f_send:'Enviar',f_rm:'Remover amigo',f_bl:'Bloquear',f_blk:'Indisponível',f_rp:'Denunciar',f_rpok:'Denúncia enviada.',f_msg:'Mensagem...',f_need:'Salve o seu perfil (com ID) primeiro.',f_err:'Não foi possível falar com o servidor.',f_taken:'Esse ID já está em uso por outra pessoa. Escolha outro.'},
 en:{ac:'Achievements',aon:'Enable achievements',aoff:'Achievements are turned off.',unl:'Achievement unlocked:',
-n_first:'First game',d_first:'Open a game for the first time.',n_prof:'Identity',d_prof:'Create your profile.',n_avatar:'New look',d_avatar:'Pick a profile photo or GIF.',n_min10:'Warming up',d_min10:'Play for 10 minutes in total.',n_hour1:'Hooked',d_hour1:'Play for 1 hour in total.',n_cores3:'Collector',d_cores3:'Play on 3 different consoles.',n_custom:'My way',d_custom:'Change the position or size of the buttons.',n_lang:'Polyglot',d_lang:'Change the site language.',n_folder:'Organized',d_folder:'Create a folder.',pm:'Automatic optimization (recommended)',heavy:'Heavy console: close other apps. If it lags, try a native app for this console.',og:'Optimize game',ogh:'Pick a game. The setting applies only to that one.',lv0:'Off',lv1:'Light',lv2:'Maximum',ld0:'no tweaks (full quality)',ld1:'light tweaks (default)',ld2:'skips more frames and lowers quality',hz:'Your screen runs above 60 Hz. For stable gameplay, set the display to 60 Hz in your phone settings.'},
+n_first:'First game',d_first:'Open a game for the first time.',n_prof:'Identity',d_prof:'Create your profile.',n_avatar:'New look',d_avatar:'Pick a profile photo or GIF.',n_min10:'Warming up',d_min10:'Play for 10 minutes in total.',n_hour1:'Hooked',d_hour1:'Play for 1 hour in total.',n_cores3:'Collector',d_cores3:'Play on 3 different consoles.',n_custom:'My way',d_custom:'Change the position or size of the buttons.',n_lang:'Polyglot',d_lang:'Change the site language.',n_folder:'Organized',d_folder:'Create a folder.',pm:'Automatic optimization (recommended)',heavy:'Heavy console: close other apps. If it lags, try a native app for this console.',og:'Optimize game',ogh:'Pick a game. The setting applies only to that one.',lv0:'Off',lv1:'Light',lv2:'Maximum',ld0:'no tweaks (full quality)',ld1:'light tweaks (default)',ld2:'skips more frames and lowers quality',hz:'Your screen runs above 60 Hz. For stable gameplay, set the display to 60 Hz in your phone settings.',f_t:'Friends',f_ph:'Friend ID (up to 7 digits)',f_go:'Search',f_nf:'No profile with that ID.',f_me:'That is your own ID.',f_add:'Add friend',f_sent:'Request sent',f_acc:'Accept',f_dec:'Decline',f_req:'Received requests',f_fr:'Your friends',f_none:'No friends yet.',f_chat:'Chat',f_send:'Send',f_rm:'Remove friend',f_bl:'Block',f_blk:'Unavailable',f_rp:'Report',f_rpok:'Report sent.',f_msg:'Message...',f_need:'Save your profile (with an ID) first.',f_err:'Could not reach the server.',f_taken:'That ID is already used by someone else. Pick another.'},
 es:{ac:'Logros',aon:'Activar logros',aoff:'Los logros están desactivados.',unl:'Logro desbloqueado:',
-n_first:'Primer juego',d_first:'Abre un juego por primera vez.',n_prof:'Identidad',d_prof:'Crea tu perfil.',n_avatar:'Cara nueva',d_avatar:'Elige una foto o GIF de perfil.',n_min10:'Calentando',d_min10:'Juega 10 minutos en total.',n_hour1:'Enganchado',d_hour1:'Juega 1 hora en total.',n_cores3:'Coleccionista',d_cores3:'Juega en 3 consolas distintas.',n_custom:'A mi manera',d_custom:'Cambia la posición o el tamaño de los botones.',n_lang:'Políglota',d_lang:'Cambia el idioma del sitio.',n_folder:'Organizado',d_folder:'Crea una carpeta.',pm:'Optimización automática (recomendado)',heavy:'Consola pesada: cierra otras apps. Si va lento, prueba una app nativa para esta consola.',og:'Optimizar juego',ogh:'Elige un juego. El ajuste vale solo para ese.',lv0:'Desactivada',lv1:'Ligera',lv2:'Máxima',ld0:'sin ajustes (calidad total)',ld1:'ajustes ligeros (predeterminado)',ld2:'salta más cuadros y baja la calidad',hz:'Tu pantalla pasa de 60 Hz. Para que el juego sea estable, fija la pantalla en 60 Hz en los ajustes del móvil.'}};
+n_first:'Primer juego',d_first:'Abre un juego por primera vez.',n_prof:'Identidad',d_prof:'Crea tu perfil.',n_avatar:'Cara nueva',d_avatar:'Elige una foto o GIF de perfil.',n_min10:'Calentando',d_min10:'Juega 10 minutos en total.',n_hour1:'Enganchado',d_hour1:'Juega 1 hora en total.',n_cores3:'Coleccionista',d_cores3:'Juega en 3 consolas distintas.',n_custom:'A mi manera',d_custom:'Cambia la posición o el tamaño de los botones.',n_lang:'Políglota',d_lang:'Cambia el idioma del sitio.',n_folder:'Organizado',d_folder:'Crea una carpeta.',pm:'Optimización automática (recomendado)',heavy:'Consola pesada: cierra otras apps. Si va lento, prueba una app nativa para esta consola.',og:'Optimizar juego',ogh:'Elige un juego. El ajuste vale solo para ese.',lv0:'Desactivada',lv1:'Ligera',lv2:'Máxima',ld0:'sin ajustes (calidad total)',ld1:'ajustes ligeros (predeterminado)',ld2:'salta más cuadros y baja la calidad',hz:'Tu pantalla pasa de 60 Hz. Para que el juego sea estable, fija la pantalla en 60 Hz en los ajustes del móvil.',f_t:'Amigos',f_ph:'ID del amigo (hasta 7 números)',f_go:'Buscar',f_nf:'Ningún perfil con ese ID.',f_me:'Ese es tu propio ID.',f_add:'Añadir amigo',f_sent:'Solicitud enviada',f_acc:'Aceptar',f_dec:'Rechazar',f_req:'Solicitudes recibidas',f_fr:'Tus amigos',f_none:'Aún no tienes amigos.',f_chat:'Chat',f_send:'Enviar',f_rm:'Quitar amigo',f_bl:'Bloquear',f_blk:'No disponible',f_rp:'Denunciar',f_rpok:'Denuncia enviada.',f_msg:'Mensaje...',f_need:'Guarda primero tu perfil (con ID).',f_err:'No se pudo contactar con el servidor.',f_taken:'Ese ID ya lo usa otra persona. Elige otro.'}};
 const ta=k=>((AL[cfg.lang]||AL.en)[k])||AL.en[k];
 const ACH=[['first',()=>cfg.ach.plays>=1],['prof',()=>!!prof.id],['avatar',()=>!!prof.avatar],['min10',()=>cfg.ach.secs>=600],['hour1',()=>cfg.ach.secs>=3600],['cores3',()=>Object.keys(cfg.ach.cores).length>=3],['custom',()=>Object.keys(cfg.pos).length>0||cfg.scale!==1],['lang',()=>!!cfg.ach.lc],['folder',()=>folders.length>1]];
 let tt;const toast=m=>{const e=$('#toast');e.textContent='🏆 '+ta('unl')+' '+m;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),4000)};
-function checkAch(){if(!cfg.achOn)return;let ch=0;ACH.forEach(([k,f])=>{if(!cfg.ach.u[k]&&f()){cfg.ach.u[k]=Date.now();ch=1;toast(ta('n_'+k))}});if(ch){saveCfg();renderProf()}}
+function checkAch(){if(!cfg.achOn)return;let ch=0;ACH.forEach(([k,f])=>{if(!cfg.ach.u[k]&&f()){cfg.ach.u[k]=Date.now();ch=1;toast(ta('n_'+k))}});if(ch){saveCfg();renderProf();schedPub()}}
 function renderAchList(){const l=$('#achl');l.innerHTML='';const h=document.createElement('b');
  if(!cfg.achOn){h.textContent='🏆 '+ta('ac');l.append(h);const p=document.createElement('div');p.textContent=ta('aoff');p.style.color='var(--mut)';l.append(p);return}
  h.textContent='🏆 '+ta('ac')+' ('+Object.keys(cfg.ach.u).length+'/'+ACH.length+')';l.append(h);
@@ -329,11 +332,79 @@ function drawOt(sel){
   const bk=document.createElement('button');bk.textContent='←';bk.onclick=()=>drawOt(null);l.append(bk)}}
 $('#og').onclick=()=>{$('#st').classList.remove('on');$('#oth').textContent=ta('og');drawOt(null);$('#ot').classList.add('on')};
 $('#otx').onclick=()=>{$('#ot').classList.remove('on');$('#st').classList.add('on')};
+const FBCFG={apiKey:"AIzaSyBgF4vJtEZj6X4P7waD3HK8xZQFaS3Yf6w",authDomain:"zeo-emulador.firebaseapp.com",projectId:"zeo-emulador",storageBucket:"zeo-emulador.firebasestorage.app",messagingSenderId:"125929190341",appId:"1:125929190341:web:212740e12092bd750091ac"};
+let FB=null,FBP=null,REQ=[],frOn=0,chatU=null,chatKey=null;const PCH={};
+const pk=(a,b)=>[a,b].sort().join('_');
+function initFb(){if(FBP)return FBP;FBP=(async()=>{const B='https://www.gstatic.com/firebasejs/10.14.1/';
+ const [a,au,fs]=await Promise.all([import(B+'firebase-app.js'),import(B+'firebase-auth.js'),import(B+'firebase-firestore.js')]);
+ const app=a.initializeApp(FBCFG),auth=au.getAuth(app);
+ await new Promise((ok,no)=>{const u=au.onAuthStateChanged(auth,x=>{if(x){u();ok()}});au.signInAnonymously(auth).catch(no)});
+ FB={fs,db:fs.getFirestore(app),uid:auth.currentUser.uid};return FB})().catch(e=>{FBP=null;throw e});return FBP}
+function shrink(b){return new Promise(ok=>{
+ if(b.type==='image/gif'&&b.size<=150000){const r=new FileReader();r.onload=()=>ok(r.result);r.readAsDataURL(b);return}
+ const u=URL.createObjectURL(b),im=new Image();
+ im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=96;const s=Math.min(im.width,im.height);c.getContext('2d').drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,96,96);URL.revokeObjectURL(u);ok(c.toDataURL('image/jpeg',.8))};
+ im.onerror=()=>ok('');im.src=u})}
+async function publish(){const f=await initFb(),{doc,runTransaction}=f.fs;const photo=prof.avatar?await shrink(prof.avatar):'';const old=prof.pub,id=prof.id;
+ await runTransaction(f.db,async tr=>{const ref=doc(f.db,'ids',id),s=await tr.get(ref);
+  if(s.exists()&&s.data().uid!==f.uid)throw new Error('taken');
+  if(old&&old!==id)tr.delete(doc(f.db,'ids',old));
+  tr.set(ref,{uid:f.uid,name:prof.name,photo,ach:Object.keys(cfg.ach.u),t:Date.now()})});
+ prof.pub=id;await tx('meta','readwrite',s=>s.put(prof,'profile')).catch(()=>{})}
+let ps;function schedPub(){if(!prof.pub)return;clearTimeout(ps);ps=setTimeout(()=>publish().catch(()=>{}),4000)}
+async function getP(id){if(PCH[id])return PCH[id];const f=await initFb(),s=await f.fs.getDoc(f.fs.doc(f.db,'ids',id));if(s.exists())PCH[id]=s.data();return PCH[id]||null}
+function badge(){const n=REQ.filter(r=>r.status==='pending'&&FB&&r.toUid===FB.uid).length;$('#fr0').textContent='👥 '+ta('f_t')+(n?' ('+n+')':'')}
+function frRefresh(){if($('#fr').classList.contains('on')&&!chatKey&&$('#frl'))frList()}
+async function startFr(){const f=await initFb();if(frOn)return;frOn=1;const{collection,query,where,onSnapshot}=f.fs;let A=[],B=[];
+ const m=()=>{REQ=[...A,...B];badge();frRefresh()};
+ const ls=(fld,set)=>onSnapshot(query(collection(f.db,'reqs'),where(fld,'==',f.uid)),s=>{set(s.docs.map(d=>({id:d.id,...d.data()})));m()},()=>{});
+ ls('fromUid',x=>A=x);ls('toUid',x=>B=x)}
+const upd=async(r,d)=>{try{await FB.fs.updateDoc(FB.fs.doc(FB.db,'reqs',r.id),d)}catch(e){note(ta('f_err'))}};
+const del=async r=>{try{await FB.fs.deleteDoc(FB.fs.doc(FB.db,'reqs',r.id))}catch(e){note(ta('f_err'))}};
+function mkb(x,fn,pr){const b=document.createElement('button');b.textContent=x;if(pr)b.className='p';b.onclick=fn;return b}
+function row(id,btns){const e=document.createElement('div');e.className='fi';const im=document.createElement('img');im.className='av';im.src='icon-192.png';im.alt='';const n=document.createElement('div');n.className='nm';n.textContent='ID '+id;e.append(im,n);
+ getP(id).then(p=>{if(p){im.src=p.photo||'icon-192.png';n.textContent=p.name+' · ID '+id}}).catch(()=>{});
+ btns.forEach(([x,fn,pr])=>e.append(mkb(x,fn,pr)));return e}
+function frList(){const f=FB,l=$('#frl');l.innerHTML='';const H=x=>{const e=document.createElement('b');e.textContent=x;e.style.cssText='display:block;margin-top:10px';return e};
+ const inc=REQ.filter(r=>r.status==='pending'&&r.toUid===f.uid),fl=REQ.filter(r=>r.status==='accepted');
+ if(inc.length){l.append(H(ta('f_req')));inc.forEach(r=>l.append(row(r.from,[[ta('f_acc'),()=>upd(r,{status:'accepted'}),1],[ta('f_dec'),()=>del(r)],[ta('f_bl'),()=>upd(r,{status:'blocked',blockedBy:f.uid})]])))}
+ l.append(H(ta('f_fr')));
+ if(!fl.length){const e=document.createElement('div');e.textContent=ta('f_none');e.style.color='var(--mut)';l.append(e)}
+ fl.forEach(r=>l.append(row(r.from===prof.id?r.to:r.from,[[ta('f_chat'),()=>openChat(r),1]])))}
+function frHome(){chatKey=null;if(chatU){chatU();chatU=null}const b=$('#frb');b.innerHTML='';
+ const h=document.createElement('h2');h.textContent='👥 '+ta('f_t');
+ const sr=document.createElement('div');sr.className='row';
+ const inp=document.createElement('input');inp.type='text';inp.inputMode='numeric';inp.maxLength=7;inp.placeholder=ta('f_ph');inp.style.cssText='flex:1 1 140px;min-width:0';inp.oninput=()=>{inp.value=inp.value.replace(/[^0-9]/g,'')};
+ const res=document.createElement('div'),l=document.createElement('div');l.id='frl';
+ sr.append(inp,mkb(ta('f_go'),()=>search(inp.value.trim(),res),1));b.append(h,sr,res,l);frList()}
+async function search(id,res){res.innerHTML='';if(!id)return;if(id===prof.id){res.textContent=ta('f_me');return}
+ try{const s=await FB.fs.getDoc(FB.fs.doc(FB.db,'ids',id));if(!s.exists()){res.textContent=ta('f_nf');return}
+  const p=s.data();PCH[id]=p;const r=REQ.find(x=>x.id===pk(prof.id,id));
+  const c=document.createElement('div');c.className='fi';const im=document.createElement('img');im.className='av';im.src=p.photo||'icon-192.png';im.alt='';
+  const n=document.createElement('div');n.className='nm';n.textContent=p.name+' · ID '+id+' · 🏆 '+(p.ach||[]).length;c.append(im,n);
+  if(!r)c.append(mkb(ta('f_add'),async()=>{try{await FB.fs.setDoc(FB.fs.doc(FB.db,'reqs',pk(prof.id,id)),{from:prof.id,to:id,fromUid:FB.uid,toUid:p.uid,status:'pending',t:Date.now()});res.textContent=ta('f_sent')}catch(e){note(ta('f_err'))}},1));
+  else if(r.status==='accepted')c.append(mkb(ta('f_chat'),()=>openChat(r),1));
+  else if(r.status==='pending'&&r.toUid===FB.uid)c.append(mkb(ta('f_acc'),()=>upd(r,{status:'accepted'}),1));
+  else{const m=document.createElement('span');m.textContent=r.status==='pending'?ta('f_sent'):ta('f_blk');c.append(m)}
+  res.append(c)}catch(e){note(ta('f_err'))}}
+function openChat(r){chatKey=r.id;const b=$('#frb');b.innerHTML='';const o=r.from===prof.id?r.to:r.from;
+ const hd=document.createElement('div');hd.className='row';const t0=document.createElement('b');t0.style.flex='1';t0.textContent='ID '+o;getP(o).then(p=>{if(p)t0.textContent=p.name+' · ID '+o}).catch(()=>{});hd.append(mkb('←',frHome),t0);
+ const act=document.createElement('div');act.className='row';
+ [[ta('f_rm'),()=>{if(confirm(ta('f_rm')+'?')){del(r);frHome()}}],[ta('f_bl'),()=>{if(confirm(ta('f_bl')+'?')){upd(r,{status:'blocked',blockedBy:FB.uid});frHome()}}],[ta('f_rp'),async()=>{if(!confirm(ta('f_rp')+'?'))return;try{await FB.fs.addDoc(FB.fs.collection(FB.db,'reports'),{by:prof.id,byUid:FB.uid,target:o,pair:r.id,t:Date.now()});note(ta('f_rpok'))}catch(e){note(ta('f_err'))}}]].forEach(([x,fn])=>{const bt=mkb(x,fn);bt.style.cssText='padding:4px 10px;min-height:32px;font-size:13px';act.append(bt)});
+ const ms=document.createElement('div');ms.id='msgs';
+ const inp=document.createElement('input');inp.type='text';inp.maxLength=500;inp.placeholder=ta('f_msg');inp.style.cssText='flex:1;min-width:0';
+ const send=async()=>{const x=inp.value.trim();if(!x)return;inp.value='';try{await FB.fs.addDoc(FB.fs.collection(FB.db,'reqs',r.id,'msgs'),{fromUid:FB.uid,from:prof.id,text:x,t:Date.now()})}catch(e){note(ta('f_err'))}};
+ inp.onkeydown=e=>{if(e.key==='Enter')send()};
+ const cr=document.createElement('div');cr.className='row';cr.append(inp,mkb(ta('f_send'),send,1));b.append(hd,act,ms,cr);
+ const{query,collection,orderBy,limitToLast,onSnapshot}=FB.fs;
+ chatU=onSnapshot(query(collection(FB.db,'reqs',r.id,'msgs'),orderBy('t'),limitToLast(100)),s=>{ms.innerHTML='';s.docs.forEach(d=>{const m=d.data(),e=document.createElement('div');e.className='mb'+(m.fromUid===FB.uid?' me':'');e.textContent=m.text;ms.append(e)});ms.scrollTop=ms.scrollHeight},()=>note(ta('f_err')))}
+$('#fr0').onclick=async()=>{if(!prof.pub){note(ta('f_need'));return}try{await startFr()}catch(e){note(ta('f_err'));return}frHome();$('#fr').classList.add('on')};
+$('#frx').onclick=()=>{if(chatU){chatU();chatU=null}chatKey=null;$('#fr').classList.remove('on')};
 const A1=['Roxo','Neon','Pixel','Turbo','Astro','Cosmo','Sombra','Nova','Lunar','Ninja'],A2=['Gamer','Fox','Dragon','Byte','Wolf','Comet','Ghost','Rider','Spark','Hero'];
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 const rndName=()=>pick(A1)+pick(A2)+(10+Math.floor(Math.random()*90));
 const setAv=(img,b)=>{img.src=b?URL.createObjectURL(b):'icon-192.png'};
-function renderProf(){$('#pnm').textContent=prof.id?prof.name:t('prof');$('#pid').textContent=prof.id?'ID '+prof.id+(cfg.achOn?' · 🏆 '+Object.keys(cfg.ach.u).length:''):'';$('#ao').checked=cfg.achOn;$('#aol').textContent=ta('aon');$('#og').textContent=ta('og');renderAchList();setAv($('#pav'),prof.avatar)}
+function renderProf(){$('#pnm').textContent=prof.id?prof.name:t('prof');$('#pid').textContent=prof.id?'ID '+prof.id+(cfg.achOn?' · 🏆 '+Object.keys(cfg.ach.u).length:''):'';$('#ao').checked=cfg.achOn;$('#aol').textContent=ta('aon');$('#og').textContent=ta('og');badge();renderAchList();setAv($('#pav'),prof.avatar)}
 $('#prof').onclick=()=>{tmpAv=prof.avatar;$('#pn').value=prof.name;$('#pi').value=prof.id;$('#pmsg').textContent='';setAv($('#pav2'),tmpAv);$('#pf').classList.add('on')};
 $('#pph').onclick=()=>$('#pfile').click();
 $('#pfile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;if(f.size>5242880){$('#pmsg').textContent=t('big');return}tmpAv=f;setAv($('#pav2'),f);$('#pmsg').textContent=''};
@@ -341,8 +412,8 @@ $('#prn').onclick=()=>{$('#pn').value=rndName()};
 $('#pi').oninput=e=>{e.target.value=e.target.value.replace(/[^0-9]/g,'').slice(0,7)};
 $('#psv').onclick=async()=>{const id=$('#pi').value.trim();
  if(!/^[0-9]{1,7}$/.test(id)){$('#pmsg').textContent=t('bad');return}
- /* futuro: com servidor, conferir aqui se o ID já existe em outro perfil */
- prof={name:$('#pn').value.trim()||rndName(),id,avatar:tmpAv};
+ const old=prof;prof={name:$('#pn').value.trim()||rndName(),id,avatar:tmpAv,pub:old.pub};
+ try{await publish()}catch(e){if(String(e&&e.message||e).includes('taken')){prof=old;$('#pmsg').textContent=ta('f_taken');return}note(ta('f_err'))}
  await tx('meta','readwrite',s=>s.put(prof,'profile')).catch(()=>{});checkAch();renderProf();$('#pf').classList.remove('on')};
 $('#pcl').onclick=()=>$('#pf').classList.remove('on');
 const dr=$('#drop');
