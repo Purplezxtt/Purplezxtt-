@@ -58,6 +58,7 @@ body.cp .ejs_virtualGamepad_parent{display:none!important}
 .eb input{width:110px}
 #toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);transform:translateX(-50%);z-index:70;background:var(--card);color:var(--ink);border:1px solid var(--acc);border-radius:12px;padding:10px 16px;opacity:0;pointer-events:none;transition:opacity .3s;max-width:90vw;text-align:center}#toast.on{opacity:1}
 #achl{display:grid;gap:2px;max-height:30vh;overflow:auto}.arow{padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}.arow.lk{opacity:.55}
+#fps{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 6px);left:8px;z-index:60;font:600 12px system-ui;color:#fff;background:rgba(0,0,0,.55);padding:2px 6px;border-radius:6px;display:none}body.pf #fps{display:block}
 .chip{display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:6px 16px 6px 6px;border-radius:999px}
 .av{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--acc);flex:none}
 #pf{position:fixed;inset:0;z-index:20;display:none;background:rgba(0,0,0,.6);overflow:auto;padding:20px 16px}#pf.on{display:block}
@@ -76,7 +77,7 @@ body.cp .ejs_virtualGamepad_parent{display:none!important}
 <div id="drop"><div id="list"></div></div>
 <small data-i="foot"></small>
 </main>
-<div id="player"><div id="game"></div></div><button id="pc" data-i="cl"></button><button id="mn">☰ Menu</button><div id="toast"></div><div id="pad"></div>
+<div id="player"><div id="game"></div></div><button id="pc" data-i="cl"></button><button id="mn">☰ Menu</button><div id="toast"></div><div id="fps"></div><div id="pad"></div>
 <div id="st"><div class="card"><h2 data-i="set"></h2>
 <label><span data-i="lang"></span><select id="lg"><option value="pt">Português (BR)</option><option value="es">Español (ES)</option><option value="en">English (US)</option><option value="ru">Русский</option><option value="ja">日本語</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="it">Italiano</option></select></label>
 <label class="row"><input type="checkbox" id="cu"><span data-i="ctl"></span></label>
@@ -273,6 +274,7 @@ function play(i){
  if(!core||core==='none'){say(t('uns'));return}
  $('#player').classList.add('on');onPlay(core,i.name);wl();
  if(['psx','psp','segaSaturn','n64','nds'].includes(core))note(ta('heavy'));
+ if(cfg.perf){document.body.classList.add('pf');startFps()}
  if(cfg.perf)window.EJS_defaultOptions=Object.assign({shader:'disabled'},PERF[core]||{});
  if(cfg.custom&&['gba','gb','nes','snes'].includes(core)){window.EJS_VirtualGamepadSettings=[];document.body.classList.add('cp');mountPad($('#pad'),false,core);$('#pad').classList.add('on')}
  const url=URL.createObjectURL(new File([i.blob],i.name));
@@ -285,7 +287,7 @@ function play(i){
  document.body.append(s)}
 $('#pc').onclick=()=>location.reload();
 $('#mn').onclick=()=>{try{const m=window.EJS_emulator.menu;(m.open||m.toggle).call(m)}catch(e){}};
-const fsMove=()=>{const fe=document.fullscreenElement||document.webkitFullscreenElement;(fe||document.body).append($('#pad'),$('#pc'),$('#mn'),$('#toast'))};
+const fsMove=()=>{const fe=document.fullscreenElement||document.webkitFullscreenElement;(fe||document.body).append($('#pad'),$('#pc'),$('#mn'),$('#toast'),$('#fps'))};
 document.addEventListener('fullscreenchange',fsMove);document.addEventListener('webkitfullscreenchange',fsMove);
 const AL={
 pt:{ac:'Conquistas',aon:'Ativar conquistas',aoff:'As conquistas estão desativadas.',unl:'Conquista desbloqueada:',
@@ -304,6 +306,7 @@ function renderAchList(){const l=$('#achl');l.innerHTML='';const h=document.crea
  ACH.forEach(([k])=>{const r=document.createElement('div'),ok=cfg.ach.u[k];r.className='arow'+(ok?'':' lk');r.textContent=(ok?'🏆 ':'🔒 ')+ta('n_'+k)+' — '+ta('d_'+k);l.append(r)})}
 function onPlay(core,name){if(!cfg.achOn)return;cfg.ach.plays++;cfg.ach.cores[core]=1;cfg.ach.games[name]=1;saveCfg();checkAch();
  setInterval(()=>{if(document.visibilityState==='visible'){cfg.ach.secs+=15;saveCfg();checkAch()}},15000)}
+let fpsOn=0;function startFps(){if(fpsOn)return;fpsOn=1;let fr=0,lt=performance.now();const tick=n=>{fr++;if(n-lt>=1000){$('#fps').textContent='FPS '+Math.round(fr*1000/(n-lt));fr=0;lt=n}requestAnimationFrame(tick)};requestAnimationFrame(tick)}
 const note=m=>{const e=$('#toast');e.textContent=m;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),5000)};
 const wl=()=>{try{navigator.wakeLock&&navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&$('#player').classList.contains('on'))wl()});
