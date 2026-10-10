@@ -226,16 +226,44 @@ function draw(){
  b.setAttribute('aria-pressed',n===cur);b.onclick=()=>{cur=n;say('');draw()};tb.append(b)});
  const l=$('#list');l.innerHTML='';
  const v=items.filter(i=>cur==='Todos'||i.folder===cur);
- if(!v.length){const f=fo(cur);l.innerHTML='<div class="empty"></div>';l.firstChild.textContent=(f&&f.exts.length?t('eF')+f.exts.join(', ')+'. ':'')+t('e0');return}
+ const bar=document.createElement('div');bar.className='row';bar.style.marginBottom='12px';
+ if(cur!=='Todos'&&cur!=='Sem pasta'&&fo(cur)){const b=document.createElement('button');b.textContent=fxs('d');b.onclick=()=>delFolder(cur);bar.append(b)}
+ if(cur==='Sem pasta'&&v.length){const b=document.createElement('button');b.className='p';b.textContent=fxs('ai');b.onclick=autoOrg;bar.append(b)}
+ if(bar.childNodes.length)l.append(bar);
+ if(!v.length){const f=fo(cur),em=document.createElement('div');em.className='empty';em.textContent=(f&&f.exts.length?t('eF')+f.exts.join(', ')+'. ':'')+t('e0');l.append(em);return}
  v.forEach(i=>{const d=document.createElement('div');d.className='item';
  const n=document.createElement('div');n.className='n';n.textContent=i.name;const s=document.createElement('span');s.className='s';s.textContent=fmt(i.size)+' · '+lab(i.folder);n.append(s);
  const sel=document.createElement('select');sel.setAttribute('aria-label',t('mv'));
- folders.filter(f=>acc(f,i.name)||f.name===i.folder).forEach(f=>sel.add(new Option(lab(f.name),f.name,false,f.name===i.folder)));
+ folders.filter(f=>i.folder==='Sem pasta'||acc(f,i.name)||f.name===i.folder).forEach(f=>sel.add(new Option(lab(f.name),f.name,false,f.name===i.folder)));
  sel.onchange=async()=>{i.folder=sel.value;await tx('games','readwrite',s=>s.put(i));draw()};
  const pl=document.createElement('button');pl.className='p';pl.textContent=t('play');pl.onclick=()=>play(i);
  const dl=document.createElement('button');dl.textContent=t('dl');dl.onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(i.blob);a.download=i.name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)};
  const rm=document.createElement('button');rm.textContent=t('rm');rm.onclick=async()=>{await tx('games','readwrite',s=>s.delete(i.id));tx('meta','readwrite',s=>s.delete('st:'+i.id)).catch(()=>{});HAS.delete(i.id);items=items.filter(x=>x!==i);draw()};
  d.append(n,pl,sel,dl,rm);if(HAS.has(i.id)){const rs=document.createElement('button');rs.textContent='↺ '+ta('f_restart');rs.onclick=async()=>{await tx('meta','readwrite',s=>s.delete('st:'+i.id)).catch(()=>{});HAS.delete(i.id);draw()};d.append(rs)}l.append(d)})}
+const FXT={pt:{d:'🗑 Excluir esta pasta',dq:'Excluir a pasta “%s”? Os jogos dela não serão apagados: vão para “%t”.',ai:'🔍 Identificar e organizar',ar:'%1 jogo(s) organizado(s). %2 sem identificação — escolha a pasta manualmente na lista de cada jogo.',n0:'Nenhum jogo para identificar.'},
+es:{d:'🗑 Eliminar esta carpeta',dq:'¿Eliminar la carpeta “%s”? Sus juegos no se borrarán: pasarán a “%t”.',ai:'🔍 Identificar y organizar',ar:'%1 juego(s) organizado(s). %2 sin identificar — elige la carpeta a mano en la lista de cada juego.',n0:'No hay juegos para identificar.'},
+en:{d:'🗑 Delete this folder',dq:'Delete the folder “%s”? Its games won’t be deleted: they move to “%t”.',ai:'🔍 Identify and organize',ar:'%1 game(s) organized. %2 not identified — pick the folder by hand in each game’s list.',n0:'No games to identify.'},
+ru:{d:'🗑 Удалить папку',dq:'Удалить папку «%s»? Игры не удалятся — они переместятся в «%t».',ai:'🔍 Определить и разложить',ar:'Разложено: %1. Не определено: %2 — выберите папку вручную.',n0:'Нет игр для определения.'},
+ja:{d:'🗑 このフォルダを削除',dq:'フォルダ「%s」を削除しますか？ゲームは削除されず「%t」に移動します。',ai:'🔍 判別して整理',ar:'%1本を整理しました。判別できなかったもの：%2本（各ゲームのリストで手動選択してください）。',n0:'判別するゲームがありません。'},
+de:{d:'🗑 Ordner löschen',dq:'Ordner „%s“ löschen? Die Spiele bleiben erhalten und kommen nach „%t“.',ai:'🔍 Erkennen und sortieren',ar:'%1 Spiel(e) sortiert. %2 nicht erkannt – Ordner bitte manuell wählen.',n0:'Keine Spiele zum Erkennen.'},
+fr:{d:'🗑 Supprimer ce dossier',dq:'Supprimer le dossier « %s » ? Les jeux ne seront pas effacés : ils iront dans « %t ».',ai:'🔍 Identifier et ranger',ar:'%1 jeu(x) rangé(s). %2 non identifié(s) — choisis le dossier à la main.',n0:'Aucun jeu à identifier.'},
+it:{d:'🗑 Elimina questa cartella',dq:'Eliminare la cartella “%s”? I giochi non verranno cancellati: andranno in “%t”.',ai:'🔍 Riconosci e organizza',ar:'%1 gioco/i organizzati. %2 non riconosciuti — scegli la cartella a mano.',n0:'Nessun gioco da riconoscere.'}};
+const fxs=k=>(FXT[cfg.lang]||FXT.en)[k];
+async function delFolder(n){if(!fo(n)||n==='Sem pasta'||n==='Todos')return;if(!confirm(fxs('dq').replace('%s',n).replace('%t',lab('Sem pasta'))))return;
+ for(const i of items.filter(x=>x.folder===n)){i.folder='Sem pasta';await tx('games','readwrite',s=>s.put(i)).catch(()=>{})}
+ folders=folders.filter(f=>f.name!==n);cur='Todos';saveF();say('');draw()}
+async function sniff(file){try{const b=new Uint8Array(await file.slice(0,0x9400).arrayBuffer()),s=(o,n)=>String.fromCharCode(...b.slice(o,o+n)),u=o=>((b[o]<<24)|(b[o+1]<<16)|(b[o+2]<<8)|b[o+3])>>>0;
+ if(u(0x18)===0x5D1C9EA3)return'Wii';
+ if(s(0,15)==='SEGA SEGASATURN')return'Sega Saturn';
+ if(s(0,14)==='SEGADISCSYSTEM')return'Sega CD';
+ for(const o of [0x8000,0x9310]){if(s(o+1,5)==='CD001'){const sid=s(o+8,32);if(sid.startsWith('PSP GAME'))return'PSP';if(sid.startsWith('PLAYSTATION'))return file.size>800e6?'PlayStation 2':'PlayStation'}}
+ const x=new Uint8Array(await file.slice(0x10000,0x10020).arrayBuffer());if(String.fromCharCode(...x).startsWith('MICROSOFT*XBOX*MEDIA'))return'Xbox'}catch(e){}return null}
+const fByKey=k=>{const e=folders.find(f=>f.name===k);if(e)return e;const c=PC[k];if(!c||c==='none')return null;const m=folders.filter(f=>f.core===c);return m.length===1?m[0]:null};
+async function autoOrg(){let ok=0,left=0;
+ for(const i of items.filter(x=>x.folder==='Sem pasta')){let tg=null;const e=ext(i.name),ms=folders.filter(f=>f.name!=='Sem pasta'&&f.exts.length&&f.exts.includes(e));
+  if(ms.length===1)tg=ms[0].name;else if(['.iso','.bin','.img'].includes(e)){const k=await sniff(i.blob),f=k&&fByKey(k);if(f&&f.name!=='Sem pasta')tg=f.name}
+  if(tg){i.folder=tg;await tx('games','readwrite',s=>s.put(i)).catch(()=>{});ok++}else left++}
+ say(ok||left?fxs('ar').replace('%1',ok).replace('%2',left):fxs('n0'));draw()}
 async function addFiles(fs){
  let ok=0,bad=[],auto=0;const here=fo(cur);
  for(const f of fs){let tg;
@@ -269,7 +297,14 @@ function mountPad(host,edit,core){
   el.style.left=P(k)[0]+'%';el.style.top=P(k)[1]+'%';
   const press=(e0,idx)=>{e0.onpointerdown=e=>{if(edit)return;e.preventDefault();e0.classList.add('on');try{e0.setPointerCapture(e.pointerId)}catch(x){}sim(idx,1);if(navigator.vibrate)navigator.vibrate(8)};
    const up=()=>{if(edit)return;e0.classList.remove('on');sim(idx,0)};e0.onpointerup=up;e0.onpointercancel=up};
-  if(k==='dpad')DIRS.forEach(([s,idx],n)=>{const d=document.createElement('i');d.textContent=s;d.className='d'+n;press(d,idx);el.append(d)});
+  if(k==='dpad'){const ds=[];DIRS.forEach(([s],n)=>{const d=document.createElement('i');d.textContent=s;d.className='d'+n;d.style.pointerEvents='none';el.append(d);ds.push(d)});
+   if(!edit){const cu=[0,0,0,0];let pid=null;
+    const upd=e=>{const r=el.getBoundingClientRect(),dx=(e.clientX-(r.left+r.width/2))/r.width,dy=(e.clientY-(r.top+r.height/2))/r.height,th=.14,nw=[dy<-th,dy>th,dx<-th,dx>th];
+     nw.forEach((v,n)=>{if(v!==!!cu[n]){cu[n]=v?1:0;ds[n].classList.toggle('on',v);sim(DIRS[n][1],v?1:0);if(v&&navigator.vibrate)navigator.vibrate(6)}})};
+    const end=e=>{if(e&&e.pointerId!==pid)return;pid=null;cu.forEach((v,n)=>{if(v){cu[n]=0;ds[n].classList.remove('on');sim(DIRS[n][1],0)}})};
+    el.onpointerdown=e=>{e.preventDefault();pid=e.pointerId;try{el.setPointerCapture(e.pointerId)}catch(x){}upd(e)};
+    el.onpointermove=e=>{if(e.pointerId===pid)upd(e)};
+    el.onpointerup=end;el.onpointercancel=end;el.onlostpointercapture=end}}
   else{el.textContent=BTN[k][0];press(el,BTN[k][1])}
   if(edit){el.onpointerdown=e=>{e.preventDefault();el.setPointerCapture(e.pointerId);el._d=1};
    el.onpointermove=e=>{if(!el._d)return;const r=host.getBoundingClientRect(),x=Math.min(97,Math.max(3,(e.clientX-r.left)/r.width*100)),y=Math.min(97,Math.max(3,(e.clientY-r.top)/r.height*100));el.style.left=x+'%';el.style.top=y+'%';cfg.pos[k]=[+x.toFixed(1),+y.toFixed(1)]};
