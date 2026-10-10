@@ -52,7 +52,7 @@ body.cp .ejs_virtualGamepad_parent{display:none!important}
 #st{background:rgba(0,0,0,.6);overflow:auto;padding:20px 16px}
 .card{max-width:420px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:14px}
 .card h2{margin:0;font:800 22px 'Bricolage Grotesque',system-ui}.card label{display:grid;gap:6px}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-#ed{background:#0b0614}#padE{position:absolute;inset:0;z-index:5;pointer-events:none}#pc{z-index:60!important}#mn{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:124px;z-index:60;display:none;background:rgba(20,10,35,.85);color:#fff;border-color:#7a2fe0}body.cp #mn{display:block}
+#ed{background:#0b0614}#padE{position:absolute;inset:0;z-index:5;pointer-events:none}#pc{z-index:60!important}
 .scr{position:absolute;left:22%;top:18%;width:56%;height:56%;border:2px dashed #4a3a78;border-radius:8px}
 .eb{position:absolute;top:calc(env(safe-area-inset-top,0px) + 6px);left:50%;transform:translateX(-50%);z-index:3;display:flex;gap:8px;align-items:center;background:rgba(20,10,35,.9);color:#fff;border-radius:12px;padding:6px 10px;font-size:13px}
 .eb input{width:110px}
@@ -79,7 +79,7 @@ body.cp .ejs_virtualGamepad_parent{display:none!important}
 <div id="drop"><div id="list"></div></div>
 <small data-i="foot"></small>
 </main>
-<div id="player"><div id="game"></div></div><button id="pc" data-i="cl"></button><button id="mn">☰ Menu</button><div id="toast"></div><div id="fps"></div><div id="pad"></div>
+<div id="player"><div id="game"></div></div><button id="pc" data-i="cl"></button><div id="toast"></div><div id="fps"></div><div id="pad"></div>
 <div id="st"><div class="card"><h2 data-i="set"></h2>
 <label><span data-i="lang"></span><select id="lg"><option value="pt">Português (BR)</option><option value="es">Español (ES)</option><option value="en">English (US)</option><option value="ru">Русский</option><option value="ja">日本語</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="it">Italiano</option></select></label>
 <label class="row"><input type="checkbox" id="cu"><span data-i="ctl"></span></label>
@@ -300,8 +300,7 @@ async function play(i){
  s.onerror=()=>{$('#game').textContent=t('lerr');$('#game').style.cssText='color:#fff;padding:80px 20px;text-align:center'};
  document.body.append(s)}
 $('#pc').onclick=async()=>{await saveRun();location.reload()};
-$('#mn').onclick=()=>{try{const m=window.EJS_emulator.menu;(m.open||m.toggle).call(m)}catch(e){}};
-const fsMove=()=>{const fe=document.fullscreenElement||document.webkitFullscreenElement;(fe||document.body).append($('#pad'),$('#pc'),$('#mn'),$('#toast'),$('#fps'))};
+const fsMove=()=>{const fe=document.fullscreenElement||document.webkitFullscreenElement;(fe||document.body).append($('#pad'),$('#pc'),$('#toast'),$('#fps'))};
 document.addEventListener('fullscreenchange',fsMove);document.addEventListener('webkitfullscreenchange',fsMove);
 const AL={
 pt:{ac:'Conquistas',aon:'Ativar conquistas',aoff:'As conquistas estão desativadas.',unl:'Conquista desbloqueada:',
