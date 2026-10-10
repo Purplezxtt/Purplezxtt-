@@ -285,12 +285,13 @@ async function play(i){
  if(['psx','psp','segaSaturn','n64','nds'].includes(core))note(ta('heavy'));
  const lv=cfg.opt[i.id]===undefined?1:cfg.opt[i.id];
  if(lv>0){document.body.classList.add('pf');startFps()}
- if(lv>0)window.EJS_defaultOptions=Object.assign({shader:'disabled',fastForward:'disabled',slowMotion:'disabled'},(lv>=2?PERF2:PERF)[core]||{});
+ if(lv>0)window.EJS_defaultOptions=Object.assign({shader:'disabled',fastForward:'disabled',slowMotion:'disabled',rewindEnabled:'disabled','rewind-enabled':'disabled'},(lv>=2?PERF2:PERF)[core]||{});
  if(cfg.custom&&['gba','gb','nes','snes'].includes(core)){window.EJS_VirtualGamepadSettings=[];document.body.classList.add('cp');mountPad($('#pad'),false,core);$('#pad').classList.add('on')}
  const url=URL.createObjectURL(new File([i.blob],i.name));
  window.EJS_player='#game';window.EJS_core=core;window.EJS_gameUrl=url;
  window.EJS_gameName=i.name.replace(/\.[^.]+$/,'');
  window.EJS_pathtodata='https://cdn.emulatorjs.org/stable/data/';
+ if(window.crossOriginIsolated)window.EJS_threads=true;
  window.EJS_startOnLoaded=true;window.EJS_color='#7a2fe0';window.EJS_language={pt:'pt-BR',es:'es-ES',en:'en-US',ru:'ru-RU',ja:'ja-JA',de:'de-GER',fr:'af-FR',it:'it-IT'}[cfg.lang];
  curGame=i;
  if(cfg.resume){let rs=null;try{rs=await tx('meta','readonly',s=>s.get('st:'+i.id))}catch(e){}
@@ -450,7 +451,7 @@ dr.ondragover=e=>{e.preventDefault();dr.classList.add('over')};
 dr.ondragleave=()=>dr.classList.remove('over');
 dr.ondrop=e=>{e.preventDefault();dr.classList.remove('over');addFiles([...e.dataTransfer.files])};
 load();
-if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").catch(()=>{})}catch(e){}}
+if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").then(()=>navigator.serviceWorker.ready).then(()=>{if(!window.crossOriginIsolated&&!/noiso/.test(location.search)&&!sessionStorage.getItem('zeoiso')&&navigator.serviceWorker.controller){sessionStorage.setItem('zeoiso','1');location.reload()}}).catch(()=>{})}catch(e){}}
 </script>
 </body>
 </html>
