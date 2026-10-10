@@ -64,7 +64,7 @@ body.ing main{visibility:hidden}#fps{position:fixed;bottom:calc(env(safe-area-in
 #msgs{display:flex;flex-direction:column;gap:6px;max-height:42vh;overflow:auto;padding:6px;border:1px solid var(--line);border-radius:12px}.mb{max-width:80%;padding:6px 10px;border-radius:12px;background:var(--sel);align-self:flex-start;overflow-wrap:anywhere}.mb.me{align-self:flex-end;background:var(--acc);color:var(--bg)}
 .chip{display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:6px 16px 6px 6px;border-radius:999px}
 .av{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--acc);flex:none}
-#pf,#ot,#fr,#nc,#hp{position:fixed;inset:0;z-index:20;display:none;background:rgba(0,0,0,.6);overflow:auto;padding:20px 16px}#pf.on,#ot.on,#fr.on,#nc.on,#hp.on{display:block}
+#pf,#ot,#fr,#nc,#hp,#au{position:fixed;inset:0;z-index:20;display:none;background:rgba(0,0,0,.6);overflow:auto;padding:20px 16px}#pf.on,#ot.on,#fr.on,#nc.on,#hp.on,#au.on{display:block}
 #help{position:fixed;top:calc(env(safe-area-inset-top,0px) + 68px);right:12px;z-index:15;width:46px;height:46px;border-radius:50%;padding:0;font:800 22px system-ui;display:grid;place-items:center;background:var(--card);border:1px solid var(--line)}#player.on~#help{display:none}
 #hp details{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}#hp summary{font-weight:700;cursor:pointer}#hp details p{margin:8px 0 0;color:var(--mut);white-space:pre-line;line-height:1.45}
 #bell{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);right:12px;z-index:15;width:46px;height:46px;border-radius:50%;padding:0;font-size:22px;display:grid;place-items:center;background:var(--card);border:1px solid var(--line)}#player.on~#bell{display:none}
@@ -93,12 +93,13 @@ body.ing main{visibility:hidden}#fps{position:fixed;bottom:calc(env(safe-area-in
 <label><span data-i="lang"></span><select id="lg"><option value="pt">Português (BR)</option><option value="es">Español (ES)</option><option value="en">English (US)</option><option value="ru">Русский</option><option value="ja">日本語</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="it">Italiano</option></select></label>
 <label class="row"><input type="checkbox" id="cu"><span data-i="ctl"></span></label>
 <label class="row"><input type="checkbox" id="ao"><span id="aol"></span></label>
-<button id="og"></button>
+<button id="og"></button><button id="ag"></button>
 <label class="row"><input type="checkbox" id="nt"><span id="ntl"></span></label>
 <label class="row"><input type="checkbox" id="rz"><span id="rzl"></span></label>
 <label class="row"><input type="checkbox" id="ns"><span id="nsl"></span></label>
 <label hidden><span><span data-i="size"></span>: <b id="szv"></b></span><input type="range" id="sz" min="60" max="160" step="5"></label>
 <div class="row"><button id="em" data-i="ed"></button><button class="p" id="sx" data-i="ok"></button></div></div></div>
+<div id="au"><div class="card"><h2 id="aut"></h2><div id="aul"></div><div class="row"><button class="p" id="aux"></button></div></div></div>
 <div id="hp"><div class="card"><h2 id="hpt"></h2><div id="hpl"></div><div class="row"><button class="p" id="hpx"></button></div></div></div>
 <div id="nc"><div class="card"><h2 id="nct"></h2><div id="ncl"></div><div class="row"><button id="ncc"></button><button class="p" id="ncx"></button></div></div></div>
 <div id="pf"><div class="card"><h2 data-i="prof"></h2>
@@ -113,6 +114,7 @@ body.ing main{visibility:hidden}#fps{position:fixed;bottom:calc(env(safe-area-in
 <div id="skp"><div class="card"><h2 id="skt"></h2><div id="skl"></div><div class="row"><button class="p" id="skx"></button></div><input type="file" id="skf" accept="image/*" hidden></div></div>
 <div id="ed"><div class="scr"></div><div id="padE"></div><div class="eb"><span data-i="tip"></span><select id="edc"></select><button id="eimg"></button><input type="range" id="sz2" min="60" max="160" step="5"><button id="rs" data-i="rs"></button><button class="p" id="ex" data-i="ok"></button></div></div>
 <script>
+(()=>{const A=window.AudioContext||window.webkitAudioContext;if(!A)return;class Z extends A{constructor(o){const x=window.ZAH;super(x===undefined?o:Object.assign({},o,{latencyHint:x}))}}try{window.AudioContext=Z;if(window.webkitAudioContext)window.webkitAudioContext=Z}catch(e){}})();
 const $=s=>document.querySelector(s);
 const L={
 pt:{add:'Adicionar jogos',nf:'Nova pasta',set:'Configurações',all:'Todos',nof:'Sem pasta',play:'Jogar',dl:'Baixar',rm:'Remover',
@@ -328,7 +330,7 @@ function mountPad(host,edit,core){
   const su=SK[core+':'+k];if(su){el.style.cssText+=';background:url("'+su+'") center/contain no-repeat;border:0;'+(k==='dpad'?'':'color:transparent');if(k==='dpad')el.querySelectorAll('i').forEach(i=>{i.style.background='transparent';i.style.border='0';i.style.color='transparent'})}
   host.append(el)})}
 const setScale=v=>{LYK(ECORE).scale=v/100;saveCfg();checkAch();$('#sz').value=$('#sz2').value=v;$('#szv').textContent=v+'%';if($('#ed').classList.contains('on'))mountPad($('#padE'),true,ECORE)};
-$('#set').onclick=()=>$('#st').classList.add('on');
+$('#set').onclick=()=>{$('#ag').textContent=ax('b');$('#st').classList.add('on')};
 $('#sx').onclick=()=>$('#st').classList.remove('on');
 $('#lg').onchange=e=>{cfg.lang=e.target.value;cfg.ach.lc=1;(cfg.ach.ls=cfg.ach.ls||{})[cfg.lang]=1;saveCfg();applyLang();checkAch()};
 $('#cu').onchange=e=>{cfg.custom=e.target.checked;saveCfg()};
@@ -378,6 +380,7 @@ async function play(i){
  const lv=cfg.opt[i.id]===undefined?(['psp','psx','n64','nds','segaSaturn','sega32x','segaCD'].includes(core)?2:1):cfg.opt[i.id];
  if(lv>0){document.body.classList.add('pf');startFps()}
  if(lv>0)window.EJS_defaultOptions=Object.assign({shader:'disabled',fastForward:'disabled',slowMotion:'disabled',rewindEnabled:'disabled','rewind-enabled':'disabled'},(lv>=2?PERF2:PERF)[core]||{});
+ {const au=(cfg.au&&cfg.au[i.id])||0;if(au>0){window.EJS_defaultOptions=Object.assign(window.EJS_defaultOptions||{},AUD[core]||{});window.ZAH=au>=2?0.3:'playback'}else window.ZAH=undefined}
  if(cfg.custom&&CPS[core]){window.EJS_VirtualGamepadSettings=[];document.body.classList.add('cp');mountPad($('#pad'),false,core);$('#pad').classList.add('on')}
  const url=URL.createObjectURL(new File([i.blob],i.name));
  window.EJS_player='#game';window.EJS_core=core;window.EJS_gameUrl=url;
@@ -566,10 +569,11 @@ const CH=[
 {id:'u-ctl',pt:'Controles personalizados para cada console (agora com DS e PlayStation) e imagens ou GIFs nos botões.',es:'Controles personalizados por consola (ahora con DS y PlayStation) e imágenes o GIFs en los botones.',en:'Custom controls for each console (now including DS and PlayStation) plus images or GIFs on buttons.'},
 {id:'u-del',pt:'Agora você pode apagar as suas mensagens no chat (🗑).',es:'Ahora puedes borrar tus mensajes en el chat (🗑).',en:'You can now delete your own chat messages (🗑).'},
 {id:'u-more',pt:'Controles personalizados agora também em PSP, Mega Drive, Master System, Game Gear, 32X, Sega CD, PC Engine, Atari 2600/7800 e Lynx.',es:'Controles personalizados ahora también en PSP, Mega Drive, Master System, Game Gear, 32X, Sega CD, PC Engine, Atari 2600/7800 y Lynx.',en:'Custom controls now also for PSP, Mega Drive, Master System, Game Gear, 32X, Sega CD, PC Engine, Atari 2600/7800 and Lynx.'},
+{id:'u-aud',pt:'Novo botão Ajustar áudio nas Configurações, para reduzir chiado e travadas no som (por jogo).',es:'Nuevo botón Ajustar audio en Configuración para reducir chasquidos y cortes de sonido (por juego).',en:'New Adjust audio button in Settings to reduce crackling and stutter (per game).'},
 {id:'u-help',pt:'Novo botão ? com perguntas e respostas para ajudar quem está começando.',es:'Nuevo botón ? con preguntas y respuestas para quien empieza.',en:'New ? button with questions and answers for newcomers.'},
 {id:'u-live',pt:'Avisos de atualização em tempo real: quando sair uma versão nova, o sininho te avisa.',es:'Avisos de actualización en tiempo real: cuando salga una versión nueva, la campanita te avisa.',en:'Live update alerts: when a new version is out, the bell tells you.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-10.4';let verSeen=APP_VER;
+const APP_VER='2026-10-10.5';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname,{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
@@ -635,6 +639,28 @@ function openHelp(){const l=$('#hpl');l.innerHTML='';$('#hpt').textContent='? '+
  (FQ[cfg.lang]||FQ.en).forEach(([q,a])=>{const d=document.createElement('details'),s=document.createElement('summary'),p=document.createElement('p');s.textContent=q;p.textContent=a;d.append(s,p);l.append(d)});
  $('#hp').classList.add('on')}
 $('#help').onclick=openHelp;$('#hpx').onclick=()=>$('#hp').classList.remove('on');
+
+const AUD={snes:{snes9x_audio_interpolation:'none'},nes:{fceumm_sndquality:'Low',fceumm_sndlowpass:'disabled'},gba:{mgba_audio_low_pass_filter:'disabled'},segaMD:{genesis_plus_gx_lowpass_filter:'disabled',genesis_plus_gx_audio_filter:'disabled'},segaMS:{genesis_plus_gx_lowpass_filter:'disabled',genesis_plus_gx_audio_filter:'disabled'},segaGG:{genesis_plus_gx_lowpass_filter:'disabled',genesis_plus_gx_audio_filter:'disabled'},psx:{pcsx_rearmed_spu_interpolation:'simple',pcsx_rearmed_spu_reverb:'disabled'}};
+const AXT={pt:{b:'Ajustar áudio',h:'Escolha um jogo. O ajuste vale só para ele.',l0:'Padrão',d0:'sem mudanças',l1:'Estável',d1:'som mais firme, atraso pequeno',l2:'Máxima estabilidade',d2:'menos chiado, o som atrasa um pouco',n:'Se o jogo roda abaixo da velocidade normal, o som ainda pode cortar: este ajuste só ajuda em travadas curtas.'},
+es:{b:'Ajustar audio',h:'Elige un juego. El ajuste vale solo para ese.',l0:'Estándar',d0:'sin cambios',l1:'Estable',d1:'sonido más firme, poco retraso',l2:'Máxima estabilidad',d2:'menos chasquidos, el sonido se retrasa un poco',n:'Si el juego va por debajo de la velocidad normal, el sonido aún puede cortarse: este ajuste solo ayuda con tirones cortos.'},
+en:{b:'Adjust audio',h:'Pick a game. The setting applies only to that one.',l0:'Default',d0:'no changes',l1:'Stable',d1:'steadier sound, small delay',l2:'Maximum stability',d2:'less crackling, sound lags a bit',n:'If the game runs below normal speed the sound can still cut out: this only helps with short hiccups.'},
+ru:{b:'Настроить звук',h:'Выберите игру. Настройка действует только для неё.',l0:'По умолчанию',d0:'без изменений',l1:'Стабильно',d1:'звук ровнее, небольшая задержка',l2:'Макс. стабильность',d2:'меньше треска, звук чуть запаздывает',n:'Если игра работает медленнее нормы, звук всё равно может прерываться.'},
+ja:{b:'音声を調整',h:'ゲームを選んでください。設定はそのゲームだけに適用されます。',l0:'標準',d0:'変更なし',l1:'安定',d1:'音が安定、遅延は小さい',l2:'最大安定',d2:'ノイズ減少、音が少し遅れる',n:'ゲームが通常速度より遅い場合、音は途切れることがあります。'},
+de:{b:'Audio anpassen',h:'Wähle ein Spiel. Die Einstellung gilt nur dafür.',l0:'Standard',d0:'keine Änderung',l1:'Stabil',d1:'ruhigerer Ton, kleine Verzögerung',l2:'Maximale Stabilität',d2:'weniger Knistern, Ton etwas verzögert',n:'Läuft das Spiel langsamer als normal, kann der Ton weiter aussetzen.'},
+fr:{b:'Régler l’audio',h:'Choisis un jeu. Le réglage ne vaut que pour lui.',l0:'Par défaut',d0:'aucun changement',l1:'Stable',d1:'son plus régulier, petit décalage',l2:'Stabilité maximale',d2:'moins de grésillements, son un peu retardé',n:'Si le jeu tourne sous la vitesse normale, le son peut encore saccader.'},
+it:{b:'Regola audio',h:'Scegli un gioco. L’impostazione vale solo per quello.',l0:'Predefinito',d0:'nessuna modifica',l1:'Stabile',d1:'suono più saldo, piccolo ritardo',l2:'Massima stabilità',d2:'meno crepitii, suono leggermente in ritardo',n:'Se il gioco gira sotto la velocità normale, il suono può ancora saltare.'}};
+const ax=k=>(AXT[cfg.lang]||AXT.en)[k];
+function drawAu(sel){const l=$('#aul');l.innerHTML='';const bs='display:block;width:100%;text-align:left;margin-bottom:8px';cfg.au=cfg.au||{};
+ if(!items.length){l.textContent=t('e0');return}
+ if(sel==null){const p=document.createElement('div');p.textContent=ax('h');p.style.cssText='color:var(--mut);margin-bottom:10px';l.append(p);
+  items.forEach(g=>{const b=document.createElement('button');b.textContent=g.name+' — '+ax('l'+(cfg.au[g.id]||0));b.style.cssText=bs;b.onclick=()=>drawAu(g.id);l.append(b)});
+  const n=document.createElement('div');n.textContent=ax('n');n.style.cssText='color:var(--mut);font-size:13px;margin-top:6px';l.append(n)}
+ else{const g=items.find(x=>x.id===sel);if(!g){drawAu(null);return}
+  const n=document.createElement('b');n.textContent=g.name;n.style.cssText='display:block;margin-bottom:10px;overflow-wrap:anywhere';l.append(n);
+  [0,1,2].forEach(v=>{const b=document.createElement('button');b.textContent=((cfg.au[sel]||0)===v?'✔ ':'')+ax('l'+v)+' — '+ax('d'+v);b.style.cssText=bs;b.onclick=()=>{cfg.au[sel]=v;saveCfg();drawAu(null)};l.append(b)});
+  const bk=document.createElement('button');bk.textContent='←';bk.onclick=()=>drawAu(null);l.append(bk)}}
+$('#ag').onclick=()=>{$('#st').classList.remove('on');$('#aut').textContent='🔊 '+ax('b');$('#aux').textContent=cx('cl');drawAu(null);$('#au').classList.add('on')};
+$('#aux').onclick=()=>{$('#au').classList.remove('on');$('#st').classList.add('on')};
 
 load();
 if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").then(()=>navigator.serviceWorker.ready).then(()=>{if(!window.crossOriginIsolated&&!/noiso/.test(location.search)&&!sessionStorage.getItem('zeoiso')&&navigator.serviceWorker.controller){sessionStorage.setItem('zeoiso','1');location.reload()}}).catch(()=>{})}catch(e){}}
