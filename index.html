@@ -56,6 +56,11 @@ body.cp .ejs_virtualGamepad_parent{display:none!important}
 .scr{position:absolute;left:22%;top:18%;width:56%;height:56%;border:2px dashed #4a3a78;border-radius:8px}
 .eb{position:absolute;top:calc(env(safe-area-inset-top,0px) + 6px);left:50%;transform:translateX(-50%);z-index:3;display:flex;gap:8px;align-items:center;background:rgba(20,10,35,.9);color:#fff;border-radius:12px;padding:6px 10px;font-size:13px}
 .eb input{width:110px}.eb{flex-wrap:wrap;justify-content:center;max-width:94vw}.eb select{max-width:150px}.pc.on{filter:brightness(1.35)}
+@property --ang{syntax:'<angle>';inherits:false;initial-value:0deg}
+@keyframes zrot{to{--ang:360deg}}
+img.av.f-rgb{border:3px solid transparent;background:conic-gradient(from var(--ang),#ff2d2d,#ffd12d,#2dff5a,#2dd8ff,#4d2dff,#ff2de1,#ff2d2d) border-box;animation:zrot 3s linear infinite}
+@keyframes zbg{0%{background-position:0% 50%}100%{background-position:400% 50%}}
+body.rgbbg:not(.ing)::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(120deg,#7a2fe0,#2f7ae0,#2fe0a0,#e0d02f,#e02f7a,#7a2fe0);background-size:400% 100%;opacity:.38;animation:zbg 14s linear infinite}
 #skp{position:fixed;inset:0;z-index:25;display:none;background:rgba(0,0,0,.8);overflow:auto;padding:20px 16px}#skp.on{display:block}.mb .xm{background:none;border:0;padding:0 0 0 8px;font-size:12px;opacity:.55;color:inherit;cursor:pointer}
 #toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);transform:translateX(-50%);z-index:70;background:var(--card);color:var(--ink);border:1px solid var(--acc);border-radius:12px;padding:10px 16px;opacity:0;pointer-events:none;transition:opacity .3s;max-width:90vw;text-align:center}#toast.on{opacity:1}
 #achl{display:grid;gap:2px;max-height:30vh;overflow:auto}.arow{padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}.arow.lk{opacity:.55}
@@ -64,7 +69,8 @@ body.ing main{visibility:hidden}#fps{position:fixed;bottom:calc(env(safe-area-in
 #msgs{display:flex;flex-direction:column;gap:6px;max-height:42vh;overflow:auto;padding:6px;border:1px solid var(--line);border-radius:12px}.mb{max-width:80%;padding:6px 10px;border-radius:12px;background:var(--sel);align-self:flex-start;overflow-wrap:anywhere}.mb.me{align-self:flex-end;background:var(--acc);color:var(--bg)}
 .chip{display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:6px 16px 6px 6px;border-radius:999px}
 .av{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--acc);flex:none}
-#pf,#ot,#fr,#nc,#hp,#au{position:fixed;inset:0;z-index:20;display:none;background:rgba(0,0,0,.6);overflow:auto;padding:20px 16px}#pf.on,#ot.on,#fr.on,#nc.on,#hp.on,#au.on{display:block}
+#pf,#ot,#fr,#nc,#hp,#au,#cs{position:fixed;inset:0;z-index:20;display:none;background:rgba(0,0,0,.6);overflow:auto;padding:20px 16px}#pf.on,#ot.on,#fr.on,#nc.on,#hp.on,#au.on,#cs.on{display:block}
+#cs{z-index:26}
 #help{position:fixed;top:calc(env(safe-area-inset-top,0px) + 68px);right:12px;z-index:15;width:46px;height:46px;border-radius:50%;padding:0;font:800 22px system-ui;display:grid;place-items:center;background:var(--card);border:1px solid var(--line)}#player.on~#help{display:none}
 #hp details{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}#hp summary{font-weight:700;cursor:pointer}#hp details p{margin:8px 0 0;color:var(--mut);white-space:pre-line;line-height:1.45}
 #bell{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);right:12px;z-index:15;width:46px;height:46px;border-radius:50%;padding:0;font-size:22px;display:grid;place-items:center;background:var(--card);border:1px solid var(--line)}#player.on~#bell{display:none}
@@ -99,16 +105,17 @@ body.ing main{visibility:hidden}#fps{position:fixed;bottom:calc(env(safe-area-in
 <label class="row"><input type="checkbox" id="ns"><span id="nsl"></span></label>
 <label hidden><span><span data-i="size"></span>: <b id="szv"></b></span><input type="range" id="sz" min="60" max="160" step="5"></label>
 <div class="row"><button id="em" data-i="ed"></button><button class="p" id="sx" data-i="ok"></button></div></div></div>
+<div id="cs"><div class="card"><h2 id="cst"></h2><div id="csl"></div><div class="row"><button class="p" id="csx"></button></div></div></div>
 <div id="au"><div class="card"><h2 id="aut"></h2><div id="aul"></div><div class="row"><button class="p" id="aux"></button></div></div></div>
 <div id="hp"><div class="card"><h2 id="hpt"></h2><div id="hpl"></div><div class="row"><button class="p" id="hpx"></button></div></div></div>
 <div id="nc"><div class="card"><h2 id="nct"></h2><div id="ncl"></div><div class="row"><button id="ncc"></button><button class="p" id="ncx"></button></div></div></div>
 <div id="pf"><div class="card"><h2 data-i="prof"></h2>
-<div class="row"><img id="pav2" class="av" alt="" src="icon-192.png"><button id="pph" data-i="ph"></button><input type="file" id="pfile" accept="image/*" hidden></div>
+<div class="row"><img id="pav2" class="av" alt="" src="icon-192.png"><button id="pph" data-i="ph"></button><button id="pfr"></button><button id="pbg"></button><input type="file" id="pfile" accept="image/*" hidden></div>
 <label><span data-i="nm"></span><div class="row"><input type="text" id="pn" maxlength="24"><button id="prn" data-i="rn"></button></div></label>
 <label><span data-i="idl"></span><input type="text" id="pi" readonly></label>
 <div id="achl"></div>
 <div id="pmsg" role="status" style="color:var(--acc);min-height:20px"></div>
-<div class="row"><button class="p" id="psv" data-i="sv"></button><button id="pcl" data-i="cx"></button></div></div></div>
+<div class="row"><button class="p" id="psv" data-i="sv"></button><button id="pcl" data-i="cx"></button><button id="prd"></button></div></div></div>
 <div id="fr"><div class="card"><div id="frb"></div><div class="row"><button class="p" id="frx" data-i="ok"></button></div></div></div>
 <div id="ot"><div class="card"><h2 id="oth"></h2><div id="otl"></div><div class="row"><button class="p" id="otx" data-i="ok"></button></div></div></div>
 <div id="skp"><div class="card"><h2 id="skt"></h2><div id="skl"></div><div class="row"><button class="p" id="skx"></button></div><input type="file" id="skf" accept="image/*" hidden></div></div>
@@ -449,7 +456,7 @@ async function publish(){const f=await initFb(),{doc,runTransaction}=f.fs;const 
  await runTransaction(f.db,async tr=>{const ref=doc(f.db,'ids',id),s=await tr.get(ref);
   if(s.exists()&&s.data().uid!==f.uid)throw new Error('taken');
   if(old&&old!==id)tr.delete(doc(f.db,'ids',old));
-  tr.set(ref,{uid:f.uid,name:prof.name,photo,ach:Object.keys(cfg.ach.u),t:Date.now()})});
+  tr.set(ref,{uid:f.uid,name:prof.name,photo,ach:Object.keys(cfg.ach.u),frame:myFrame(),t:Date.now()})});
  prof.pub=id;await tx('meta','readwrite',s=>s.put(prof,'profile')).catch(()=>{})}
 async function claimId(){const f=await initFb(),{doc,runTransaction,getDocs,deleteDoc,collection,query,where}=f.fs;
  if(!prof.name)prof.name=rndName();
@@ -458,7 +465,7 @@ async function claimId(){const f=await initFb(),{doc,runTransaction,getDocs,dele
   const n=(cs.exists()?cs.data().n:0)+1;nid=String(n);
   let del=false;if(old){const os=await tr.get(doc(f.db,'ids',old));del=os.exists()&&os.data().uid===f.uid}
   tr.set(cr,{n});
-  tr.set(doc(f.db,'ids',nid),{uid:f.uid,name:prof.name,photo,ach:Object.keys(cfg.ach.u),t:Date.now()});
+  tr.set(doc(f.db,'ids',nid),{uid:f.uid,name:prof.name,photo,ach:Object.keys(cfg.ach.u),frame:myFrame(),t:Date.now()});
   if(del)tr.delete(doc(f.db,'ids',old))});
  if(old){try{for(const k of ['fromUid','toUid']){const s=await getDocs(query(collection(f.db,'reqs'),where(k,'==',f.uid)));for(const d of s.docs)await deleteDoc(d.ref).catch(()=>{})}}catch(e){}}
  prof.id=nid;prof.pub=nid;prof.num=true;await tx('meta','readwrite',s=>s.put(prof,'profile')).catch(()=>{});return nid}
@@ -475,7 +482,7 @@ const upd=async(r,d)=>{try{await FB.fs.updateDoc(FB.fs.doc(FB.db,'reqs',r.id),d)
 const del=async r=>{try{await FB.fs.deleteDoc(FB.fs.doc(FB.db,'reqs',r.id))}catch(e){note(ta('f_err'))}};
 function mkb(x,fn,pr){const b=document.createElement('button');b.textContent=x;if(pr)b.className='p';b.onclick=fn;return b}
 function row(id,btns){const e=document.createElement('div');e.className='fi';const im=document.createElement('img');im.className='av';im.src='icon-192.png';im.alt='';const n=document.createElement('div');n.className='nm';n.textContent='ID '+id;e.append(im,n);
- getP(id).then(p=>{if(p){im.src=p.photo||'icon-192.png';n.textContent=p.name+' · ID '+id}}).catch(()=>{});
+ getP(id).then(p=>{if(p){im.src=p.photo||'icon-192.png';if(p.frame==='rgb')im.classList.add('f-rgb');n.textContent=p.name+' · ID '+id}}).catch(()=>{});
  btns.forEach(([x,fn,pr])=>e.append(mkb(x,fn,pr)));return e}
 function frList(){const f=FB,l=$('#frl');l.innerHTML='';const H=x=>{const e=document.createElement('b');e.textContent=x;e.style.cssText='display:block;margin-top:10px';return e};
  const inc=REQ.filter(r=>r.status==='pending'&&r.toUid===f.uid),fl=REQ.filter(r=>r.status==='accepted');
@@ -492,7 +499,7 @@ function frHome(){chatKey=null;if(chatU){chatU();chatU=null}const b=$('#frb');b.
 async function search(id,res){res.innerHTML='';if(!id)return;if(id===prof.id){res.textContent=ta('f_me');return}
  try{const s=await FB.fs.getDoc(FB.fs.doc(FB.db,'ids',id));if(!s.exists()){res.textContent=ta('f_nf');return}
   const p=s.data();PCH[id]=p;const r=REQ.find(x=>x.id===pk(prof.id,id));
-  const c=document.createElement('div');c.className='fi';const im=document.createElement('img');im.className='av';im.src=p.photo||'icon-192.png';im.alt='';
+  const c=document.createElement('div');c.className='fi';const im=document.createElement('img');im.className='av';im.src=p.photo||'icon-192.png';im.alt='';if(p.frame==='rgb')im.classList.add('f-rgb');
   const n=document.createElement('div');n.className='nm';n.textContent=p.name+' · ID '+id+' · 🏆 '+(p.ach||[]).length;c.append(im,n);
   if(!r)c.append(mkb(ta('f_add'),async()=>{try{await FB.fs.setDoc(FB.fs.doc(FB.db,'reqs',pk(prof.id,id)),{from:prof.id,to:id,fromUid:FB.uid,toUid:p.uid,status:'pending',t:Date.now()});res.textContent=ta('f_sent')}catch(e){note(ta('f_err'))}},1));
   else if(r.status==='accepted')c.append(mkb(ta('f_chat'),()=>openChat(r),1));
@@ -541,8 +548,8 @@ const A1=['Roxo','Neon','Pixel','Turbo','Astro','Cosmo','Sombra','Nova','Lunar',
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 const rndName=()=>pick(A1)+pick(A2)+(10+Math.floor(Math.random()*90));
 const setAv=(img,b)=>{img.src=b?URL.createObjectURL(b):'icon-192.png'};
-function renderProf(){$('#pnm').textContent=prof.id?prof.name:t('prof');$('#pid').textContent=prof.id?'ID #'+prof.id+(cfg.achOn?' · 🏆 '+Object.keys(cfg.ach.u).length:''):'';$('#ao').checked=cfg.achOn;$('#aol').textContent=ta('aon');$('#og').textContent=ta('og');badge();$('#nt').checked=cfg.notif;$('#ntl').textContent=ta('f_not');$('#ns').checked=cfg.nsound!==false;$('#nsl').textContent=nx('s');$('#rz').checked=cfg.resume;$('#rzl').textContent=ta('f_res');renderAchList();setAv($('#pav'),prof.avatar)}
-$('#prof').onclick=()=>{tmpAv=prof.avatar;$('#pn').value=prof.name;$('#pi').value=prof.id?'#'+prof.id:'…';$('#pmsg').textContent='';setAv($('#pav2'),tmpAv);$('#pf').classList.add('on')};
+function renderProf(){$('#pnm').textContent=prof.id?prof.name:t('prof');$('#pid').textContent=prof.id?'ID #'+prof.id+(cfg.achOn?' · 🏆 '+Object.keys(cfg.ach.u).length:''):'';$('#ao').checked=cfg.achOn;$('#aol').textContent=ta('aon');$('#og').textContent=ta('og');badge();$('#nt').checked=cfg.notif;$('#ntl').textContent=ta('f_not');$('#ns').checked=cfg.nsound!==false;$('#nsl').textContent=nx('s');$('#rz').checked=cfg.resume;$('#rzl').textContent=ta('f_res');renderAchList();setAv($('#pav'),prof.avatar);applyLook()}
+$('#prof').onclick=()=>{tmpAv=prof.avatar;$('#pn').value=prof.name;$('#pi').value=prof.id?'#'+prof.id:'…';$('#pmsg').textContent='';setAv($('#pav2'),tmpAv);$('#pfr').textContent=kx('fr');$('#pbg').textContent=kx('bg');$('#prd').textContent=kx('rd');applyLook();$('#pf').classList.add('on')};
 $('#pph').onclick=()=>$('#pfile').click();
 $('#pfile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;if(f.size>5242880){$('#pmsg').textContent=t('big');return}tmpAv=f;setAv($('#pav2'),f);$('#pmsg').textContent=''};
 $('#prn').onclick=()=>{$('#pn').value=rndName()};
@@ -569,11 +576,12 @@ const CH=[
 {id:'u-ctl',pt:'Controles personalizados para cada console (agora com DS e PlayStation) e imagens ou GIFs nos botões.',es:'Controles personalizados por consola (ahora con DS y PlayStation) e imágenes o GIFs en los botones.',en:'Custom controls for each console (now including DS and PlayStation) plus images or GIFs on buttons.'},
 {id:'u-del',pt:'Agora você pode apagar as suas mensagens no chat (🗑).',es:'Ahora puedes borrar tus mensajes en el chat (🗑).',en:'You can now delete your own chat messages (🗑).'},
 {id:'u-more',pt:'Controles personalizados agora também em PSP, Mega Drive, Master System, Game Gear, 32X, Sega CD, PC Engine, Atari 2600/7800 e Lynx.',es:'Controles personalizados ahora también en PSP, Mega Drive, Master System, Game Gear, 32X, Sega CD, PC Engine, Atari 2600/7800 y Lynx.',en:'Custom controls now also for PSP, Mega Drive, Master System, Game Gear, 32X, Sega CD, PC Engine, Atari 2600/7800 and Lynx.'},
+{id:'u-code',pt:'Novo: resgate códigos no Perfil para ganhar molduras e fundos RGB.',es:'Nuevo: canjea códigos en el Perfil para ganar marcos y fondos RGB.',en:'New: redeem codes in your Profile to unlock RGB frames and backgrounds.'},
 {id:'u-aud',pt:'Novo botão Ajustar áudio nas Configurações, para reduzir chiado e travadas no som (por jogo).',es:'Nuevo botón Ajustar audio en Configuración para reducir chasquidos y cortes de sonido (por juego).',en:'New Adjust audio button in Settings to reduce crackling and stutter (per game).'},
 {id:'u-help',pt:'Novo botão ? com perguntas e respostas para ajudar quem está começando.',es:'Nuevo botón ? con preguntas y respuestas para quien empieza.',en:'New ? button with questions and answers for newcomers.'},
 {id:'u-live',pt:'Avisos de atualização em tempo real: quando sair uma versão nova, o sininho te avisa.',es:'Avisos de actualización en tiempo real: cuando salga una versión nueva, la campanita te avisa.',en:'Live update alerts: when a new version is out, the bell tells you.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-10.5';let verSeen=APP_VER;
+const APP_VER='2026-10-10.6';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname,{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
@@ -661,6 +669,34 @@ function drawAu(sel){const l=$('#aul');l.innerHTML='';const bs='display:block;wi
   const bk=document.createElement('button');bk.textContent='←';bk.onclick=()=>drawAu(null);l.append(bk)}}
 $('#ag').onclick=()=>{$('#st').classList.remove('on');$('#aut').textContent='🔊 '+ax('b');$('#aux').textContent=cx('cl');drawAu(null);$('#au').classList.add('on')};
 $('#aux').onclick=()=>{$('#au').classList.remove('on');$('#st').classList.add('on')};
+
+const KXT={pt:{rd:'🎟 Resgatar código',fr:'🖼 Molduras',bg:'🌈 Fundos',ph:'Digite o código',go:'Resgatar',bad:'Código inválido.',dup:'Você já resgatou este código.',okf:'Moldura RGB desbloqueada e ativada!',okb:'Fundo RGB desbloqueado e ativado!',none:'Nenhuma',blk:'Preto (padrão)',rgb:'RGB',lock:'🔒 Bloqueado — resgate um código'},
+es:{rd:'🎟 Canjear código',fr:'🖼 Marcos',bg:'🌈 Fondos',ph:'Escribe el código',go:'Canjear',bad:'Código no válido.',dup:'Ya canjeaste este código.',okf:'¡Marco RGB desbloqueado y activado!',okb:'¡Fondo RGB desbloqueado y activado!',none:'Ninguno',blk:'Negro (estándar)',rgb:'RGB',lock:'🔒 Bloqueado — canjea un código'},
+en:{rd:'🎟 Redeem code',fr:'🖼 Frames',bg:'🌈 Backgrounds',ph:'Enter code',go:'Redeem',bad:'Invalid code.',dup:'You already redeemed this code.',okf:'RGB frame unlocked and equipped!',okb:'RGB background unlocked and equipped!',none:'None',blk:'Black (default)',rgb:'RGB',lock:'🔒 Locked — redeem a code'},
+ru:{rd:'🎟 Ввести код',fr:'🖼 Рамки',bg:'🌈 Фоны',ph:'Введите код',go:'Активировать',bad:'Неверный код.',dup:'Этот код уже использован.',okf:'RGB-рамка открыта и включена!',okb:'RGB-фон открыт и включён!',none:'Нет',blk:'Чёрный (по умолчанию)',rgb:'RGB',lock:'🔒 Закрыто — введите код'},
+ja:{rd:'🎟 コードを使う',fr:'🖼 フレーム',bg:'🌈 背景',ph:'コードを入力',go:'使う',bad:'無効なコードです。',dup:'このコードは使用済みです。',okf:'RGBフレームを解放して装備しました！',okb:'RGB背景を解放して適用しました！',none:'なし',blk:'ブラック（標準）',rgb:'RGB',lock:'🔒 ロック中 — コードを使ってください'},
+de:{rd:'🎟 Code einlösen',fr:'🖼 Rahmen',bg:'🌈 Hintergründe',ph:'Code eingeben',go:'Einlösen',bad:'Ungültiger Code.',dup:'Diesen Code hast du schon eingelöst.',okf:'RGB-Rahmen freigeschaltet und aktiv!',okb:'RGB-Hintergrund freigeschaltet und aktiv!',none:'Keiner',blk:'Schwarz (Standard)',rgb:'RGB',lock:'🔒 Gesperrt — Code einlösen'},
+fr:{rd:'🎟 Utiliser un code',fr:'🖼 Cadres',bg:'🌈 Fonds',ph:'Saisis le code',go:'Valider',bad:'Code invalide.',dup:'Tu as déjà utilisé ce code.',okf:'Cadre RGB débloqué et activé !',okb:'Fond RGB débloqué et activé !',none:'Aucun',blk:'Noir (par défaut)',rgb:'RGB',lock:'🔒 Verrouillé — utilise un code'},
+it:{rd:'🎟 Riscatta codice',fr:'🖼 Cornici',bg:'🌈 Sfondi',ph:'Inserisci il codice',go:'Riscatta',bad:'Codice non valido.',dup:'Hai già riscattato questo codice.',okf:'Cornice RGB sbloccata e attivata!',okb:'Sfondo RGB sbloccato e attivato!',none:'Nessuna',blk:'Nero (predefinito)',rgb:'RGB',lock:'🔒 Bloccato — riscatta un codice'}};
+const kx=k=>(KXT[cfg.lang]||KXT.en)[k];
+const CODES={'c3cbc34a2345f8f92125a27d689bd6dd16c011164286bbbf9c5d5572190db5f3':'frame:rgb','aab5901ad313a787a951bf4919c8aac9bc86b4fd1541204b381de2ab02063cd8':'bg:rgb'};
+const myFrame=()=>(cfg.frame==='rgb'&&cfg.unl&&cfg.unl['frame:rgb'])?'rgb':'';
+function applyLook(){const u=cfg.unl||{};document.body.classList.toggle('rgbbg',cfg.bg==='rgb'&&!!u['bg:rgb']);
+ ['#pav','#pav2'].forEach(s=>{const im=$(s);if(im)im.classList.toggle('f-rgb',myFrame()==='rgb')})}
+async function redeem(raw){try{const c=(raw||'').trim().toUpperCase().replace(/\s+/g,'');if(!c)return kx('bad');
+ const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('zeo|'+c)),hx=[...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,'0')).join(''),k=CODES[hx];
+ if(!k)return kx('bad');cfg.unl=cfg.unl||{};if(cfg.unl[k])return kx('dup');cfg.unl[k]=1;
+ if(k==='frame:rgb'){cfg.frame='rgb';if(prof.pub)schedPub()}else cfg.bg='rgb';
+ saveCfg();applyLook();return k==='frame:rgb'?kx('okf'):kx('okb')}catch(e){return kx('bad')}}
+function openCs(mode){const l=$('#csl');l.innerHTML='';const bs='display:block;width:100%;text-align:left;margin-bottom:8px';cfg.unl=cfg.unl||{};$('#csx').textContent=cx('cl');
+ if(mode==='code'){$('#cst').textContent=kx('rd');const i=document.createElement('input');i.type='text';i.placeholder=kx('ph');i.autocapitalize='characters';i.autocomplete='off';i.style.cssText='width:100%;margin-bottom:8px';
+  const m=document.createElement('div');m.style.cssText='min-height:22px;color:var(--acc);margin-bottom:8px';
+  const b=document.createElement('button');b.className='p';b.textContent=kx('go');b.onclick=async()=>{m.textContent=await redeem(i.value);i.value=''};l.append(i,m,b)}
+ else{const f=mode==='frame',key=f?'frame':'bg',cur=cfg[key]||'';$('#cst').textContent=f?kx('fr'):kx('bg');
+  [['',f?kx('none'):kx('blk'),true],['rgb',kx('rgb'),!!cfg.unl[key+':rgb']]].forEach(([v,n,ok])=>{const b=document.createElement('button');b.style.cssText=bs;b.textContent=(cur===v?'✔ ':'')+n+(ok?'':' — '+kx('lock'));b.disabled=!ok;
+   b.onclick=()=>{cfg[key]=v;saveCfg();applyLook();if(f&&prof.pub)schedPub();openCs(mode)};l.append(b)})}
+ $('#cs').classList.add('on')}
+$('#pfr').onclick=()=>openCs('frame');$('#pbg').onclick=()=>openCs('bg');$('#prd').onclick=()=>openCs('code');$('#csx').onclick=()=>$('#cs').classList.remove('on');
 
 load();
 if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").then(()=>navigator.serviceWorker.ready).then(()=>{if(!window.crossOriginIsolated&&!/noiso/.test(location.search)&&!sessionStorage.getItem('zeoiso')&&navigator.serviceWorker.controller){sessionStorage.setItem('zeoiso','1');location.reload()}}).catch(()=>{})}catch(e){}}
