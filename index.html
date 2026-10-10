@@ -285,15 +285,22 @@ $('#fc').onclick=()=>{
  if(!n){say(t('nn'));return}
  if(fo(n)||n==='Todos'){say(t('dup'));return}
  folders.push({name:n,exts:ex,core:PC[k]||''});cur=n;saveF();checkAch();$('#fn').value='';$('#fe').value='';$('#nfbox').classList.remove('on');say(t('cre',n,ex.join(', ')));draw()};
-const DEF={dpad:[15,62],a:[89,60],b:[78,78],x:[89,40],y:[78,58],l:[9,30],r:[91,22],sel:[42,90],sta:[58,90],l2:[9,12],r2:[91,8]};
-const BTN={l2:['L2',12],r2:['R2',13],a:['A',8],b:['B',0],x:['X',9],y:['Y',1],l:['L',10],r:['R',11],sel:['Select',2],sta:['Start',3]};
+const DEF={dpad:[15,62],a:[89,60],b:[78,78],x:[89,40],y:[78,58],l:[9,30],r:[91,22],sel:[42,90],sta:[58,90],l2:[9,12],r2:[91,8],c:[90,66],z:[90,40]};
+const BTN={c:['C',8],z:['Z',11],l2:['L2',12],r2:['R2',13],a:['A',8],b:['B',0],x:['X',9],y:['Y',1],l:['L',10],r:['R',11],sel:['Select',2],sta:['Start',3]};
 const DIRS=[['▲',4],['▼',5],['◀',6],['▶',7]];
-const CPS={gba:['dpad','a','b','l','r','sel','sta'],gb:['dpad','a','b','sel','sta'],nes:['dpad','a','b','sel','sta'],snes:['dpad','a','b','x','y','l','r','sel','sta'],nds:['dpad','a','b','x','y','l','r','sel','sta'],psx:['dpad','a','b','x','y','l','r','l2','r2','sel','sta']};
-const CN={gba:'GBA',gb:'Game Boy / GBC',nes:'NES',snes:'SNES',nds:'Nintendo DS',psx:'PlayStation'};
-const BLB={psx:{a:'○',b:'✕',x:'△',y:'□',l:'L1',r:'R1'}};
+const SN=['dpad','a','b','x','y','l','r','sel','sta'],MDK=['dpad','a','b','c','x','y','z','sel','sta'];
+const CPS={gba:['dpad','a','b','l','r','sel','sta'],gb:['dpad','a','b','sel','sta'],nes:['dpad','a','b','sel','sta'],snes:SN,nds:SN,psx:['dpad','a','b','x','y','l','r','l2','r2','sel','sta'],psp:SN,segaMD:MDK,sega32x:MDK,segaCD:MDK,segaMS:['dpad','a','b','sta'],segaGG:['dpad','a','b','sta'],pce:['dpad','a','b','sel','sta'],atari2600:['dpad','a','sel','sta'],atari7800:['dpad','a','b','sel','sta'],lynx:['dpad','a','b','sta']};
+const CN={gba:'GBA',gb:'Game Boy / GBC',nes:'NES',snes:'SNES',nds:'Nintendo DS',psx:'PlayStation',psp:'PSP',segaMD:'Mega Drive',sega32x:'Sega 32X',segaCD:'Sega CD',segaMS:'Master System',segaGG:'Game Gear',pce:'PC Engine',atari2600:'Atari 2600',atari7800:'Atari 7800',lynx:'Atari Lynx'};
+const PSL={a:'○',b:'✕',x:'△',y:'□',l:'L1',r:'R1'},MDL={a:'A',b:'B',c:'C',x:'X',y:'Y',z:'Z',sel:'Mode',sta:'Start'};
+const BLB={psx:PSL,psp:PSL,segaMD:MDL,sega32x:MDL,segaCD:MDL,segaMS:{b:'1',a:'2'},segaGG:{b:'1',a:'2'},pce:{a:'I',b:'II',sta:'Run'},atari2600:{a:'FIRE',sta:'Reset'},atari7800:{a:'2',b:'1',sta:'Pause'},lynx:{sta:'Pause'}};
+const MDI={a:1,b:0,c:8,x:10,y:9,z:11,sel:2,sta:3};
+const BIXC={segaMD:MDI,sega32x:MDI,segaCD:MDI,atari2600:{a:0}};
+const bix=(c,k)=>{const o=BIXC[c];return o&&o[k]!==undefined?o[k]:BTN[k][1]};
+const MDD={a:[68,82],b:[79,74],c:[90,66],x:[68,56],y:[79,48],z:[90,40]};
+const DEFC={segaMD:MDD,sega32x:MDD,segaCD:MDD,segaMS:{b:[78,72],a:[90,60]},segaGG:{b:[78,72],a:[90,60]},pce:{b:[78,72],a:[90,60]}};
 const LYK=c=>{cfg.lay=cfg.lay||{};if(!cfg.lay[c]){const old=['gba','gb','nes','snes'].includes(c);cfg.lay[c]={pos:old?Object.assign({},cfg.pos):{},scale:old?cfg.scale:1}}return cfg.lay[c]};
 let CUR='gba',ECORE='gba',skKey='';const SK={};
-const P=k=>LYK(CUR).pos[k]||DEF[k];
+const P=k=>LYK(CUR).pos[k]||(DEFC[CUR]||{})[k]||DEF[k];
 const blab=(c,k)=>(BLB[c]||{})[k]||BTN[k][0];
 const sim=(i,v)=>{try{window.EJS_emulator.gameManager.simulateInput(0,i,v)}catch(e){}};
 function mountPad(host,edit,core){
@@ -311,7 +318,7 @@ function mountPad(host,edit,core){
     el.onpointerdown=e=>{e.preventDefault();pid=e.pointerId;try{el.setPointerCapture(e.pointerId)}catch(x){}upd(e)};
     el.onpointermove=e=>{if(e.pointerId===pid)upd(e)};
     el.onpointerup=end;el.onpointercancel=end;el.onlostpointercapture=end}}
-  else{el.textContent=blab(core,k);press(el,BTN[k][1])}
+  else{el.textContent=blab(core,k);press(el,bix(core,k))}
   if(edit){el.onpointerdown=e=>{e.preventDefault();el.setPointerCapture(e.pointerId);el._d=1};
    el.onpointermove=e=>{if(!el._d)return;const r=host.getBoundingClientRect(),x=Math.min(97,Math.max(3,(e.clientX-r.left)/r.width*100)),y=Math.min(97,Math.max(3,(e.clientY-r.top)/r.height*100));el.style.left=x+'%';el.style.top=y+'%';LYK(core).pos[k]=[+x.toFixed(1),+y.toFixed(1)]};
    el.onpointerup=()=>{el._d=0;saveCfg();checkAch()}}
@@ -555,9 +562,10 @@ const CH=[
 {id:'u-snd',pt:'Som de sininho nas notificações (dá pra desligar em Configurações).',es:'Sonido de campanita en las notificaciones (se puede desactivar en Configuración).',en:'Bell sound for notifications (can be turned off in Settings).'},
 {id:'u-ctl',pt:'Controles personalizados para cada console (agora com DS e PlayStation) e imagens ou GIFs nos botões.',es:'Controles personalizados por consola (ahora con DS y PlayStation) e imágenes o GIFs en los botones.',en:'Custom controls for each console (now including DS and PlayStation) plus images or GIFs on buttons.'},
 {id:'u-del',pt:'Agora você pode apagar as suas mensagens no chat (🗑).',es:'Ahora puedes borrar tus mensajes en el chat (🗑).',en:'You can now delete your own chat messages (🗑).'},
+{id:'u-more',pt:'Controles personalizados agora também em PSP, Mega Drive, Master System, Game Gear, 32X, Sega CD, PC Engine, Atari 2600/7800 e Lynx.',es:'Controles personalizados ahora también en PSP, Mega Drive, Master System, Game Gear, 32X, Sega CD, PC Engine, Atari 2600/7800 y Lynx.',en:'Custom controls now also for PSP, Mega Drive, Master System, Game Gear, 32X, Sega CD, PC Engine, Atari 2600/7800 and Lynx.'},
 {id:'u-live',pt:'Avisos de atualização em tempo real: quando sair uma versão nova, o sininho te avisa.',es:'Avisos de actualización en tiempo real: cuando salga una versión nueva, la campanita te avisa.',en:'Live update alerts: when a new version is out, the bell tells you.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-10.2';let verSeen=APP_VER;
+const APP_VER='2026-10-10.3';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname,{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
