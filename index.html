@@ -58,7 +58,7 @@ body.cp .ejs_virtualGamepad_parent{display:none!important}
 .eb input{width:110px}
 #toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);transform:translateX(-50%);z-index:70;background:var(--card);color:var(--ink);border:1px solid var(--acc);border-radius:12px;padding:10px 16px;opacity:0;pointer-events:none;transition:opacity .3s;max-width:90vw;text-align:center}#toast.on{opacity:1}
 #achl{display:grid;gap:2px;max-height:30vh;overflow:auto}.arow{padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}.arow.lk{opacity:.55}
-#fps{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 6px);left:8px;z-index:60;font:600 12px system-ui;color:#fff;background:rgba(0,0,0,.55);padding:2px 6px;border-radius:6px;display:none}body.pf #fps{display:block}
+body.ing main{visibility:hidden}#fps{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 6px);left:8px;z-index:60;font:600 12px system-ui;color:#fff;background:rgba(0,0,0,.55);padding:2px 6px;border-radius:6px;display:none}body.pf #fps{display:block}
 .fi{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}.fi .av{width:40px;height:40px}.fi .nm{flex:1 1 120px;min-width:0;overflow-wrap:anywhere}.fi button{padding:6px 10px;min-height:36px}
 #msgs{display:flex;flex-direction:column;gap:6px;max-height:42vh;overflow:auto;padding:6px;border:1px solid var(--line);border-radius:12px}.mb{max-width:80%;padding:6px 10px;border-radius:12px;background:var(--sel);align-self:flex-start;overflow-wrap:anywhere}.mb.me{align-self:flex-end;background:var(--acc);color:var(--bg)}
 .chip{display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:6px 16px 6px 6px;border-radius:999px}
@@ -93,6 +93,7 @@ body.cp .ejs_virtualGamepad_parent{display:none!important}
 <button id="og"></button>
 <label class="row"><input type="checkbox" id="nt"><span id="ntl"></span></label>
 <label class="row"><input type="checkbox" id="rz"><span id="rzl"></span></label>
+<label class="row"><input type="checkbox" id="ns"><span id="nsl"></span></label>
 <label><span><span data-i="size"></span>: <b id="szv"></b></span><input type="range" id="sz" min="60" max="160" step="5"></label>
 <div class="row"><button id="em" data-i="ed"></button><button class="p" id="sx" data-i="ok"></button></div></div></div>
 <div id="nc"><div class="card"><h2 id="nct"></h2><div id="ncl"></div><div class="row"><button id="ncc"></button><button class="p" id="ncx"></button></div></div></div>
@@ -283,16 +284,28 @@ $('#sz').oninput=e=>setScale(+e.target.value);$('#sz2').oninput=e=>setScale(+e.t
 $('#em').onclick=()=>{$('#st').classList.remove('on');$('#ed').classList.add('on');mountPad($('#padE'),true)};
 $('#ex').onclick=()=>{$('#ed').classList.remove('on');$('#st').classList.add('on')};
 $('#rs').onclick=()=>{cfg.pos={};cfg.scale=1;saveCfg();setScale(100);mountPad($('#padE'),true)};
-const PERF={gba:{mgba_frameskip:'auto',mgba_interframe_blending:'disabled',mgba_audio_low_pass_filter:'disabled'},gb:{gambatte_mix_frames:'disabled'},n64:{'mupen64plus-43screensize':'320x240'},psp:{ppsspp_internal_resolution:'480x272',ppsspp_frameskip:'1',ppsspp_auto_frameskip:'enabled',ppsspp_skip_buffer_effects:'enabled'},psx:{pcsx_rearmed_frameskip:'1'},nds:{desmume_frameskip:'1'}};
-const X2={gba:{mgba_frameskip:'fixed_interval',mgba_frameskip_interval:'1'},psp:{ppsspp_frameskip:'3',ppsspp_lazy_texture_caching:'enabled'},psx:{pcsx_rearmed_frameskip:'2'},nds:{desmume_frameskip:'2'},n64:{'mupen64plus-EnableFBEmulation':'False'}};
+const SEGA={genesis_plus_gx_blargg_ntsc_filter:'disabled',genesis_plus_gx_lcd_filter:'disabled',genesis_plus_gx_audio_filter:'disabled',genesis_plus_gx_no_sprite_limit:'disabled'};
+const PERF={
+gba:{mgba_frameskip:'auto',mgba_interframe_blending:'disabled',mgba_audio_low_pass_filter:'disabled',mgba_color_correction:'OFF',mgba_sgb_borders:'OFF'},
+gb:{gambatte_mix_frames:'disabled'},
+nes:{fceumm_ntsc_filter:'disabled',fceumm_overclocking:'disabled',fceumm_nospritelimit:'disabled'},
+snes:{snes9x_blargg:'disabled',snes9x_overclock_cycles:'disabled',snes9x_audio_interpolation:'none',snes9x_reduce_sprite_flicker:'disabled'},
+segaMD:SEGA,segaMS:SEGA,segaGG:SEGA,segaCD:SEGA,
+sega32x:{picodrive_dynamic_recompiler:'enabled'},
+n64:{'mupen64plus-43screensize':'320x240','mupen64plus-cpucore':'dynamic_recompiler','mupen64plus-rdp-plugin':'gliden64','mupen64plus-rsp-plugin':'hle','mupen64plus-FXAA':'0','mupen64plus-EnableLODEmulation':'False'},
+nds:{desmume_frameskip:'1',desmume_internal_resolution:'256x192',desmume_gfx_edgemark:'disabled',desmume_gfx_texture_smoothing:'disabled'},
+psx:{pcsx_rearmed_frameskip:'1',pcsx_rearmed_drc:'enabled'},
+psp:{ppsspp_internal_resolution:'480x272',ppsspp_frameskip:'1',ppsspp_auto_frameskip:'enabled',ppsspp_skip_buffer_effects:'enabled',ppsspp_fast_memory:'enabled',ppsspp_cpu_core:'JIT',ppsspp_vertex_cache:'enabled',ppsspp_texture_anisotropic_filtering:'disabled'},
+segaSaturn:{yabause_frameskip:'enabled'}};
+const X2={gba:{mgba_frameskip:'fixed_interval',mgba_frameskip_interval:'1'},snes:{snes9x_hires_blend:'disabled'},psp:{ppsspp_frameskip:'3',ppsspp_lazy_texture_caching:'enabled'},psx:{pcsx_rearmed_frameskip:'2'},nds:{desmume_frameskip:'2'},n64:{'mupen64plus-EnableFBEmulation':'False'},sega32x:{picodrive_frameskip:'manual'}};
 const PERF2=Object.fromEntries(Object.keys(PERF).map(k=>[k,Object.assign({},PERF[k],X2[k]||{})]));
 const CORES={'.gba':'gba','.gb':'gb','.gbc':'gb','.nes':'nes','.sfc':'snes','.smc':'snes','.z64':'n64','.n64':'n64','.v64':'n64','.nds':'nds','.md':'segaMD','.gen':'segaMD','.smd':'segaMD','.sms':'segaMS','.gg':'segaGG','.32x':'sega32x','.a26':'atari2600','.a52':'a5200','.a78':'atari7800','.lnx':'lynx','.j64':'jaguar','.jag':'jaguar','.pce':'pce','.ngp':'ngp','.ngc':'ngp','.vb':'vb','.col':'coleco'};
 async function play(i){
  const fd=fo(i.folder),core=(fd&&fd.core)||CORES[ext(i.name)];
  if(!core||core==='none'){say(t('uns'));return}
- $('#player').classList.add('on');onPlay(core,i.name);wl();
+ $('#player').classList.add('on');document.body.classList.add('ing');onPlay(core,i.name);wl();
  if(['psx','psp','segaSaturn','n64','nds'].includes(core))note(ta('heavy'));
- const lv=cfg.opt[i.id]===undefined?1:cfg.opt[i.id];
+ const lv=cfg.opt[i.id]===undefined?(['psp','psx','n64','nds','segaSaturn','sega32x','segaCD'].includes(core)?2:1):cfg.opt[i.id];
  if(lv>0){document.body.classList.add('pf');startFps()}
  if(lv>0)window.EJS_defaultOptions=Object.assign({shader:'disabled',fastForward:'disabled',slowMotion:'disabled',rewindEnabled:'disabled','rewind-enabled':'disabled'},(lv>=2?PERF2:PERF)[core]||{});
  if(cfg.custom&&['gba','gb','nes','snes'].includes(core)){window.EJS_VirtualGamepadSettings=[];document.body.classList.add('cp');mountPad($('#pad'),false,core);$('#pad').classList.add('on')}
@@ -453,7 +466,7 @@ const A1=['Roxo','Neon','Pixel','Turbo','Astro','Cosmo','Sombra','Nova','Lunar',
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 const rndName=()=>pick(A1)+pick(A2)+(10+Math.floor(Math.random()*90));
 const setAv=(img,b)=>{img.src=b?URL.createObjectURL(b):'icon-192.png'};
-function renderProf(){$('#pnm').textContent=prof.id?prof.name:t('prof');$('#pid').textContent=prof.id?'ID #'+prof.id+(cfg.achOn?' · 🏆 '+Object.keys(cfg.ach.u).length:''):'';$('#ao').checked=cfg.achOn;$('#aol').textContent=ta('aon');$('#og').textContent=ta('og');badge();$('#nt').checked=cfg.notif;$('#ntl').textContent=ta('f_not');$('#rz').checked=cfg.resume;$('#rzl').textContent=ta('f_res');renderAchList();setAv($('#pav'),prof.avatar)}
+function renderProf(){$('#pnm').textContent=prof.id?prof.name:t('prof');$('#pid').textContent=prof.id?'ID #'+prof.id+(cfg.achOn?' · 🏆 '+Object.keys(cfg.ach.u).length:''):'';$('#ao').checked=cfg.achOn;$('#aol').textContent=ta('aon');$('#og').textContent=ta('og');badge();$('#nt').checked=cfg.notif;$('#ntl').textContent=ta('f_not');$('#ns').checked=cfg.nsound!==false;$('#nsl').textContent=nx('s');$('#rz').checked=cfg.resume;$('#rzl').textContent=ta('f_res');renderAchList();setAv($('#pav'),prof.avatar)}
 $('#prof').onclick=()=>{tmpAv=prof.avatar;$('#pn').value=prof.name;$('#pi').value=prof.id?'#'+prof.id:'…';$('#pmsg').textContent='';setAv($('#pav2'),tmpAv);$('#pf').classList.add('on')};
 $('#pph').onclick=()=>$('#pfile').click();
 $('#pfile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;if(f.size>5242880){$('#pmsg').textContent=t('big');return}tmpAv=f;setAv($('#pav2'),f);$('#pmsg').textContent=''};
@@ -467,7 +480,7 @@ const dr=$('#drop');
 dr.ondragover=e=>{e.preventDefault();dr.classList.add('over')};
 dr.ondragleave=()=>dr.classList.remove('over');
 dr.ondrop=e=>{e.preventDefault();dr.classList.remove('over');addFiles([...e.dataTransfer.files])};
-const NTX={pt:{t:'Notificações',e:'Nenhuma notificação por enquanto.',c:'Limpar tudo',x:'Fechar',u:'Novidade no Zeo'},es:{t:'Notificaciones',e:'Aún no hay notificaciones.',c:'Borrar todo',x:'Cerrar',u:'Novedad en Zeo'},en:{t:'Notifications',e:'No notifications yet.',c:'Clear all',x:'Close',u:'What’s new in Zeo'},ru:{t:'Уведомления',e:'Пока нет уведомлений.',c:'Очистить',x:'Закрыть',u:'Новое в Zeo'},ja:{t:'通知',e:'通知はまだありません。',c:'すべて消去',x:'閉じる',u:'Zeoの新機能'},de:{t:'Benachrichtigungen',e:'Noch keine Benachrichtigungen.',c:'Alle löschen',x:'Schließen',u:'Neu in Zeo'},fr:{t:'Notifications',e:'Aucune notification pour le moment.',c:'Tout effacer',x:'Fermer',u:'Nouveauté Zeo'},it:{t:'Notifiche',e:'Ancora nessuna notifica.',c:'Cancella tutto',x:'Chiudi',u:'Novità su Zeo'}};
+const NTX={pt:{t:'Notificações',e:'Nenhuma notificação por enquanto.',c:'Limpar tudo',x:'Fechar',u:'Novidade no Zeo',s:'Som de sininho nas notificações'},es:{t:'Notificaciones',e:'Aún no hay notificaciones.',c:'Borrar todo',x:'Cerrar',u:'Novedad en Zeo',s:'Sonido de campanita en las notificaciones'},en:{t:'Notifications',e:'No notifications yet.',c:'Clear all',x:'Close',u:'What’s new in Zeo',s:'Bell sound for notifications'},ru:{t:'Уведомления',e:'Пока нет уведомлений.',c:'Очистить',x:'Закрыть',u:'Новое в Zeo',s:'Звук колокольчика для уведомлений'},ja:{t:'通知',e:'通知はまだありません。',c:'すべて消去',x:'閉じる',u:'Zeoの新機能',s:'通知のベル音'},de:{t:'Benachrichtigungen',e:'Noch keine Benachrichtigungen.',c:'Alle löschen',x:'Schließen',u:'Neu in Zeo',s:'Glockenton bei Benachrichtigungen'},fr:{t:'Notifications',e:'Aucune notification pour le moment.',c:'Tout effacer',x:'Fermer',u:'Nouveauté Zeo',s:'Son de clochette pour les notifications'},it:{t:'Notifiche',e:'Ancora nessuna notifica.',c:'Cancella tutto',x:'Chiudi',u:'Novità su Zeo',s:'Suono di campanello per le notifiche'}};
 const nx=k=>(NTX[cfg.lang]||NTX.en)[k];
 const CH=[
 {id:'u-resume',pt:'Agora o jogo retoma de onde você parou ao sair.',es:'Ahora el juego continúa donde lo dejaste al salir.',en:'Games now resume right where you left off when you exit.'},
@@ -479,8 +492,10 @@ const chT=c=>c[cfg.lang]||c.en;
 function pushN(n){n.t=Date.now();n.r=0;if(n.tag){const i=cfg.nt.findIndex(x=>x.tag===n.tag&&!x.r);if(i>=0)cfg.nt.splice(i,1)}
  cfg.nt.unshift(n);cfg.nt=cfg.nt.slice(0,60);saveCfg();renderBell(true)}
 function updNotes(){CH.slice().reverse().forEach(c=>{if(!cfg.seenU.includes(c.id)){cfg.seenU.push(c.id);if(!FIRST)pushN({k:'upd',u:c.id})}});saveCfg()}
+let AC;function ding(){if(cfg.nsound===false||$('#player').classList.contains('on'))return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();const t=AC.currentTime;
+ [[1568,0],[2093,.17]].forEach(([f,d])=>[[1,.22],[2.76,.07]].forEach(([m,v])=>{const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f*m;g.gain.setValueAtTime(0,t+d);g.gain.linearRampToValueAtTime(v,t+d+.01);g.gain.exponentialRampToValueAtTime(.0008,t+d+1);o.connect(g);g.connect(AC.destination);o.start(t+d);o.stop(t+d+1.1)}))}catch(e){}}
 function renderBell(hit){const b=$('#bell');if(!b)return;const n=cfg.nt.filter(x=>!x.r).length;b.classList.toggle('has',n>0);b.querySelector('b').textContent=n>99?'99+':n;
- if(hit&&n>0){b.classList.remove('hit');void b.offsetWidth;b.classList.add('hit');try{if(navigator.vibrate)navigator.vibrate([40,40,40])}catch(e){}setTimeout(()=>b.classList.remove('hit'),1000)}}
+ if(hit&&n>0){ding();b.classList.remove('hit');void b.offsetWidth;b.classList.add('hit');try{if(navigator.vibrate)navigator.vibrate([40,40,40])}catch(e){}setTimeout(()=>b.classList.remove('hit'),1000)}}
 function openNC(){const l=$('#ncl');l.innerHTML='';$('#nct').textContent='🔔 '+nx('t');$('#ncc').textContent=nx('c');$('#ncx').textContent=nx('x');
  if(!cfg.nt.length){const e=document.createElement('p');e.textContent=nx('e');e.style.color='var(--mut)';l.append(e)}
  cfg.nt.forEach(n=>{const r=document.createElement('div');r.className='nrow'+(n.r?'':' un');const c=n.k==='upd'?CH.find(x=>x.id===n.u):null;
@@ -490,6 +505,7 @@ function openNC(){const l=$('#ncl');l.innerHTML='';$('#nct').textContent='🔔 '
   if(n.k!=='upd')r.onclick=async()=>{$('#nc').classList.remove('on');if(!prof.pub){note(ta('f_need'));return}try{await startFr()}catch(e){note(ta('f_err'));return}frHome();$('#fr').classList.add('on');const q=n.k==='msg'?REQ.find(x=>x.id===n.tag):null;if(q)openChat(q)};
   l.append(r)});
  cfg.nt.forEach(n=>n.r=1);saveCfg();renderBell();$('#nc').classList.add('on')}
+$('#ns').onchange=e=>{cfg.nsound=e.target.checked;saveCfg();if(cfg.nsound)ding()};
 $('#bell').onclick=openNC;$('#ncx').onclick=()=>$('#nc').classList.remove('on');$('#ncc').onclick=()=>{cfg.nt=[];saveCfg();renderBell();$('#ncl').innerHTML='';const e=document.createElement('p');e.textContent=nx('e');e.style.color='var(--mut)';$('#ncl').append(e)};
 
 load();
