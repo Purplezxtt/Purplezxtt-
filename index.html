@@ -64,7 +64,9 @@ body.ing main{visibility:hidden}#fps{position:fixed;bottom:calc(env(safe-area-in
 #msgs{display:flex;flex-direction:column;gap:6px;max-height:42vh;overflow:auto;padding:6px;border:1px solid var(--line);border-radius:12px}.mb{max-width:80%;padding:6px 10px;border-radius:12px;background:var(--sel);align-self:flex-start;overflow-wrap:anywhere}.mb.me{align-self:flex-end;background:var(--acc);color:var(--bg)}
 .chip{display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:6px 16px 6px 6px;border-radius:999px}
 .av{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--acc);flex:none}
-#pf,#ot,#fr,#nc{position:fixed;inset:0;z-index:20;display:none;background:rgba(0,0,0,.6);overflow:auto;padding:20px 16px}#pf.on,#ot.on,#fr.on,#nc.on{display:block}
+#pf,#ot,#fr,#nc,#hp{position:fixed;inset:0;z-index:20;display:none;background:rgba(0,0,0,.6);overflow:auto;padding:20px 16px}#pf.on,#ot.on,#fr.on,#nc.on,#hp.on{display:block}
+#help{position:fixed;top:calc(env(safe-area-inset-top,0px) + 68px);right:12px;z-index:15;width:46px;height:46px;border-radius:50%;padding:0;font:800 22px system-ui;display:grid;place-items:center;background:var(--card);border:1px solid var(--line)}#player.on~#help{display:none}
+#hp details{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}#hp summary{font-weight:700;cursor:pointer}#hp details p{margin:8px 0 0;color:var(--mut);white-space:pre-line;line-height:1.45}
 #bell{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);right:12px;z-index:15;width:46px;height:46px;border-radius:50%;padding:0;font-size:22px;display:grid;place-items:center;background:var(--card);border:1px solid var(--line)}#player.on~#bell{display:none}
 #bell b{position:absolute;top:-5px;right:-5px;min-width:20px;height:20px;border-radius:10px;background:#e5484d;color:#fff;font:700 12px/20px system-ui;text-align:center;display:none;padding:0 5px}#bell.has b{display:block}
 #bell.has span{display:inline-block;transform-origin:50% 8%;animation:bring 2.6s ease-in-out infinite}#bell.hit span{animation:bring2 .9s ease-in-out}
@@ -86,7 +88,7 @@ body.ing main{visibility:hidden}#fps{position:fixed;bottom:calc(env(safe-area-in
 <div id="drop"><div id="list"></div></div>
 <small data-i="foot"></small>
 </main>
-<div id="player"><div id="game"></div></div><button id="bell" aria-label="Notifications"><span>🔔</span><b></b></button><button id="pc" data-i="cl"></button><div id="toast"></div><div id="fps"></div><div id="pad"></div>
+<div id="player"><div id="game"></div></div><button id="bell" aria-label="Notifications"><span>🔔</span><b></b></button><button id="help" aria-label="Help">?</button><button id="pc" data-i="cl"></button><div id="toast"></div><div id="fps"></div><div id="pad"></div>
 <div id="st"><div class="card"><h2 data-i="set"></h2>
 <label><span data-i="lang"></span><select id="lg"><option value="pt">Português (BR)</option><option value="es">Español (ES)</option><option value="en">English (US)</option><option value="ru">Русский</option><option value="ja">日本語</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="it">Italiano</option></select></label>
 <label class="row"><input type="checkbox" id="cu"><span data-i="ctl"></span></label>
@@ -97,6 +99,7 @@ body.ing main{visibility:hidden}#fps{position:fixed;bottom:calc(env(safe-area-in
 <label class="row"><input type="checkbox" id="ns"><span id="nsl"></span></label>
 <label hidden><span><span data-i="size"></span>: <b id="szv"></b></span><input type="range" id="sz" min="60" max="160" step="5"></label>
 <div class="row"><button id="em" data-i="ed"></button><button class="p" id="sx" data-i="ok"></button></div></div></div>
+<div id="hp"><div class="card"><h2 id="hpt"></h2><div id="hpl"></div><div class="row"><button class="p" id="hpx"></button></div></div></div>
 <div id="nc"><div class="card"><h2 id="nct"></h2><div id="ncl"></div><div class="row"><button id="ncc"></button><button class="p" id="ncx"></button></div></div></div>
 <div id="pf"><div class="card"><h2 data-i="prof"></h2>
 <div class="row"><img id="pav2" class="av" alt="" src="icon-192.png"><button id="pph" data-i="ph"></button><input type="file" id="pfile" accept="image/*" hidden></div>
@@ -563,9 +566,10 @@ const CH=[
 {id:'u-ctl',pt:'Controles personalizados para cada console (agora com DS e PlayStation) e imagens ou GIFs nos botões.',es:'Controles personalizados por consola (ahora con DS y PlayStation) e imágenes o GIFs en los botones.',en:'Custom controls for each console (now including DS and PlayStation) plus images or GIFs on buttons.'},
 {id:'u-del',pt:'Agora você pode apagar as suas mensagens no chat (🗑).',es:'Ahora puedes borrar tus mensajes en el chat (🗑).',en:'You can now delete your own chat messages (🗑).'},
 {id:'u-more',pt:'Controles personalizados agora também em PSP, Mega Drive, Master System, Game Gear, 32X, Sega CD, PC Engine, Atari 2600/7800 e Lynx.',es:'Controles personalizados ahora también en PSP, Mega Drive, Master System, Game Gear, 32X, Sega CD, PC Engine, Atari 2600/7800 y Lynx.',en:'Custom controls now also for PSP, Mega Drive, Master System, Game Gear, 32X, Sega CD, PC Engine, Atari 2600/7800 and Lynx.'},
+{id:'u-help',pt:'Novo botão ? com perguntas e respostas para ajudar quem está começando.',es:'Nuevo botón ? con preguntas y respuestas para quien empieza.',en:'New ? button with questions and answers for newcomers.'},
 {id:'u-live',pt:'Avisos de atualização em tempo real: quando sair uma versão nova, o sininho te avisa.',es:'Avisos de actualización en tiempo real: cuando salga una versión nueva, la campanita te avisa.',en:'Live update alerts: when a new version is out, the bell tells you.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-10.3';let verSeen=APP_VER;
+const APP_VER='2026-10-10.4';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname,{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
@@ -588,6 +592,49 @@ function openNC(){const l=$('#ncl');l.innerHTML='';$('#nct').textContent='🔔 '
  cfg.nt.forEach(n=>n.r=1);saveCfg();renderBell();$('#nc').classList.add('on')}
 $('#ns').onchange=e=>{cfg.nsound=e.target.checked;saveCfg();if(cfg.nsound)ding()};
 $('#bell').onclick=openNC;$('#ncx').onclick=()=>$('#nc').classList.remove('on');$('#ncc').onclick=()=>{cfg.nt=[];saveCfg();renderBell();$('#ncl').innerHTML='';const e=document.createElement('p');e.textContent=nx('e');e.style.color='var(--mut)';$('#ncl').append(e)};
+
+const HT={pt:'Ajuda',es:'Ayuda',en:'Help',ru:'Помощь',ja:'ヘルプ',de:'Hilfe',fr:'Aide',it:'Aiuto'};
+const FQ={
+pt:[
+['Como adiciono um jogo?','1) Se o arquivo veio compactado (.zip), extraia primeiro: abra o zip no gerenciador de arquivos do celular e toque em Extrair.\n2) No Zeo Emulador, toque em Adicionar jogos.\n3) Entre na pasta extraída e toque no arquivo do jogo (por exemplo .gba, .nes, .iso). O Zeo reconhece o console pela extensão e coloca o jogo na pasta certa.\nUse só jogos que você tem direito de usar: cópias suas, homebrew e jogos livres.'],
+['Para que servem as pastas?','Cada pasta é de um console e só aceita arquivos daquele tipo. Toque em Nova pasta para criar uma. Para apagar uma pasta, abra ela e toque em Excluir esta pasta: os jogos não são apagados, vão para Sem pasta.'],
+['Meu jogo ficou em "Sem pasta". E agora?','Abra a aba Sem pasta e toque em Identificar e organizar: o Zeo tenta reconhecer o console de cada jogo. Se não reconhecer, escolha a pasta manualmente na lista que aparece em cada jogo.'],
+['Como jogo e salvo meu progresso?','Toque em Jogar. Ao tocar em Fechar jogo ou sair do app, o progresso é salvo sozinho e volta de onde você parou. Para recomeçar, toque em Do início no jogo.'],
+['Como mudo o lugar e o tamanho dos botões?','Em Configurações, ligue Controles personalizados e toque em Mover botões. Escolha o console na lista, arraste os botões e use a barra para mudar o tamanho. O botão Imagens dos botões deixa você usar PNG ou GIF.'],
+['O jogo está lento ou o som chia. O que faço?','Deixe o celular carregando, desligue a economia de bateria, feche outros apps e abas e evite o Fast-Forward. O número FPS aparece no canto da tela. Nas Configurações há a otimização por jogo (Leve ou Máxima).'],
+['Como adiciono amigos e converso?','Seu ID é automático (#1, #2...). Toque em Amigos, pesquise o ID de alguém e envie o pedido. Depois de aceito, vocês podem conversar. O 🗑 ao lado da sua mensagem apaga ela.'],
+['Para que serve o sininho?','Ele mostra mensagens, pedidos de amizade, novidades do Zeo e avisos de nova versão. Quando balança, tem algo novo.'],
+['Como instalo o Zeo Emulador no celular?','No Chrome, toque nos três pontinhos e escolha Instalar app (ou Adicionar à tela inicial).'],
+['Meus jogos sumiram. Por quê?','Os jogos ficam salvos só neste aparelho, dentro do navegador. Se você limpar os dados do site, a estante é apagada.']
+],
+es:[
+['¿Cómo agrego un juego?','1) Si el archivo viene comprimido (.zip), extráelo primero con el administrador de archivos del móvil.\n2) En Zeo Emulador toca Agregar juegos.\n3) Entra en la carpeta extraída y toca el archivo del juego (por ejemplo .gba, .nes, .iso). Zeo reconoce la consola por la extensión y lo pone en la carpeta correcta.\nUsa solo juegos que tengas derecho a usar: copias tuyas, homebrew y juegos libres.'],
+['¿Para qué sirven las carpetas?','Cada carpeta es de una consola y solo acepta ese tipo de archivos. Toca Nueva carpeta para crear una. Para borrar una, ábrela y toca Eliminar esta carpeta: los juegos no se borran, pasan a Sin carpeta.'],
+['Mi juego quedó en "Sin carpeta". ¿Y ahora?','Abre la pestaña Sin carpeta y toca Identificar y organizar. Si no lo reconoce, elige la carpeta a mano en la lista de cada juego.'],
+['¿Cómo juego y guardo mi progreso?','Toca Jugar. Al tocar Cerrar juego o salir de la app, el progreso se guarda solo y continúas donde lo dejaste. Para empezar de nuevo, toca Del inicio.'],
+['¿Cómo cambio la posición y el tamaño de los botones?','En Configuración activa Controles personalizados y toca Mover botones. Elige la consola, arrastra los botones y usa la barra para el tamaño. Imágenes de los botones permite usar PNG o GIF.'],
+['El juego va lento o el sonido se corta.','Carga el móvil, desactiva el ahorro de batería, cierra otras apps y pestañas y evita el Fast-Forward. Los FPS aparecen en la esquina. En Configuración hay optimización por juego (Leve o Máxima).'],
+['¿Cómo agrego amigos y chateo?','Tu ID es automático (#1, #2...). Toca Amigos, busca el ID de alguien y envía la solicitud. Al aceptarla pueden chatear. El 🗑 junto a tu mensaje lo borra.'],
+['¿Para qué sirve la campanita?','Muestra mensajes, solicitudes de amistad, novedades de Zeo y avisos de nueva versión. Si se mueve, hay algo nuevo.'],
+['¿Cómo instalo Zeo Emulador en el móvil?','En Chrome toca los tres puntos y elige Instalar app (o Añadir a pantalla de inicio).'],
+['Mis juegos desaparecieron. ¿Por qué?','Los juegos se guardan solo en este dispositivo, dentro del navegador. Si borras los datos del sitio, la estantería se vacía.']
+],
+en:[
+['How do I add a game?','1) If the file came zipped (.zip), extract it first with your phone’s file manager.\n2) In Zeo Emulador, tap Add games.\n3) Open the extracted folder and tap the game file (for example .gba, .nes, .iso). Zeo recognizes the console by the extension and puts the game in the right folder.\nOnly use games you have the right to use: your own copies, homebrew and free games.'],
+['What are folders for?','Each folder belongs to one console and only accepts that file type. Tap New folder to create one. To remove a folder, open it and tap Delete this folder: the games are not deleted, they move to No folder.'],
+['My game ended up in “No folder”. Now what?','Open the No folder tab and tap Identify and organize. If Zeo can’t tell, pick the folder by hand in the list on each game.'],
+['How do I play and save my progress?','Tap Play. When you tap Close game or leave the app, progress is saved automatically and resumes where you left off. To start over, tap From the start.'],
+['How do I change button position and size?','In Settings turn on Custom controls and tap Move buttons. Pick the console, drag the buttons and use the slider for size. Button images lets you use PNG or GIF.'],
+['The game is slow or the sound crackles.','Plug in the phone, turn off battery saver, close other apps and tabs and avoid Fast-Forward. FPS shows in the corner. Settings has per-game optimization (Light or Maximum).'],
+['How do I add friends and chat?','Your ID is automatic (#1, #2...). Tap Friends, search someone’s ID and send a request. Once accepted you can chat. The 🗑 next to your message deletes it.'],
+['What is the bell for?','It shows messages, friend requests, Zeo news and new-version alerts. When it shakes, something is new.'],
+['How do I install Zeo Emulador on my phone?','In Chrome tap the three dots and choose Install app (or Add to Home screen).'],
+['My games disappeared. Why?','Games are stored only on this device, inside the browser. Clearing the site data empties the shelf.']
+]};
+function openHelp(){const l=$('#hpl');l.innerHTML='';$('#hpt').textContent='? '+(HT[cfg.lang]||HT.en);$('#hpx').textContent=cx('cl');
+ (FQ[cfg.lang]||FQ.en).forEach(([q,a])=>{const d=document.createElement('details'),s=document.createElement('summary'),p=document.createElement('p');s.textContent=q;p.textContent=a;d.append(s,p);l.append(d)});
+ $('#hp').classList.add('on')}
+$('#help').onclick=openHelp;$('#hpx').onclick=()=>$('#hp').classList.remove('on');
 
 load();
 if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").then(()=>navigator.serviceWorker.ready).then(()=>{if(!window.crossOriginIsolated&&!/noiso/.test(location.search)&&!sessionStorage.getItem('zeoiso')&&navigator.serviceWorker.controller){sessionStorage.setItem('zeoiso','1');location.reload()}}).catch(()=>{})}catch(e){}}
