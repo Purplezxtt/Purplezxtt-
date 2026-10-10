@@ -63,7 +63,13 @@ body.cp .ejs_virtualGamepad_parent{display:none!important}
 #msgs{display:flex;flex-direction:column;gap:6px;max-height:42vh;overflow:auto;padding:6px;border:1px solid var(--line);border-radius:12px}.mb{max-width:80%;padding:6px 10px;border-radius:12px;background:var(--sel);align-self:flex-start;overflow-wrap:anywhere}.mb.me{align-self:flex-end;background:var(--acc);color:var(--bg)}
 .chip{display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:6px 16px 6px 6px;border-radius:999px}
 .av{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--acc);flex:none}
-#pf,#ot,#fr{position:fixed;inset:0;z-index:20;display:none;background:rgba(0,0,0,.6);overflow:auto;padding:20px 16px}#pf.on,#ot.on,#fr.on{display:block}
+#pf,#ot,#fr,#nc{position:fixed;inset:0;z-index:20;display:none;background:rgba(0,0,0,.6);overflow:auto;padding:20px 16px}#pf.on,#ot.on,#fr.on,#nc.on{display:block}
+#bell{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);right:12px;z-index:15;width:46px;height:46px;border-radius:50%;padding:0;font-size:22px;display:grid;place-items:center;background:var(--card);border:1px solid var(--line)}#player.on~#bell{display:none}
+#bell b{position:absolute;top:-5px;right:-5px;min-width:20px;height:20px;border-radius:10px;background:#e5484d;color:#fff;font:700 12px/20px system-ui;text-align:center;display:none;padding:0 5px}#bell.has b{display:block}
+#bell.has span{display:inline-block;transform-origin:50% 8%;animation:bring 2.6s ease-in-out infinite}#bell.hit span{animation:bring2 .9s ease-in-out}
+@keyframes bring{0%,45%,100%{transform:rotate(0)}5%{transform:rotate(-20deg)}10%{transform:rotate(20deg)}15%{transform:rotate(-16deg)}20%{transform:rotate(16deg)}25%{transform:rotate(-9deg)}30%{transform:rotate(9deg)}35%{transform:rotate(0)}}
+@keyframes bring2{0%,100%{transform:rotate(0)}10%{transform:rotate(-28deg)}25%{transform:rotate(28deg)}40%{transform:rotate(-22deg)}55%{transform:rotate(22deg)}70%{transform:rotate(-12deg)}85%{transform:rotate(12deg)}}
+.nrow{padding:10px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;cursor:pointer}.nrow.un{border-color:var(--acc);background:rgba(122,47,224,.12)}.nrow b{display:block}.nrow small{color:var(--mut)}#ncl{max-height:60vh;overflow:auto}
 #pf .av{width:72px;height:72px}#pf input[type=text]{flex:1 1 120px;min-width:0}
 </style>
 </head>
@@ -79,7 +85,7 @@ body.cp .ejs_virtualGamepad_parent{display:none!important}
 <div id="drop"><div id="list"></div></div>
 <small data-i="foot"></small>
 </main>
-<div id="player"><div id="game"></div></div><button id="pc" data-i="cl"></button><div id="toast"></div><div id="fps"></div><div id="pad"></div>
+<div id="player"><div id="game"></div></div><button id="bell" aria-label="Notifications"><span>🔔</span><b></b></button><button id="pc" data-i="cl"></button><div id="toast"></div><div id="fps"></div><div id="pad"></div>
 <div id="st"><div class="card"><h2 data-i="set"></h2>
 <label><span data-i="lang"></span><select id="lg"><option value="pt">Português (BR)</option><option value="es">Español (ES)</option><option value="en">English (US)</option><option value="ru">Русский</option><option value="ja">日本語</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="it">Italiano</option></select></label>
 <label class="row"><input type="checkbox" id="cu"><span data-i="ctl"></span></label>
@@ -89,6 +95,7 @@ body.cp .ejs_virtualGamepad_parent{display:none!important}
 <label class="row"><input type="checkbox" id="rz"><span id="rzl"></span></label>
 <label><span><span data-i="size"></span>: <b id="szv"></b></span><input type="range" id="sz" min="60" max="160" step="5"></label>
 <div class="row"><button id="em" data-i="ed"></button><button class="p" id="sx" data-i="ok"></button></div></div></div>
+<div id="nc"><div class="card"><h2 id="nct"></h2><div id="ncl"></div><div class="row"><button id="ncc"></button><button class="p" id="ncx"></button></div></div></div>
 <div id="pf"><div class="card"><h2 data-i="prof"></h2>
 <div class="row"><img id="pav2" class="av" alt="" src="icon-192.png"><button id="pph" data-i="ph"></button><input type="file" id="pfile" accept="image/*" hidden></div>
 <label><span data-i="nm"></span><div class="row"><input type="text" id="pn" maxlength="24"><button id="prn" data-i="rn"></button></div></label>
@@ -180,7 +187,8 @@ it:{prof:'Profilo',nm:'Nome',rn:'Casuale',ph:'Foto o GIF',idl:'Il tuo ID (automa
 for(const k in PL)Object.assign(L[k],PL[k]);
 let prof={name:'',id:'',avatar:null},tmpAv=null;
 let cfg={lang:'pt',custom:false,scale:1,pos:{},perf:true,opt:{},read:{},notif:true,resume:true,achOn:true,ach:{u:{},plays:0,secs:0,cores:{},games:{}}};
-try{Object.assign(cfg,JSON.parse(localStorage.getItem('zeo.cfg')||'{}'))}catch(e){}
+const FIRST=!localStorage.getItem('zeo.cfg');try{Object.assign(cfg,JSON.parse(localStorage.getItem('zeo.cfg')||'{}'))}catch(e){}
+if(!Array.isArray(cfg.nt))cfg.nt=[];if(!Array.isArray(cfg.seenU))cfg.seenU=[];
 const saveCfg=()=>{try{localStorage.setItem('zeo.cfg',JSON.stringify(cfg))}catch(e){}};
 if(!cfg.perfV){cfg.perf=true;cfg.perfV=2;saveCfg()}
 const t=(k,...a)=>{const v=(L[cfg.lang]||L.pt)[k];return typeof v==='function'?v(...a):v};
@@ -206,7 +214,7 @@ const tx=(st,m,f)=>new Promise((ok,no)=>{try{const q0=db.transaction(st,m),q=f(q
 async function load(){
  try{db=await open();items=await tx('games','readonly',s=>s.getAll())||[];
  const f=await tx('meta','readonly',s=>s.get('folders'));if(f)folders=f.map(x=>typeof x==='string'?{name:x,exts:[]}:x);const p=await tx('meta','readonly',s=>s.get('profile'));if(p)prof=p;const ks=await tx('meta','readonly',s=>s.getAllKeys());(ks||[]).forEach(k=>{if(String(k).startsWith('st:'))HAS.add(+String(k).slice(3))})}catch(e){}
- checkAch();applyLang();if(prof.id&&prof.num)publish().then(()=>startFr()).catch(e=>{if(String(e&&e.message||e).includes('taken'))note(ta('f_taken'))});
+ checkAch();applyLang();updNotes();renderBell();if(prof.id&&prof.num)publish().then(()=>startFr()).catch(e=>{if(String(e&&e.message||e).includes('taken'))note(ta('f_taken'))});
  else{if(prof.id)prof.set=true;claimId().then(()=>{renderProf();checkAch();return startFr()}).catch(()=>{if(prof.id)return publish().then(()=>startFr()).catch(()=>{})})}}
 const saveF=()=>tx('meta','readwrite',s=>s.put(folders,'folders')).catch(()=>{});
 const fo=n=>folders.find(f=>f.name===n);
@@ -429,7 +437,7 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 window.addEventListener('pagehide',()=>{saveRun()});
 $('#rz').onchange=e=>{cfg.resume=e.target.checked;saveCfg()};
 const UNR={},CW={};let reqBase=0;const seenReq=new Set();
-function notify(title,body,tag){if(!cfg.notif)return;
+function notify(title,body,tag){pushN({k:String(tag||'').startsWith('rq')?'req':'msg',tag:String(tag||''),title,body});if(!cfg.notif)return;
  if(document.visibilityState==='visible'){note('🔔 '+title+': '+body);try{if(navigator.vibrate)navigator.vibrate(60)}catch(e){}}
  else if('Notification' in window&&Notification.permission==='granted'&&navigator.serviceWorker){navigator.serviceWorker.ready.then(r=>r.showNotification(title,{body,icon:'icon-192.png',badge:'icon-192.png',tag,renotify:true})).catch(()=>{})}}
 function watchChats(){const f=FB;if(!f)return;const{query,collection,where,orderBy,onSnapshot}=f.fs;const acc=REQ.filter(r=>r.status==='accepted');
@@ -459,6 +467,31 @@ const dr=$('#drop');
 dr.ondragover=e=>{e.preventDefault();dr.classList.add('over')};
 dr.ondragleave=()=>dr.classList.remove('over');
 dr.ondrop=e=>{e.preventDefault();dr.classList.remove('over');addFiles([...e.dataTransfer.files])};
+const NTX={pt:{t:'Notificações',e:'Nenhuma notificação por enquanto.',c:'Limpar tudo',x:'Fechar',u:'Novidade no Zeo'},es:{t:'Notificaciones',e:'Aún no hay notificaciones.',c:'Borrar todo',x:'Cerrar',u:'Novedad en Zeo'},en:{t:'Notifications',e:'No notifications yet.',c:'Clear all',x:'Close',u:'What’s new in Zeo'},ru:{t:'Уведомления',e:'Пока нет уведомлений.',c:'Очистить',x:'Закрыть',u:'Новое в Zeo'},ja:{t:'通知',e:'通知はまだありません。',c:'すべて消去',x:'閉じる',u:'Zeoの新機能'},de:{t:'Benachrichtigungen',e:'Noch keine Benachrichtigungen.',c:'Alle löschen',x:'Schließen',u:'Neu in Zeo'},fr:{t:'Notifications',e:'Aucune notification pour le moment.',c:'Tout effacer',x:'Fermer',u:'Nouveauté Zeo'},it:{t:'Notifiche',e:'Ancora nessuna notifica.',c:'Cancella tutto',x:'Chiudi',u:'Novità su Zeo'}};
+const nx=k=>(NTX[cfg.lang]||NTX.en)[k];
+const CH=[
+{id:'u-resume',pt:'Agora o jogo retoma de onde você parou ao sair.',es:'Ahora el juego continúa donde lo dejaste al salir.',en:'Games now resume right where you left off when you exit.'},
+{id:'u-perf',pt:'Melhorias de desempenho: modo multi-thread (para PSP e outros) e rewind desligado.',es:'Mejoras de rendimiento: modo multihilo (PSP y otros) y rewind desactivado.',en:'Performance upgrades: multi-thread mode (for PSP and others) and rewind turned off.'},
+{id:'u-menu',pt:'Removido o menu duplicado da tela do jogo.',es:'Se quitó el menú duplicado de la pantalla del juego.',en:'Removed the duplicate menu from the game screen.'},
+{id:'u-id',pt:'IDs automáticos: cada pessoa ganha um número em ordem (#1, #2, #3...).',es:'IDs automáticos: cada persona recibe un número en orden (#1, #2, #3...).',en:'Automatic IDs: everyone gets a number in order (#1, #2, #3...).'},
+{id:'u-bell',pt:'Novo sininho de notificações aqui em cima.',es:'Nueva campanita de notificaciones aquí arriba.',en:'New notification bell up here.'}];
+const chT=c=>c[cfg.lang]||c.en;
+function pushN(n){n.t=Date.now();n.r=0;if(n.tag){const i=cfg.nt.findIndex(x=>x.tag===n.tag&&!x.r);if(i>=0)cfg.nt.splice(i,1)}
+ cfg.nt.unshift(n);cfg.nt=cfg.nt.slice(0,60);saveCfg();renderBell(true)}
+function updNotes(){CH.slice().reverse().forEach(c=>{if(!cfg.seenU.includes(c.id)){cfg.seenU.push(c.id);if(!FIRST)pushN({k:'upd',u:c.id})}});saveCfg()}
+function renderBell(hit){const b=$('#bell');if(!b)return;const n=cfg.nt.filter(x=>!x.r).length;b.classList.toggle('has',n>0);b.querySelector('b').textContent=n>99?'99+':n;
+ if(hit&&n>0){b.classList.remove('hit');void b.offsetWidth;b.classList.add('hit');try{if(navigator.vibrate)navigator.vibrate([40,40,40])}catch(e){}setTimeout(()=>b.classList.remove('hit'),1000)}}
+function openNC(){const l=$('#ncl');l.innerHTML='';$('#nct').textContent='🔔 '+nx('t');$('#ncc').textContent=nx('c');$('#ncx').textContent=nx('x');
+ if(!cfg.nt.length){const e=document.createElement('p');e.textContent=nx('e');e.style.color='var(--mut)';l.append(e)}
+ cfg.nt.forEach(n=>{const r=document.createElement('div');r.className='nrow'+(n.r?'':' un');const c=n.k==='upd'?CH.find(x=>x.id===n.u):null;
+  const ti=document.createElement('b');ti.textContent=(n.k==='msg'?'💬 ':n.k==='req'?'👥 ':'✨ ')+(n.k==='upd'?nx('u'):n.title);
+  const bo=document.createElement('div');bo.textContent=c?chT(c):n.body;const tm=document.createElement('small');tm.textContent=new Date(n.t).toLocaleString();
+  r.append(ti,bo,tm);
+  if(n.k!=='upd')r.onclick=async()=>{$('#nc').classList.remove('on');if(!prof.pub){note(ta('f_need'));return}try{await startFr()}catch(e){note(ta('f_err'));return}frHome();$('#fr').classList.add('on');const q=n.k==='msg'?REQ.find(x=>x.id===n.tag):null;if(q)openChat(q)};
+  l.append(r)});
+ cfg.nt.forEach(n=>n.r=1);saveCfg();renderBell();$('#nc').classList.add('on')}
+$('#bell').onclick=openNC;$('#ncx').onclick=()=>$('#nc').classList.remove('on');$('#ncc').onclick=()=>{cfg.nt=[];saveCfg();renderBell();$('#ncl').innerHTML='';const e=document.createElement('p');e.textContent=nx('e');e.style.color='var(--mut)';$('#ncl').append(e)};
+
 load();
 if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").then(()=>navigator.serviceWorker.ready).then(()=>{if(!window.crossOriginIsolated&&!/noiso/.test(location.search)&&!sessionStorage.getItem('zeoiso')&&navigator.serviceWorker.controller){sessionStorage.setItem('zeoiso','1');location.reload()}}).catch(()=>{})}catch(e){}}
 </script>
