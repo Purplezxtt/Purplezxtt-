@@ -125,6 +125,24 @@ body.nh #player:not(.on)~#bell,body.nh #player:not(.on)~#help,body.nh #player:no
 .fc{display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,#170f38,#100829);border:1px solid #3b2478;border-radius:18px;padding:10px;margin-bottom:10px}.fc .cv{width:46px;height:46px}.fc>div{flex:1;min-width:0}.fc b{display:block}.fc small{margin:0}
 #gm{z-index:27}
 body.bgold{background:#14171f!important}
+body.bgold{--bg:#14171f;--card:#1e222d;--ink:#eceef4;--mut:#9aa2b5;--acc:#b58bff;--line:#2e3445;--sel:#2c2347}
+body.bgold #bnr{background:linear-gradient(135deg,#232838 0%,#1a1e2a 60%,#232838 100%);border-bottom:1px solid #2e3445;box-shadow:none}
+body.bgold #bnr::before{background:repeating-linear-gradient(115deg,transparent 0 26px,rgba(181,139,255,.07) 26px 30px,transparent 30px 74px)}
+body.bgold #bnr::after{background:radial-gradient(circle,rgba(181,139,255,.16),transparent 65%)}
+body.bgold #bnr .logo{box-shadow:none}
+body.bgold #bnr h1{background:linear-gradient(180deg,#fff,#cdb8ff);-webkit-background-clip:text;background-clip:text;filter:none}
+body.bgold #pcard,body.bgold .gi,body.bgold .fc{background:#1e222d;border-color:#2e3445;box-shadow:none}
+body.bgold .bar button,body.bgold #pcard #fr0,body.bgold .ib,body.bgold .sd,body.bgold .tab{background:#1e222d;border-color:#2e3445;box-shadow:none}
+body.bgold .bar button.p,body.bgold .gp{background:#b58bff;border-color:#b58bff;color:#14171f;box-shadow:none}
+body.bgold .ltabs{background:#1e222d;border-color:#2e3445}
+body.bgold .tab[aria-pressed=true],body.bgold .ltabs button[aria-pressed=true]{background:#2c2347;border-color:#b58bff;box-shadow:none;color:#fff}
+body.bgold .sd[aria-pressed=true]{background:#b58bff;border-color:#b58bff;color:#14171f}
+body.bgold .sd[aria-pressed=true] small{color:#2c2347}
+body.bgold #bn{background:#14171f;border-top-color:#2e3445}
+body.bgold #bn button.on{color:#b58bff}
+body.bgold #bn button.on::before{background:#b58bff;box-shadow:none}
+body.bgold .lh .lt{text-shadow:none;color:#eceef4}
+
 
 #rot{position:fixed;top:calc(env(safe-area-inset-top,0px) + 124px);right:12px;z-index:15;width:46px;height:46px;border-radius:50%;padding:0;font-size:22px;display:grid;place-items:center;background:var(--card);border:1px solid var(--line)}
 #rot[hidden]{display:none!important}
@@ -688,12 +706,12 @@ const CH=[
 {id:'c-creator',own:1,pt:'👑 Moldura exclusiva do Criador liberada só para você! Abra Perfil → Molduras.',es:'👑 ¡Marco exclusivo del Creador desbloqueado solo para ti! Abre Perfil → Marcos.',en:'👑 The exclusive Creator frame is unlocked just for you! Open Profile → Frames.'},
 {id:'u-rot',pt:'Novo: botão de girar a tela (ligue em Configurações) e novas dicas na Ajuda sobre arquivos .cue, PSP e PS1.',es:'Nuevo: botón para girar la pantalla (actívalo en Configuración) y nuevos consejos en la Ayuda sobre archivos .cue, PSP y PS1.',en:'New: screen rotate button (turn it on in Settings) and new Help tips about .cue files, PSP and PS1.'},
 {id:'u-layout',pt:'Novo visual! Banner do Zeo, menu de baixo (Início, Biblioteca, Pastas, Configurações), jogos compactos com capa, favoritos, recentes e busca.',es:'¡Nuevo diseño! Banner de Zeo, menú inferior (Inicio, Biblioteca, Carpetas, Ajustes), juegos compactos con portada, favoritos, recientes y búsqueda.',en:'New look! Zeo banner, bottom menu (Home, Library, Folders, Settings), compact games with covers, favorites, recents and search.'},
-{id:'c-old',code:'ZEO-CLASSICO-6P2D',pt:'Fundo Clássico (o estilo antigo do Zeo) — código:',es:'Fondo Clásico (el estilo antiguo de Zeo) — código:',en:'Classic background (the old Zeo style) — code:'},
+{id:'c-old',code:'ZEO-CLASSICO-6P2D',pt:'Tema Clássico (as cores do Zeo antigo) — código:',es:'Tema Clásico (los colores del Zeo antiguo) — código:',en:'Classic theme (the old Zeo colors) — code:'},
 {id:'u-aud',pt:'Novo botão Ajustar áudio nas Configurações, para reduzir chiado e travadas no som (por jogo).',es:'Nuevo botón Ajustar audio en Configuración para reducir chasquidos y cortes de sonido (por juego).',en:'New Adjust audio button in Settings to reduce crackling and stutter (per game).'},
 {id:'u-help',pt:'Novo botão ? com perguntas e respostas para ajudar quem está começando.',es:'Nuevo botón ? con preguntas y respuestas para quien empieza.',en:'New ? button with questions and answers for newcomers.'},
 {id:'u-live',pt:'Avisos de atualização em tempo real: quando sair uma versão nova, o sininho te avisa.',es:'Avisos de actualización en tiempo real: cuando salga una versión nueva, la campanita te avisa.',en:'Live update alerts: when a new version is out, the bell tells you.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-10.13';let verSeen=APP_VER;
+const APP_VER='2026-10-10.14';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname,{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
