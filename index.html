@@ -100,6 +100,7 @@ main{padding-bottom:104px}
 .gt{flex:1;min-width:0}.gt b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;font-weight:700;line-height:1.2}
 .gt span{display:block;color:var(--mut);font-size:13px;margin-top:3px}
 .gp{border-radius:12px;padding:8px 14px;min-height:40px;font-weight:700;background:linear-gradient(180deg,#6a35e8,#4120a6);border-color:#a070ff;color:#fff;box-shadow:0 0 12px rgba(130,70,255,.45);white-space:nowrap}
+.mb audio{display:block;max-width:100%;width:230px}.mb small{display:block;margin:4px 0 0}
 .gm{background:none;border:0;font-size:22px;min-height:40px;min-width:34px;padding:0 4px;color:var(--mut)}
 #bn{position:fixed;left:0;right:0;bottom:0;z-index:14;display:flex;background:linear-gradient(180deg,rgba(16,9,40,.97),#0a0520);border-top:1px solid #3a2478;padding:8px 6px calc(6px + env(safe-area-inset-bottom,0px))}
 #bn button{flex:1;background:none;border:0;color:#9a8cc8;display:flex;flex-direction:column;align-items:center;gap:2px;font:600 12px system-ui;min-height:50px;padding:4px 0;position:relative;border-radius:0}
@@ -479,7 +480,7 @@ $('#skf').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f||
  try{let url;if(f.type==='image/gif'){if(f.size>400*1024){note(cx('big'));return}url=await rdURL(f)}
   else{const bm=await createImageBitmap(f),sc=Math.min(1,192/Math.max(bm.width,bm.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(bm.width*sc));c.height=Math.max(1,Math.round(bm.height*sc));c.getContext('2d').drawImage(bm,0,0,c.width,c.height);url=c.toDataURL('image/png')}
   SK[ECORE+':'+skKey]=url;await saveSK();skRows();mountPad($('#padE'),true,ECORE)}catch(x){note(ta('f_err'))}};
-const CXT={pt:{nv:'Nova versão disponível',nvb:'Toque aqui para atualizar o Zeo Emulador.',im:'🖼 Imagens dos botões',ch:'Escolher imagem',big:'GIF grande demais (máx. 400 KB).',del:'Apagar mensagem',delq:'Apagar esta mensagem?',cl:'Fechar'},es:{nv:'Nueva versión disponible',nvb:'Toca aquí para actualizar Zeo Emulador.',im:'🖼 Imágenes de los botones',ch:'Elegir imagen',big:'GIF demasiado grande (máx. 400 KB).',del:'Borrar mensaje',delq:'¿Borrar este mensaje?',cl:'Cerrar'},en:{nv:'New version available',nvb:'Tap here to update Zeo Emulador.',im:'🖼 Button images',ch:'Choose image',big:'GIF too large (max 400 KB).',del:'Delete message',delq:'Delete this message?',cl:'Close'},ru:{nv:'Доступна новая версия',nvb:'Нажмите, чтобы обновить Zeo Emulador.',im:'🖼 Картинки кнопок',ch:'Выбрать',big:'GIF слишком большой (макс. 400 КБ).',del:'Удалить сообщение',delq:'Удалить это сообщение?',cl:'Закрыть'},ja:{nv:'新バージョンがあります',nvb:'タップしてZeo Emuladorを更新します。',im:'🖼 ボタン画像',ch:'画像を選ぶ',big:'GIFが大きすぎます（最大400KB）。',del:'メッセージを削除',delq:'このメッセージを削除しますか？',cl:'閉じる'},de:{nv:'Neue Version verfügbar',nvb:'Tippe hier, um Zeo Emulador zu aktualisieren.',im:'🖼 Tastenbilder',ch:'Bild wählen',big:'GIF zu groß (max. 400 KB).',del:'Nachricht löschen',delq:'Diese Nachricht löschen?',cl:'Schließen'},fr:{nv:'Nouvelle version disponible',nvb:'Touche ici pour mettre à jour Zeo Emulador.',im:'🖼 Images des boutons',ch:'Choisir une image',big:'GIF trop volumineux (max 400 Ko).',del:'Supprimer le message',delq:'Supprimer ce message ?',cl:'Fermer'},it:{nv:'Nuova versione disponibile',nvb:'Tocca qui per aggiornare Zeo Emulador.',im:'🖼 Immagini dei pulsanti',ch:'Scegli immagine',big:'GIF troppo grande (max 400 KB).',del:'Elimina messaggio',delq:'Eliminare questo messaggio?',cl:'Chiudi'}};
+const CXT={pt:{nv:'Nova versão disponível',nvb:'Toque aqui para atualizar o Zeo Emulador.',rec:'Gravar áudio',asend:'Enviar áudio',anm:'Seu navegador não consegue gravar áudio.',amic:'Permita o microfone para gravar.',abig:'Áudio grande demais. Grave um mais curto (até 1 min).',vm:'Mensagem de voz',im:'🖼 Imagens dos botões',ch:'Escolher imagem',big:'GIF grande demais (máx. 400 KB).',del:'Apagar mensagem',delq:'Apagar esta mensagem?',cl:'Fechar'},es:{nv:'Nueva versión disponible',nvb:'Toca aquí para actualizar Zeo Emulador.',rec:'Grabar audio',asend:'Enviar audio',anm:'Tu navegador no puede grabar audio.',amic:'Permite el micrófono para grabar.',abig:'Audio demasiado grande. Graba uno más corto (hasta 1 min).',vm:'Mensaje de voz',im:'🖼 Imágenes de los botones',ch:'Elegir imagen',big:'GIF demasiado grande (máx. 400 KB).',del:'Borrar mensaje',delq:'¿Borrar este mensaje?',cl:'Cerrar'},en:{nv:'New version available',nvb:'Tap here to update Zeo Emulador.',rec:'Record audio',asend:'Send audio',anm:'Your browser can’t record audio.',amic:'Allow the microphone to record.',abig:'Audio too large. Record a shorter one (up to 1 min).',vm:'Voice message',im:'🖼 Button images',ch:'Choose image',big:'GIF too large (max 400 KB).',del:'Delete message',delq:'Delete this message?',cl:'Close'},ru:{nv:'Доступна новая версия',nvb:'Нажмите, чтобы обновить Zeo Emulador.',rec:'Записать аудио',asend:'Отправить аудио',anm:'Браузер не может записывать аудио.',amic:'Разрешите доступ к микрофону.',abig:'Аудио слишком большое. Запишите короче (до 1 мин).',vm:'Голосовое сообщение',im:'🖼 Картинки кнопок',ch:'Выбрать',big:'GIF слишком большой (макс. 400 КБ).',del:'Удалить сообщение',delq:'Удалить это сообщение?',cl:'Закрыть'},ja:{nv:'新バージョンがあります',nvb:'タップしてZeo Emuladorを更新します。',rec:'音声を録音',asend:'音声を送信',anm:'このブラウザでは録音できません。',amic:'マイクを許可してください。',abig:'音声が大きすぎます。もっと短く録音してください（1分まで）。',vm:'ボイスメッセージ',im:'🖼 ボタン画像',ch:'画像を選ぶ',big:'GIFが大きすぎます（最大400KB）。',del:'メッセージを削除',delq:'このメッセージを削除しますか？',cl:'閉じる'},de:{nv:'Neue Version verfügbar',nvb:'Tippe hier, um Zeo Emulador zu aktualisieren.',rec:'Audio aufnehmen',asend:'Audio senden',anm:'Dein Browser kann kein Audio aufnehmen.',amic:'Erlaube das Mikrofon zum Aufnehmen.',abig:'Audio zu groß. Nimm ein kürzeres auf (bis 1 Min.).',vm:'Sprachnachricht',im:'🖼 Tastenbilder',ch:'Bild wählen',big:'GIF zu groß (max. 400 KB).',del:'Nachricht löschen',delq:'Diese Nachricht löschen?',cl:'Schließen'},fr:{nv:'Nouvelle version disponible',nvb:'Touche ici pour mettre à jour Zeo Emulador.',rec:'Enregistrer un audio',asend:'Envoyer l’audio',anm:'Ton navigateur ne peut pas enregistrer.',amic:'Autorise le micro pour enregistrer.',abig:'Audio trop volumineux. Fais-en un plus court (1 min max).',vm:'Message vocal',im:'🖼 Images des boutons',ch:'Choisir une image',big:'GIF trop volumineux (max 400 Ko).',del:'Supprimer le message',delq:'Supprimer ce message ?',cl:'Fermer'},it:{nv:'Nuova versione disponibile',nvb:'Tocca qui per aggiornare Zeo Emulador.',rec:'Registra audio',asend:'Invia audio',anm:'Il browser non può registrare audio.',amic:'Consenti il microfono per registrare.',abig:'Audio troppo grande. Registrane uno più breve (max 1 min).',vm:'Messaggio vocale',im:'🖼 Immagini dei pulsanti',ch:'Scegli immagine',big:'GIF troppo grande (max 400 KB).',del:'Elimina messaggio',delq:'Eliminare questo messaggio?',cl:'Chiudi'}};
 const cx=k=>(CXT[cfg.lang]||CXT.en)[k];
 const SEGA={genesis_plus_gx_blargg_ntsc_filter:'disabled',genesis_plus_gx_lcd_filter:'disabled',genesis_plus_gx_audio_filter:'disabled',genesis_plus_gx_no_sprite_limit:'disabled'};
 const PERF={
@@ -608,7 +609,7 @@ function frList(){const f=FB,l=$('#frl');l.innerHTML='';const H=x=>{const e=docu
  l.append(H(ta('f_fr')));
  if(!fl.length){const e=document.createElement('div');e.textContent=ta('f_none');e.style.color='var(--mut)';l.append(e)}
  fl.forEach(r=>l.append(row(r.from===prof.id?r.to:r.from,[[ta('f_chat')+(UNR[r.id]?' ('+UNR[r.id]+')':''),()=>openChat(r),1]])))}
-function frHome(){chatKey=null;if(chatU){chatU();chatU=null}const b=$('#frb');b.innerHTML='';
+function frHome(){if(window.__rs)window.__rs();chatKey=null;if(chatU){chatU();chatU=null}const b=$('#frb');b.innerHTML='';
  const h=document.createElement('h2');h.textContent='👥 '+ta('f_t');
  const sr=document.createElement('div');sr.className='row';
  const inp=document.createElement('input');inp.type='text';inp.inputMode='numeric';inp.maxLength=7;inp.placeholder=ta('f_ph');inp.style.cssText='flex:1 1 140px;min-width:0';inp.oninput=()=>{inp.value=inp.value.replace(/[^0-9]/g,'')};
@@ -632,16 +633,42 @@ function openChat(r){chatKey=r.id;const b=$('#frb');b.innerHTML='';const o=r.fro
  const inp=document.createElement('input');inp.type='text';inp.maxLength=500;inp.placeholder=ta('f_msg');inp.style.cssText='flex:1;min-width:0';
  const send=async()=>{const x=inp.value.trim();if(!x)return;inp.value='';try{await FB.fs.addDoc(FB.fs.collection(FB.db,'reqs',r.id,'msgs'),{fromUid:FB.uid,from:prof.id,text:x,t:Date.now()})}catch(e){note(ta('f_err'))}};
  inp.onkeydown=e=>{if(e.key==='Enter')send()};
- const cr=document.createElement('div');cr.className='row';cr.append(inp,mkb(ta('f_send'),send,1));b.append(hd,act,ms,cr);
+ const cr=document.createElement('div');cr.className='row';cr.append(inp,mkb(ta('f_send'),send,1));
+ const arow=document.createElement('div');arow.className='row';let mr=null,chunks=[],stream=null,rt0=0,tm=null,cancelled=false;
+ const mic=mkb('🎤 '+cx('rec'),()=>startRec());mic.style.flex='1';
+ const resetUI=()=>{clearInterval(tm);arow.innerHTML='';arow.append(mic)};
+ const stopTracks=()=>{try{stream&&stream.getTracks().forEach(x=>x.stop())}catch(e){}};
+ window.__rs=()=>{cancelled=true;try{if(mr&&mr.state==='recording')mr.stop()}catch(e){}stopTracks();clearInterval(tm)};
+ async function startRec(){
+  if(!navigator.mediaDevices||!window.MediaRecorder){note(cx('anm'));return}
+  try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}})}catch(e){note(cx('amic'));return}
+  const mt=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus'].find(x=>MediaRecorder.isTypeSupported(x))||'';
+  chunks=[];cancelled=false;
+  try{mr=new MediaRecorder(stream,mt?{mimeType:mt,audioBitsPerSecond:24000}:{audioBitsPerSecond:24000})}catch(e){stopTracks();note(cx('anm'));return}
+  mr.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+  mr.onstop=async()=>{stopTracks();clearInterval(tm);if(cancelled){resetUI();return}
+   const dur=Math.max(1,Math.round((Date.now()-rt0)/1000)),blob=new Blob(chunks,{type:mr.mimeType||mt||'audio/webm'});resetUI();if(!blob.size)return;
+   const url=await new Promise(ok=>{const f=new FileReader();f.onload=()=>ok(f.result);f.onerror=()=>ok('');f.readAsDataURL(blob)});
+   if(!url)return;if(url.length>440000){note(cx('abig'));return}
+   try{await FB.fs.addDoc(FB.fs.collection(FB.db,'reqs',r.id,'msgs'),{fromUid:FB.uid,from:prof.id,text:'',aud:url,dur,t:Date.now()})}catch(e){note(ta('f_err'))}};
+  mr.start();rt0=Date.now();arow.innerHTML='';
+  const lb=document.createElement('b');lb.style.flex='1';lb.textContent='🔴 0:00';
+  tm=setInterval(()=>{const s=Math.floor((Date.now()-rt0)/1000);lb.textContent='🔴 '+Math.floor(s/60)+':'+String(s%60).padStart(2,'0');if(s>=60&&mr.state==='recording')mr.stop()},250);
+  arow.append(lb,mkb('✕',()=>{cancelled=true;if(mr.state==='recording')mr.stop()}),mkb('➤ '+cx('asend'),()=>{if(mr.state==='recording')mr.stop()},1))}
+ resetUI();b.append(hd,act,ms,cr,arow);
  const{query,collection,orderBy,limitToLast,onSnapshot}=FB.fs;
- chatU=onSnapshot(query(collection(FB.db,'reqs',r.id,'msgs'),orderBy('t'),limitToLast(100)),s=>{ms.innerHTML='';s.docs.forEach(d=>{const m=d.data(),e=document.createElement('div');e.className='mb'+(m.fromUid===FB.uid?' me':'');e.textContent=m.text;
+ chatU=onSnapshot(query(collection(FB.db,'reqs',r.id,'msgs'),orderBy('t'),limitToLast(100)),s=>{ms.innerHTML='';s.docs.forEach(d=>{const m=d.data(),e=document.createElement('div');e.className='mb'+(m.fromUid===FB.uid?' me':'');if(m.aud){const a=document.createElement('audio');a.controls=true;a.preload='metadata';a.src=m.aud;e.append(a);if(m.dur){const sm=document.createElement('small');sm.textContent='🎤 '+Math.floor(m.dur/60)+':'+String(m.dur%60).padStart(2,'0');e.append(sm)}}else e.textContent=m.text;
   if(m.fromUid===FB.uid){const x=document.createElement('button');x.className='xm';x.textContent='🗑';x.setAttribute('aria-label',cx('del'));x.onclick=async()=>{if(!confirm(cx('delq')))return;try{await FB.fs.deleteDoc(FB.fs.doc(FB.db,'reqs',r.id,'msgs',d.id))}catch(er){note(ta('f_err'))}};e.append(x)}
   ms.append(e)});ms.scrollTop=ms.scrollHeight;const mx=Math.max(0,...s.docs.map(d=>d.data().t||0));if(mx>(cfg.read[r.id]||0)){cfg.read[r.id]=mx;saveCfg()}UNR[r.id]=0;badge()},()=>note(ta('f_err')))}
 $('#fr0').onclick=async()=>{if(!prof.pub){note(ta('f_need'));return}try{await startFr()}catch(e){note(ta('f_err'));return}frHome();$('#fr').classList.add('on')};
-$('#frx').onclick=()=>{if(chatU){chatU();chatU=null}chatKey=null;$('#fr').classList.remove('on')};
-(function(){const h=$('.hd h1'),t='Zeo Emulador';h.textContent='';h.style.userSelect='none';
- [...t].forEach((c,i)=>{const s=document.createElement('span');s.textContent=c;s.dataset.k=i;s.style.whiteSpace='pre';if(c===' ')s.style.cssText='display:block;height:0;overflow:hidden';h.append(s)});
- h.onclick=e=>{const k=e.target.dataset&&e.target.dataset.k;if(k===undefined||t[k]===' ')return;e.target.style.opacity='.4';setTimeout(()=>{e.target.style.opacity=''},150);(cfg.ach.tl=cfg.ach.tl||{})[k]=1;saveCfg();checkAch()}})();
+$('#frx').onclick=()=>{if(window.__rs)window.__rs();if(chatU){chatU();chatU=null}chatKey=null;$('#fr').classList.remove('on')};
+(function(){const h=$('.hd h1'),t='Zeo Emulador';h.textContent='';h.style.userSelect='none';const sp=[];
+ [...t].forEach((c,i)=>{const s=document.createElement('span');s.textContent=c;s.dataset.k=i;s.style.whiteSpace='pre';if(c===' ')s.style.cssText='display:block;height:0;overflow:hidden';h.append(s);sp.push(s)});
+ $('#bnr').addEventListener('click',e=>{const x=e.clientX,y=e.clientY;let hit=-1,best=1e9;
+  sp.forEach((s,i)=>{if(t[i]===' ')return;const r=s.getBoundingClientRect(),cx=(r.left+r.right)/2,cy=(r.top+r.bottom)/2;
+   if(x>=r.left-3&&x<=r.right+3&&y>=r.top-3&&y<=r.bottom+3){const d=Math.abs(x-cx)+Math.abs(y-cy);if(d<best){best=d;hit=i}}});
+  if(hit<0)return;const s=sp[hit];s.style.opacity='.35';setTimeout(()=>{s.style.opacity=''},160);try{if(navigator.vibrate)navigator.vibrate(8)}catch(_){}
+  (cfg.ach.tl=cfg.ach.tl||{})[hit]=1;saveCfg();checkAch()})})();
 const HAS=new Set();let curGame=null;
 async function saveRun(){if(!curGame||!cfg.resume||!$('#player').classList.contains('on'))return;
  try{const gm=window.EJS_emulator&&window.EJS_emulator.gameManager;if(!gm)return;const st=gm.getState();if(!st||!st.length||st.length>83886080)return;
@@ -650,6 +677,7 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 window.addEventListener('pagehide',()=>{saveRun()});
 $('#rz').onchange=e=>{cfg.resume=e.target.checked;saveCfg()};
 const UNR={},CW={};let reqBase=0;const seenReq=new Set();
+const mtxt=m=>m.aud?'🎤 '+cx('vm'):m.text;
 function notify(title,body,tag){pushN({k:String(tag||'').startsWith('rq')?'req':'msg',tag:String(tag||''),title,body});if(!cfg.notif)return;
  if(document.visibilityState==='visible'){note('🔔 '+title+': '+body);try{if(navigator.vibrate)navigator.vibrate(60)}catch(e){}}
  else if('Notification' in window&&Notification.permission==='granted'&&navigator.serviceWorker){navigator.serviceWorker.ready.then(r=>r.showNotification(title,{body,icon:'icon-192.png',badge:'icon-192.png',tag,renotify:true})).catch(()=>{})}}
@@ -659,7 +687,7 @@ function watchChats(){const f=FB;if(!f)return;const{query,collection,where,order
   CW[r.id]=onSnapshot(query(collection(f.db,'reqs',r.id,'msgs'),where('t','>',cfg.read[r.id]||0),orderBy('t')),s=>{
    if(chatKey===r.id){first=0;return}
    const rd=cfg.read[r.id]||0;UNR[r.id]=s.docs.filter(d=>d.data().fromUid!==f.uid&&(d.data().t||0)>rd).length;
-   if(!first)s.docChanges().forEach(c=>{const m=c.doc.data();if(c.type==='added'&&m.fromUid!==f.uid){const o=r.from===prof.id?r.to:r.from;getP(o).then(p=>notify((p&&p.name)||('ID '+o),m.text,r.id)).catch(()=>notify('ID '+o,m.text,r.id))}});
+   if(!first)s.docChanges().forEach(c=>{const m=c.doc.data();if(c.type==='added'&&m.fromUid!==f.uid){const o=r.from===prof.id?r.to:r.from;getP(o).then(p=>notify((p&&p.name)||('ID '+o),mtxt(m),r.id)).catch(()=>notify('ID '+o,mtxt(m),r.id))}});
    first=0;badge();if($('#frl')&&!chatKey&&$('#fr').classList.contains('on'))frList()},()=>{})})}
 $('#nt').onchange=async e=>{cfg.notif=e.target.checked;saveCfg();if(cfg.notif&&'Notification' in window&&Notification.permission==='default'){try{await Notification.requestPermission()}catch(x){}}};
 const A1=['Roxo','Neon','Pixel','Turbo','Astro','Cosmo','Sombra','Nova','Lunar','Ninja'],A2=['Gamer','Fox','Dragon','Byte','Wolf','Comet','Ghost','Rider','Spark','Hero'];
@@ -707,11 +735,12 @@ const CH=[
 {id:'u-rot',pt:'Novo: botão de girar a tela (ligue em Configurações) e novas dicas na Ajuda sobre arquivos .cue, PSP e PS1.',es:'Nuevo: botón para girar la pantalla (actívalo en Configuración) y nuevos consejos en la Ayuda sobre archivos .cue, PSP y PS1.',en:'New: screen rotate button (turn it on in Settings) and new Help tips about .cue files, PSP and PS1.'},
 {id:'u-layout',pt:'Novo visual! Banner do Zeo, menu de baixo (Início, Biblioteca, Pastas, Configurações), jogos compactos com capa, favoritos, recentes e busca.',es:'¡Nuevo diseño! Banner de Zeo, menú inferior (Inicio, Biblioteca, Carpetas, Ajustes), juegos compactos con portada, favoritos, recientes y búsqueda.',en:'New look! Zeo banner, bottom menu (Home, Library, Folders, Settings), compact games with covers, favorites, recents and search.'},
 {id:'c-old',code:'ZEO-CLASSICO-6P2D',pt:'Tema Clássico (as cores do Zeo antigo) — código:',es:'Tema Clásico (los colores del Zeo antiguo) — código:',en:'Classic theme (the old Zeo colors) — code:'},
+{id:'u-voice',pt:'Novo: áudio no chat de amigos! Toque em Gravar áudio, abaixo do botão Enviar. Também corrigi a conquista secreta das letras do título.',es:'¡Nuevo: audio en el chat de amigos! Toca Grabar audio, debajo del botón Enviar. También arreglé el logro secreto de las letras del título.',en:'New: voice messages in friends chat! Tap Record audio, under the Send button. Also fixed the secret achievement for the title letters.'},
 {id:'u-aud',pt:'Novo botão Ajustar áudio nas Configurações, para reduzir chiado e travadas no som (por jogo).',es:'Nuevo botón Ajustar audio en Configuración para reducir chasquidos y cortes de sonido (por juego).',en:'New Adjust audio button in Settings to reduce crackling and stutter (per game).'},
 {id:'u-help',pt:'Novo botão ? com perguntas e respostas para ajudar quem está começando.',es:'Nuevo botón ? con preguntas y respuestas para quien empieza.',en:'New ? button with questions and answers for newcomers.'},
 {id:'u-live',pt:'Avisos de atualização em tempo real: quando sair uma versão nova, o sininho te avisa.',es:'Avisos de actualización en tiempo real: cuando salga una versión nueva, la campanita te avisa.',en:'Live update alerts: when a new version is out, the bell tells you.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-10.14';let verSeen=APP_VER;
+const APP_VER='2026-10-10.15';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname,{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
@@ -748,6 +777,7 @@ pt:[
 ['Como mudo o lugar e o tamanho dos botões?','Em Configurações, ligue Controles personalizados e toque em Mover botões. Escolha o console na lista, arraste os botões e use a barra para mudar o tamanho. O botão Imagens dos botões deixa você usar PNG ou GIF.'],
 ['O jogo está lento ou o som chia. O que faço?','Deixe o celular carregando, desligue a economia de bateria, feche outros apps e abas e evite o Fast-Forward. O número FPS aparece no canto da tela. Nas Configurações há a otimização por jogo (Leve ou Máxima).'],
 ['Como adiciono amigos e converso?','Seu ID é automático (#1, #2...). Toque em Amigos, pesquise o ID de alguém e envie o pedido. Depois de aceito, vocês podem conversar. O 🗑 ao lado da sua mensagem apaga ela.'],
+['Como mando áudio no chat?','Abra o chat com um amigo e toque em Gravar áudio, abaixo do botão Enviar. Permita o microfone se o celular pedir. Fale e toque em Enviar áudio (ou ✕ para cancelar). O limite é de 1 minuto. Você pode apagar um áudio seu com o 🗑.'],
 ['Para que serve o sininho?','Ele mostra mensagens, pedidos de amizade, novidades do Zeo e avisos de nova versão. Quando balança, tem algo novo.'],
 ['Como instalo o Zeo Emulador no celular?','No Chrome, toque nos três pontinhos e escolha Instalar app (ou Adicionar à tela inicial).'],
 ['Meus jogos sumiram. Por quê?','Os jogos ficam salvos só neste aparelho, dentro do navegador. Se você limpar os dados do site, a estante é apagada.']
@@ -763,6 +793,7 @@ es:[
 ['¿Cómo cambio la posición y el tamaño de los botones?','En Configuración activa Controles personalizados y toca Mover botones. Elige la consola, arrastra los botones y usa la barra para el tamaño. Imágenes de los botones permite usar PNG o GIF.'],
 ['El juego va lento o el sonido se corta.','Carga el móvil, desactiva el ahorro de batería, cierra otras apps y pestañas y evita el Fast-Forward. Los FPS aparecen en la esquina. En Configuración hay optimización por juego (Leve o Máxima).'],
 ['¿Cómo agrego amigos y chateo?','Tu ID es automático (#1, #2...). Toca Amigos, busca el ID de alguien y envía la solicitud. Al aceptarla pueden chatear. El 🗑 junto a tu mensaje lo borra.'],
+['¿Cómo envío un audio en el chat?','Abre el chat con un amigo y toca Grabar audio, debajo del botón Enviar. Permite el micrófono si el móvil lo pide. Habla y toca Enviar audio (o ✕ para cancelar). El límite es de 1 minuto. Puedes borrar un audio tuyo con el 🗑.'],
 ['¿Para qué sirve la campanita?','Muestra mensajes, solicitudes de amistad, novedades de Zeo y avisos de nueva versión. Si se mueve, hay algo nuevo.'],
 ['¿Cómo instalo Zeo Emulador en el móvil?','En Chrome toca los tres puntos y elige Instalar app (o Añadir a pantalla de inicio).'],
 ['Mis juegos desaparecieron. ¿Por qué?','Los juegos se guardan solo en este dispositivo, dentro del navegador. Si borras los datos del sitio, la estantería se vacía.']
@@ -778,6 +809,7 @@ en:[
 ['How do I change button position and size?','In Settings turn on Custom controls and tap Move buttons. Pick the console, drag the buttons and use the slider for size. Button images lets you use PNG or GIF.'],
 ['The game is slow or the sound crackles.','Plug in the phone, turn off battery saver, close other apps and tabs and avoid Fast-Forward. FPS shows in the corner. Settings has per-game optimization (Light or Maximum).'],
 ['How do I add friends and chat?','Your ID is automatic (#1, #2...). Tap Friends, search someone’s ID and send a request. Once accepted you can chat. The 🗑 next to your message deletes it.'],
+['How do I send a voice message in chat?','Open the chat with a friend and tap Record audio, under the Send button. Allow the microphone if your phone asks. Speak and tap Send audio (or ✕ to cancel). The limit is 1 minute. You can delete your own audio with the 🗑.'],
 ['What is the bell for?','It shows messages, friend requests, Zeo news and new-version alerts. When it shakes, something is new.'],
 ['How do I install Zeo Emulador on my phone?','In Chrome tap the three dots and choose Install app (or Add to Home screen).'],
 ['My games disappeared. Why?','Games are stored only on this device, inside the browser. Clearing the site data empties the shelf.']
