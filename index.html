@@ -71,6 +71,9 @@ body.ing main{visibility:hidden}#fps{position:fixed;bottom:calc(env(safe-area-in
 .av{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--acc);flex:none}
 #pf,#ot,#fr,#nc,#hp,#au,#cs{position:fixed;inset:0;z-index:20;display:none;background:rgba(0,0,0,.6);overflow:auto;padding:20px 16px}#pf.on,#ot.on,#fr.on,#nc.on,#hp.on,#au.on,#cs.on{display:block}
 #cs{z-index:26}
+#rot{position:fixed;top:calc(env(safe-area-inset-top,0px) + 124px);right:12px;z-index:15;width:46px;height:46px;border-radius:50%;padding:0;font-size:22px;display:grid;place-items:center;background:var(--card);border:1px solid var(--line)}
+#rot[hidden]{display:none!important}
+#player.on~#rot{top:calc(env(safe-area-inset-top,0px) + 8px);right:auto;left:var(--rl,150px);z-index:61;background:rgba(20,10,35,.85);border-color:#7a2fe0;width:40px;height:40px;font-size:18px}
 img.av.f-creator{border:3px solid transparent;background:conic-gradient(from var(--ang),#7a2fe0,#c77dff,#ffd23f,#ff4dd8,#7a2fe0) border-box;animation:zrot 2.6s linear infinite,zglow 2s ease-in-out infinite}
 @keyframes zglow{0%,100%{box-shadow:0 0 6px rgba(168,85,247,.55)}50%{box-shadow:0 0 14px rgba(255,210,63,.85)}}
 .crown.cr{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 48'%3E%3Cpath d='M4 40 L8 12 L22 26 L32 6 L42 26 L56 12 L60 40 Z' fill='%23ffcf33' stroke='%235b21b6' stroke-width='3' stroke-linejoin='round'/%3E%3Crect x='4' y='40' width='56' height='6' rx='2' fill='%23a855f7' stroke='%235b21b6' stroke-width='2'/%3E%3Ccircle cx='8' cy='12' r='4' fill='%23ff4dd8'/%3E%3Ccircle cx='32' cy='6' r='4.5' fill='%23ffffff'/%3E%3Ccircle cx='56' cy='12' r='4' fill='%234dd2ff'/%3E%3Ccircle cx='32' cy='30' r='3.5' fill='%237a2fe0' stroke='%235b21b6' stroke-width='1.5'/%3E%3C/svg%3E");width:68%;top:-33%}
@@ -125,7 +128,7 @@ body.bgpix:not(.ing)::after{z-index:10;height:120px;background:linear-gradient(t
 <div id="drop"><div id="list"></div></div>
 <small data-i="foot"></small>
 </main>
-<div id="player"><div id="game"></div></div><button id="bell" aria-label="Notifications"><span>🔔</span><b></b></button><button id="help" aria-label="Help">?</button><button id="pc" data-i="cl"></button><div id="toast"></div><div id="fps"></div><div id="pad"></div>
+<div id="player"><div id="game"></div></div><button id="bell" aria-label="Notifications"><span>🔔</span><b></b></button><button id="help" aria-label="Help">?</button><button id="rot" aria-label="Rotate" hidden>🔄</button><button id="pc" data-i="cl"></button><div id="toast"></div><div id="fps"></div><div id="pad"></div>
 <div id="st"><div class="card"><h2 data-i="set"></h2>
 <label><span data-i="lang"></span><select id="lg"><option value="pt">Português (BR)</option><option value="es">Español (ES)</option><option value="en">English (US)</option><option value="ru">Русский</option><option value="ja">日本語</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="it">Italiano</option></select></label>
 <label class="row"><input type="checkbox" id="cu"><span data-i="ctl"></span></label>
@@ -134,6 +137,7 @@ body.bgpix:not(.ing)::after{z-index:10;height:120px;background:linear-gradient(t
 <label class="row"><input type="checkbox" id="nt"><span id="ntl"></span></label>
 <label class="row"><input type="checkbox" id="rz"><span id="rzl"></span></label>
 <label class="row"><input type="checkbox" id="ns"><span id="nsl"></span></label>
+<label class="row"><input type="checkbox" id="rt"><span id="rtl"></span></label>
 <label hidden><span><span data-i="size"></span>: <b id="szv"></b></span><input type="range" id="sz" min="60" max="160" step="5"></label>
 <div class="row"><button id="em" data-i="ed"></button><button class="p" id="sx" data-i="ok"></button></div></div></div>
 <div id="cs"><div class="card"><h2 id="cst"></h2><div id="csl"></div><div class="row"><button class="p" id="csx"></button></div></div></div>
@@ -433,7 +437,7 @@ async function play(i){
  s.onerror=()=>{$('#game').textContent=t('lerr');$('#game').style.cssText='color:#fff;padding:80px 20px;text-align:center'};
  document.body.append(s)}
 $('#pc').onclick=async()=>{await saveRun();location.reload()};
-const fsMove=()=>{const fe=document.fullscreenElement||document.webkitFullscreenElement;(fe||document.body).append($('#pad'),$('#pc'),$('#toast'),$('#fps'))};
+const fsMove=()=>{const fe=document.fullscreenElement||document.webkitFullscreenElement;(fe||document.body).append($('#pad'),$('#pc'),$('#rot'),$('#toast'),$('#fps'))};
 document.addEventListener('fullscreenchange',fsMove);document.addEventListener('webkitfullscreenchange',fsMove);
 const AL={
 pt:{ac:'Conquistas',aon:'Ativar conquistas',aoff:'As conquistas estão desativadas.',unl:'Conquista desbloqueada:',
@@ -579,7 +583,7 @@ const A1=['Roxo','Neon','Pixel','Turbo','Astro','Cosmo','Sombra','Nova','Lunar',
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 const rndName=()=>pick(A1)+pick(A2)+(10+Math.floor(Math.random()*90));
 const setAv=(img,b)=>{img.src=b?URL.createObjectURL(b):'icon-192.png'};
-function renderProf(){$('#pnm').textContent=prof.id?prof.name:t('prof');$('#pid').textContent=prof.id?'ID #'+prof.id+(cfg.achOn?' · 🏆 '+Object.keys(cfg.ach.u).length:''):'';$('#ao').checked=cfg.achOn;$('#aol').textContent=ta('aon');$('#og').textContent=ta('og');badge();$('#nt').checked=cfg.notif;$('#ntl').textContent=ta('f_not');$('#ns').checked=cfg.nsound!==false;$('#nsl').textContent=nx('s');$('#rz').checked=cfg.resume;$('#rzl').textContent=ta('f_res');renderAchList();setAv($('#pav'),prof.avatar);applyLook()}
+function renderProf(){$('#pnm').textContent=prof.id?prof.name:t('prof');$('#pid').textContent=prof.id?'ID #'+prof.id+(cfg.achOn?' · 🏆 '+Object.keys(cfg.ach.u).length:''):'';$('#ao').checked=cfg.achOn;$('#aol').textContent=ta('aon');$('#og').textContent=ta('og');badge();$('#nt').checked=cfg.notif;$('#ntl').textContent=ta('f_not');$('#ns').checked=cfg.nsound!==false;$('#nsl').textContent=nx('s');$('#rt').checked=!!cfg.rot;$('#rtl').textContent=rx('l');$('#rz').checked=cfg.resume;$('#rzl').textContent=ta('f_res');renderAchList();setAv($('#pav'),prof.avatar);applyLook()}
 $('#prof').onclick=()=>{tmpAv=prof.avatar;$('#pn').value=prof.name;$('#pi').value=prof.id?'#'+prof.id:'…';$('#pmsg').textContent='';setAv($('#pav2'),tmpAv);$('#pfr').textContent=kx('fr');$('#pbg').textContent=kx('bg');$('#prd').textContent=kx('rd');applyLook();$('#pf').classList.add('on')};
 $('#pph').onclick=()=>$('#pfile').click();
 $('#pfile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;if(f.size>5242880){$('#pmsg').textContent=t('big');return}tmpAv=f;setAv($('#pav2'),f);$('#pmsg').textContent=''};
@@ -617,11 +621,12 @@ const CH=[
 {id:'c-pxcrown',code:'ZEO-COROAPIXEL-4M9V',pt:'Coroa pixelada 👑 — código:',es:'Corona pixelada 👑 — código:',en:'Pixel crown 👑 — code:'},
 {id:'c-pxframe',code:'ZEO-MOLDURAPIXEL-8B3S',pt:'Moldura pixelada — código:',es:'Marco pixelado — código:',en:'Pixel frame — code:'},
 {id:'c-creator',own:1,pt:'👑 Moldura exclusiva do Criador liberada só para você! Abra Perfil → Molduras.',es:'👑 ¡Marco exclusivo del Creador desbloqueado solo para ti! Abre Perfil → Marcos.',en:'👑 The exclusive Creator frame is unlocked just for you! Open Profile → Frames.'},
+{id:'u-rot',pt:'Novo: botão de girar a tela (ligue em Configurações) e novas dicas na Ajuda sobre arquivos .cue, PSP e PS1.',es:'Nuevo: botón para girar la pantalla (actívalo en Configuración) y nuevos consejos en la Ayuda sobre archivos .cue, PSP y PS1.',en:'New: screen rotate button (turn it on in Settings) and new Help tips about .cue files, PSP and PS1.'},
 {id:'u-aud',pt:'Novo botão Ajustar áudio nas Configurações, para reduzir chiado e travadas no som (por jogo).',es:'Nuevo botón Ajustar audio en Configuración para reducir chasquidos y cortes de sonido (por juego).',en:'New Adjust audio button in Settings to reduce crackling and stutter (per game).'},
 {id:'u-help',pt:'Novo botão ? com perguntas e respostas para ajudar quem está começando.',es:'Nuevo botón ? con preguntas y respuestas para quien empieza.',en:'New ? button with questions and answers for newcomers.'},
 {id:'u-live',pt:'Avisos de atualização em tempo real: quando sair uma versão nova, o sininho te avisa.',es:'Avisos de actualización en tiempo real: cuando salga una versión nueva, la campanita te avisa.',en:'Live update alerts: when a new version is out, the bell tells you.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-10.10';let verSeen=APP_VER;
+const APP_VER='2026-10-10.11';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname,{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
@@ -649,6 +654,9 @@ const HT={pt:'Ajuda',es:'Ayuda',en:'Help',ru:'Помощь',ja:'ヘルプ',de:'H
 const FQ={
 pt:[
 ['Como adiciono um jogo?','1) Se o arquivo veio compactado (.zip), extraia primeiro: abra o zip no gerenciador de arquivos do celular e toque em Extrair.\n2) No Zeo Emulador, toque em Adicionar jogos.\n3) Entre na pasta extraída e toque no arquivo do jogo (por exemplo .gba, .nes, .iso). O Zeo reconhece o console pela extensão e coloca o jogo na pasta certa.\nUse só jogos que você tem direito de usar: cópias suas, homebrew e jogos livres.'],
+['Abri um jogo e só aparece um menu preto (Main Menu). O que é?','Esse menu aparece quando o emulador abriu, mas não recebeu um jogo de verdade para rodar. Os motivos mais comuns:\n• O arquivo é um .cue pequeno (cerca de 1 KB). Ele é só um índice e precisa do arquivo .bin grande junto: adicione o .bin ou use um arquivo único (.chd, .iso ou .pbp).\n• O arquivo ainda está dentro de um .zip: extraia antes.\n• O arquivo veio incompleto ou corrompido.\n• O jogo está na pasta de outro console.'],
+['Como sei se meu jogo é de PSP ou de PlayStation 1?','PSP: um único arquivo .iso, .cso ou .pbp, normalmente com mais de 100 MB.\nPlayStation 1: arquivos .bin com .cue, ou um arquivo .chd.\nColoque cada um na pasta do console certo.'],
+['Como giro a tela?','Em Configurações, ligue Botão de girar a tela. O botão 🔄 aparece abaixo do ? e também dentro do jogo, ao lado de Fechar jogo. Toque nele para alternar entre horizontal e vertical. Se o navegador não deixar, ligue a rotação automática do Android ou instale o app na tela inicial.'],
 ['Para que servem as pastas?','Cada pasta é de um console e só aceita arquivos daquele tipo. Toque em Nova pasta para criar uma. Para apagar uma pasta, abra ela e toque em Excluir esta pasta: os jogos não são apagados, vão para Sem pasta.'],
 ['Meu jogo ficou em "Sem pasta". E agora?','Abra a aba Sem pasta e toque em Identificar e organizar: o Zeo tenta reconhecer o console de cada jogo. Se não reconhecer, escolha a pasta manualmente na lista que aparece em cada jogo.'],
 ['Como jogo e salvo meu progresso?','Toque em Jogar. Ao tocar em Fechar jogo ou sair do app, o progresso é salvo sozinho e volta de onde você parou. Para recomeçar, toque em Do início no jogo.'],
@@ -661,6 +669,9 @@ pt:[
 ],
 es:[
 ['¿Cómo agrego un juego?','1) Si el archivo viene comprimido (.zip), extráelo primero con el administrador de archivos del móvil.\n2) En Zeo Emulador toca Agregar juegos.\n3) Entra en la carpeta extraída y toca el archivo del juego (por ejemplo .gba, .nes, .iso). Zeo reconoce la consola por la extensión y lo pone en la carpeta correcta.\nUsa solo juegos que tengas derecho a usar: copias tuyas, homebrew y juegos libres.'],
+['Abrí un juego y solo aparece un menú negro (Main Menu). ¿Qué es?','Ese menú aparece cuando el emulador abrió pero no recibió un juego real para ejecutar. Los motivos más comunes:\n• El archivo es un .cue pequeño (unos 1 KB). Es solo un índice y necesita el archivo .bin grande: agrega el .bin o usa un archivo único (.chd, .iso o .pbp).\n• El archivo sigue dentro de un .zip: extráelo antes.\n• El archivo llegó incompleto o dañado.\n• El juego está en la carpeta de otra consola.'],
+['¿Cómo sé si mi juego es de PSP o de PlayStation 1?','PSP: un único archivo .iso, .cso o .pbp, normalmente de más de 100 MB.\nPlayStation 1: archivos .bin con .cue, o un archivo .chd.\nPon cada uno en la carpeta de la consola correcta.'],
+['¿Cómo giro la pantalla?','En Configuración activa Botón para girar la pantalla. El botón 🔄 aparece debajo del ? y también dentro del juego, junto a Cerrar juego. Tócalo para alternar entre horizontal y vertical. Si el navegador no lo permite, activa la rotación automática de Android o instala la app en la pantalla de inicio.'],
 ['¿Para qué sirven las carpetas?','Cada carpeta es de una consola y solo acepta ese tipo de archivos. Toca Nueva carpeta para crear una. Para borrar una, ábrela y toca Eliminar esta carpeta: los juegos no se borran, pasan a Sin carpeta.'],
 ['Mi juego quedó en "Sin carpeta". ¿Y ahora?','Abre la pestaña Sin carpeta y toca Identificar y organizar. Si no lo reconoce, elige la carpeta a mano en la lista de cada juego.'],
 ['¿Cómo juego y guardo mi progreso?','Toca Jugar. Al tocar Cerrar juego o salir de la app, el progreso se guarda solo y continúas donde lo dejaste. Para empezar de nuevo, toca Del inicio.'],
@@ -673,6 +684,9 @@ es:[
 ],
 en:[
 ['How do I add a game?','1) If the file came zipped (.zip), extract it first with your phone’s file manager.\n2) In Zeo Emulador, tap Add games.\n3) Open the extracted folder and tap the game file (for example .gba, .nes, .iso). Zeo recognizes the console by the extension and puts the game in the right folder.\nOnly use games you have the right to use: your own copies, homebrew and free games.'],
+['I opened a game and only a black menu shows (Main Menu). What is it?','That menu shows up when the emulator opened but got no real game to run. The most common reasons:\n• The file is a tiny .cue (about 1 KB). It is only an index and needs the big .bin file next to it: add the .bin or use a single file (.chd, .iso or .pbp).\n• The file is still inside a .zip: extract it first.\n• The file came incomplete or corrupted.\n• The game is in another console’s folder.'],
+['How do I tell a PSP game from a PlayStation 1 game?','PSP: a single .iso, .cso or .pbp file, usually over 100 MB.\nPlayStation 1: .bin files with a .cue, or a .chd file.\nPut each one in the right console folder.'],
+['How do I rotate the screen?','In Settings turn on Screen rotate button. The 🔄 button appears under the ? and also inside the game, next to Close game. Tap it to switch between landscape and portrait. If the browser refuses, turn on Android auto-rotate or install the app on your home screen.'],
 ['What are folders for?','Each folder belongs to one console and only accepts that file type. Tap New folder to create one. To remove a folder, open it and tap Delete this folder: the games are not deleted, they move to No folder.'],
 ['My game ended up in “No folder”. Now what?','Open the No folder tab and tap Identify and organize. If Zeo can’t tell, pick the folder by hand in the list on each game.'],
 ['How do I play and save my progress?','Tap Play. When you tap Close game or leave the app, progress is saved automatically and resumes where you left off. To start over, tap From the start.'],
@@ -735,7 +749,7 @@ function setFrame(img,fr,n=0){if(!img)return;fr=FRS.includes(fr)?fr:'';if(!img.p
   if(hc){if(!c){c=document.createElement('i');w.append(c)}c.className='crown'+(fr==='pixcrown'?' px':'')+(fr==='creator'?' cr':'')}else if(c)c.remove()}}
 function applyLook(){const b=myBg(),cl=document.body.classList;cl.toggle('rgbbg',b==='rgb');cl.toggle('bgfire',b==='fire');cl.toggle('bgpix',b==='pix');
  ['#pav','#pav2'].forEach(s=>setFrame($(s),myFrame()));
- const a=$('#pfr'),c=$('#pbg');if(a)a.hidden=!FRS.some(v=>unl('frame:'+v));if(c)c.hidden=!BGS.some(v=>unl('bg:'+v))}
+ const a=$('#pfr'),c=$('#pbg');if(a)a.hidden=!FRS.some(v=>unl('frame:'+v));if(c)c.hidden=!BGS.some(v=>unl('bg:'+v));applyRot()}
 function redeem(raw){const c=(raw||'').trim().toUpperCase().replace(/\s+/g,''),k=CODES[c];if(!c||!k)return kx('bad');
  cfg.unl=cfg.unl||{};if(cfg.unl[k])return kx('dup');cfg.unl[k]=1;const [t,v]=k.split(':');
  if(t==='frame'){cfg.frame=v;if(prof.pub)schedPub()}else cfg.bg=v;
@@ -755,6 +769,18 @@ async function creatorCheck(){try{const f=await initFb(),{doc,getDoc}=f.fs,s=awa
  else if(cfg.unl['frame:creator']){delete cfg.unl['frame:creator'];if(cfg.frame==='creator')cfg.frame='';saveCfg();applyLook()}}catch(e){}}
 setTimeout(creatorCheck,1500);
 $('#pfr').onclick=()=>openCs('frame');$('#pbg').onclick=()=>openCs('bg');$('#prd').onclick=()=>openCs('code');$('#csx').onclick=()=>$('#cs').classList.remove('on');
+
+const RXT={pt:{l:'Botão de girar a tela',h:'Tela na horizontal',v:'Tela na vertical',no:'O navegador não deixou girar a tela. Ligue a rotação automática do Android ou instale o app na tela inicial.'},es:{l:'Botón para girar la pantalla',h:'Pantalla horizontal',v:'Pantalla vertical',no:'El navegador no permitió girar la pantalla. Activa la rotación automática de Android o instala la app en la pantalla de inicio.'},en:{l:'Screen rotate button',h:'Landscape',v:'Portrait',no:'The browser wouldn’t rotate the screen. Turn on Android auto-rotate or install the app on your home screen.'},ru:{l:'Кнопка поворота экрана',h:'Горизонтально',v:'Вертикально',no:'Браузер не разрешил повернуть экран. Включите автоповорот Android или установите приложение на главный экран.'},ja:{l:'画面回転ボタン',h:'横向き',v:'縦向き',no:'ブラウザが画面を回転できませんでした。Androidの自動回転をオンにするか、アプリをホーム画面に追加してください。'},de:{l:'Bildschirm-Dreh-Button',h:'Querformat',v:'Hochformat',no:'Der Browser erlaubt kein Drehen. Aktiviere die automatische Drehung von Android oder installiere die App auf dem Startbildschirm.'},fr:{l:'Bouton de rotation de l’écran',h:'Paysage',v:'Portrait',no:'Le navigateur n’a pas autorisé la rotation. Active la rotation automatique d’Android ou installe l’app sur l’écran d’accueil.'},it:{l:'Pulsante rotazione schermo',h:'Orizzontale',v:'Verticale',no:'Il browser non ha permesso di ruotare lo schermo. Attiva la rotazione automatica di Android o installa l’app nella schermata Home.'}};
+const rx=k=>(RXT[cfg.lang]||RXT.en)[k];
+function applyRot(){const b=$('#rot');if(b)b.hidden=!cfg.rot;placeRot()}
+function placeRot(){const p=$('#pc');if(!p)return;const r=p.getBoundingClientRect();if(r.width)document.documentElement.style.setProperty('--rl',Math.round(r.right+8)+'px')}
+async function rotateScreen(){const o=screen.orientation,land=o&&o.type?o.type.startsWith('landscape'):innerWidth>innerHeight,want=land?'portrait':'landscape';
+ try{if(o&&o.lock){try{await o.lock(want)}catch(e){if(!document.fullscreenElement&&document.documentElement.requestFullscreen){await document.documentElement.requestFullscreen();await o.lock(want)}else throw e}
+  note(rx(want==='landscape'?'h':'v'));return}}catch(e){}
+ note(rx('no'))}
+$('#rot').onclick=rotateScreen;$('#rt').onchange=e=>{cfg.rot=e.target.checked;saveCfg();applyRot()};
+try{new MutationObserver(placeRot).observe($('#player'),{attributes:true,attributeFilter:['class']})}catch(e){}
+addEventListener('resize',placeRot);addEventListener('orientationchange',()=>setTimeout(placeRot,300));
 
 load();
 if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").then(()=>navigator.serviceWorker.ready).then(()=>{if(!window.crossOriginIsolated&&!/noiso/.test(location.search)&&!sessionStorage.getItem('zeoiso')&&navigator.serviceWorker.controller){sessionStorage.setItem('zeoiso','1');location.reload()}}).catch(()=>{})}catch(e){}}
