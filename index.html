@@ -69,8 +69,63 @@ body.ing main{visibility:hidden}#fps{position:fixed;bottom:calc(env(safe-area-in
 #msgs{display:flex;flex-direction:column;gap:6px;max-height:42vh;overflow:auto;padding:6px;border:1px solid var(--line);border-radius:12px}.mb{max-width:80%;padding:6px 10px;border-radius:12px;background:var(--sel);align-self:flex-start;overflow-wrap:anywhere}.mb.me{align-self:flex-end;background:var(--acc);color:var(--bg)}
 .chip{display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:6px 16px 6px 6px;border-radius:999px}
 .av{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--acc);flex:none}
-#pf,#ot,#fr,#nc,#hp,#au,#cs{position:fixed;inset:0;z-index:20;display:none;background:rgba(0,0,0,.6);overflow:auto;padding:20px 16px}#pf.on,#ot.on,#fr.on,#nc.on,#hp.on,#au.on,#cs.on{display:block}
+#pf,#ot,#fr,#nc,#hp,#au,#cs,#gm{position:fixed;inset:0;z-index:20;display:none;background:rgba(0,0,0,.6);overflow:auto;padding:20px 16px}#pf.on,#ot.on,#fr.on,#nc.on,#hp.on,#au.on,#cs.on,#gm.on{display:block}
 #cs{z-index:26}
+/* ===== novo layout Zeo ===== */
+body{--bg:#0b0618;--card:#150e2e;--ink:#f1ecff;--mut:#a99ad6;--acc:#b58bff;--line:#3a2870;--sel:#2b1a58;background:radial-gradient(120% 60% at 50% 0%,#1d0f45 0%,#0b0618 62%) fixed,#0b0618}
+main{padding-bottom:104px}
+#msg:empty{display:none}
+#bnr{position:relative;overflow:hidden;border-radius:0 0 24px 24px;margin:-20px -16px 14px;padding:calc(env(safe-area-inset-top,0px) + 20px) 78px 14px 16px;min-height:190px;background:linear-gradient(135deg,#2b0a70 0%,#12063a 55%,#2b0a70 100%);border-bottom:1px solid #5b2fd0;box-shadow:0 8px 30px rgba(110,50,255,.25)}
+#bnr::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(115deg,transparent 0 26px,rgba(160,90,255,.16) 26px 30px,transparent 30px 74px)}
+#bnr::after{content:'';position:absolute;right:-40px;top:-40px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(190,120,255,.45),transparent 65%)}
+#bnr .hd{position:relative;z-index:1;margin:0;gap:14px}
+#bnr .logo{width:92px;height:92px;border-radius:20px;box-shadow:0 0 26px rgba(160,90,255,.75);image-rendering:auto}
+#bnr h1{margin:0;font:900 italic 34px/.95 'Bricolage Grotesque',system-ui,sans-serif;text-transform:uppercase;letter-spacing:-1px;color:transparent;background:linear-gradient(180deg,#fff 10%,#d2b2ff 55%,#8a4dff);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 0 10px rgba(160,90,255,.9))}
+#bnr p.by{color:#cdb4ff;margin:6px 0 0}
+.bn-tag{position:relative;z-index:1;margin-top:14px;font:700 11px system-ui;letter-spacing:.32em;color:#eadfff;display:flex;align-items:center;gap:10px;white-space:nowrap}
+.bn-tag::before,.bn-tag::after{content:'';height:1px;flex:1;background:linear-gradient(90deg,transparent,#9a6bf0)}.bn-tag::after{transform:scaleX(-1)}
+#pcard{display:flex;gap:10px;align-items:center;background:linear-gradient(180deg,#1b1044,#120a38);border:1px solid #4a2a9a;border-radius:20px;padding:12px;margin-bottom:12px;box-shadow:0 0 20px rgba(120,60,255,.22)}
+#pcard #prof{flex:1;min-width:0;background:none;border:0;padding:0;display:flex;gap:12px;align-items:center;text-align:left;min-height:0}
+#pcard .av{width:58px;height:58px}
+#pcard #fr0{border-radius:14px;border:1px solid #6a3fd0;background:linear-gradient(180deg,#2a1670,#1b0e50);padding:10px 14px;font-weight:700;white-space:nowrap}
+#pcard #fr0::before{content:'👥 '}
+.onl{color:#c9b8ff;font-size:13px}.onl:empty{display:none}.onl::before{content:'';display:inline-block;width:9px;height:9px;border-radius:50%;background:#2bd96b;margin-right:6px;box-shadow:0 0 8px #2bd96b}
+.bar{display:flex;gap:10px;flex-wrap:nowrap;margin-bottom:14px}
+.bar button{flex:1 1 0;min-width:0;border-radius:16px;border:1px solid #5b34b8;background:linear-gradient(180deg,#1d1050,#130a3a);font-weight:700;font-size:14px;padding:10px 8px;line-height:1.15}
+.bar button.p{background:linear-gradient(180deg,#5a2fd0,#3a1c96);border-color:#a070ff;color:#fff;box-shadow:0 0 16px rgba(130,70,255,.5)}
+#add::before{content:'🎮 '}#nf::before{content:'🗂 '}#set::before{content:'⚙ '}
+.tab{border:1px solid #4a2f90;background:linear-gradient(180deg,#171040,#0f0a2c)}
+.tab[aria-pressed=true]{background:linear-gradient(180deg,#43229a,#26115f);border-color:#9a6bf0;box-shadow:0 0 14px rgba(140,80,255,.45);color:#fff}
+.gi{display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,#170f38,#100829);border:1px solid #3b2478;border-radius:18px;padding:9px 12px 9px 9px;margin-bottom:10px}
+.cv{width:56px;height:66px;border-radius:10px;flex:none;background-size:cover;background-position:center;display:grid;place-items:center;font:800 14px system-ui;color:#fff;border:1px solid rgba(255,255,255,.18);text-shadow:0 1px 4px rgba(0,0,0,.6)}
+.gt{flex:1;min-width:0}.gt b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;font-weight:700;line-height:1.2}
+.gt span{display:block;color:var(--mut);font-size:13px;margin-top:3px}
+.gp{border-radius:12px;padding:8px 14px;min-height:40px;font-weight:700;background:linear-gradient(180deg,#6a35e8,#4120a6);border-color:#a070ff;color:#fff;box-shadow:0 0 12px rgba(130,70,255,.45);white-space:nowrap}
+.gm{background:none;border:0;font-size:22px;min-height:40px;min-width:34px;padding:0 4px;color:var(--mut)}
+#bn{position:fixed;left:0;right:0;bottom:0;z-index:14;display:flex;background:linear-gradient(180deg,rgba(16,9,40,.97),#0a0520);border-top:1px solid #3a2478;padding:8px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+#bn button{flex:1;background:none;border:0;color:#9a8cc8;display:flex;flex-direction:column;align-items:center;gap:2px;font:600 12px system-ui;min-height:50px;padding:4px 0;position:relative;border-radius:0}
+#bn button.on{color:#c9a4ff}#bn button.on::before{content:'';position:absolute;top:-9px;width:46px;height:3px;border-radius:2px;background:linear-gradient(90deg,#8a4dff,#c9a4ff);box-shadow:0 0 10px #8a4dff}
+#bn svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#player.on~#bn{display:none}
+body.nh #player:not(.on)~#bell,body.nh #player:not(.on)~#help,body.nh #player:not(.on)~#rot{display:none}
+.lh{display:flex;align-items:center;gap:12px;margin-bottom:12px}.lh .logo{width:58px;height:58px;border-radius:14px;image-rendering:auto}
+.lh .lt{font:900 italic 24px/1 'Bricolage Grotesque',system-ui,sans-serif;text-transform:uppercase;color:#e6d6ff;text-shadow:0 0 12px rgba(160,90,255,.8)}
+.lh .ls{font:600 11px system-ui;letter-spacing:.22em;color:#b58bff;margin-top:5px}.lh>div{flex:1;min-width:0}
+.ib{width:46px;height:46px;border-radius:50%;padding:0;font-size:20px;display:grid;place-items:center;border:1px solid #5b34b8;background:linear-gradient(180deg,#1d1050,#130a3a)}
+#lsw{margin-bottom:10px}#lsw input{width:100%}
+.ltabs{display:flex;gap:4px;background:linear-gradient(180deg,#130b34,#0e0828);border:1px solid #3a2478;border-radius:18px;padding:6px;margin-bottom:12px;overflow-x:auto}
+.ltabs button{flex:1;white-space:nowrap;border:0;background:none;border-radius:12px;color:var(--mut);font-weight:600;font-size:13px;padding:8px 6px;min-height:40px}
+.ltabs button[aria-pressed=true]{background:linear-gradient(180deg,#43229a,#26115f);color:#fff;box-shadow:0 0 12px rgba(140,80,255,.4)}
+#lbody{display:flex;gap:12px;align-items:flex-start}
+#lside{flex:0 0 33%;max-width:230px;display:flex;flex-direction:column;gap:8px}#lside:empty{display:none}
+.sd{display:flex;align-items:center;gap:8px;text-align:left;border-radius:16px;padding:8px;border:1px solid #3a2478;background:linear-gradient(180deg,#150d36,#0f0829);min-height:56px;width:100%}
+.sd .cv{width:38px;height:38px;border-radius:10px;font-size:11px}.sd div{min-width:0;flex:1;line-height:1.2}.sd b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sd small{margin:0;font-size:12px}
+.sd[aria-pressed=true]{background:linear-gradient(180deg,#8f5cf5,#6a35e0);border-color:#c9a4ff;color:#fff}.sd[aria-pressed=true] small{color:#efe3ff}
+#lmain{flex:1;min-width:0}#lhead{display:flex;align-items:center;gap:8px;margin-bottom:10px}#lhead .hn{flex:1;min-width:0}#lhead b{display:block;font-size:19px}#lhead small{margin:0}
+#lhead select{max-width:130px;padding:6px 8px;min-height:38px;border-radius:12px;font-size:13px}
+.fc{display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,#170f38,#100829);border:1px solid #3b2478;border-radius:18px;padding:10px;margin-bottom:10px}.fc .cv{width:46px;height:46px}.fc>div{flex:1;min-width:0}.fc b{display:block}.fc small{margin:0}
+#gm{z-index:27}
+
 #rot{position:fixed;top:calc(env(safe-area-inset-top,0px) + 124px);right:12px;z-index:15;width:46px;height:46px;border-radius:50%;padding:0;font-size:22px;display:grid;place-items:center;background:var(--card);border:1px solid var(--line)}
 #rot[hidden]{display:none!important}
 #player.on~#rot{top:calc(env(safe-area-inset-top,0px) + 8px);right:auto;left:var(--rl,150px);z-index:61;background:rgba(20,10,35,.85);border-color:#7a2fe0;width:40px;height:40px;font-size:18px}
@@ -118,17 +173,35 @@ body.bgpix:not(.ing)::after{z-index:10;height:120px;background:linear-gradient(t
 </head>
 <body>
 <main>
-<div class="hd"><img class="logo" src="icon-192.png" alt="" width="84" height="84"><div><h1>Zeo Emulador</h1><p class="by">por purplezxtt</p></div></div>
-<p class="sub" data-i="sub"></p>
-<div class="row" style="margin-bottom:14px"><button id="prof" class="chip" style="margin:0"><img id="pav" class="av" alt="" src="icon-192.png"><span style="text-align:left"><b id="pnm"></b><br><span id="pid" style="color:var(--mut);font-size:13px"></span></span></button><button id="fr0"></button></div>
+<div id="msg" role="status" aria-live="polite"></div>
+<section id="vHome">
+<div id="bnr"><div class="hd"><img class="logo" src="icon-192.png" alt="" width="92" height="92"><div><h1>Zeo Emulador</h1><p class="by">por purplezxtt</p></div></div><div class="bn-tag" id="bntag"></div></div>
+<div id="pcard"><button id="prof" class="chip"><img id="pav" class="av" alt="" src="icon-192.png"><span style="text-align:left"><b id="pnm"></b><br><span id="pid" style="color:var(--mut);font-size:13px"></span><br><span id="onl" class="onl"></span></span></button><button id="fr0"></button></div>
 <div class="bar"><button class="p" id="add" data-i="add"></button><button id="nf" data-i="nf"></button><button id="set" data-i="set"></button><input id="file" type="file" multiple hidden></div>
 <div id="nfbox"><input type="text" id="fn"><select id="fp"></select><input type="text" id="fe" hidden><button class="p" id="fc" data-i="cr"></button></div>
-<div id="msg" role="status" aria-live="polite"></div>
 <div class="tabs" id="tabs" role="group"></div>
 <div id="drop"><div id="list"></div></div>
+<p class="sub" data-i="sub" style="margin-top:16px;font-size:13px"></p>
 <small data-i="foot"></small>
+</section>
+<section id="vLib" hidden>
+<div class="lh"><img class="logo" src="icon-192.png" alt="" width="58" height="58"><div><div class="lt">Zeo Emulador</div><div class="ls" id="lsub"></div></div><button class="ib" id="lsrch" aria-label="search">🔍</button><button class="ib" id="lmore" aria-label="more">⋮</button></div>
+<div id="lsw" hidden><input type="text" id="lq" autocomplete="off"></div>
+<div class="ltabs" id="ltabs" role="group"></div>
+<div id="lbody"><div id="lside"></div><div id="lmain"><div id="lhead"></div><div id="llist"></div></div></div>
+</section>
+<section id="vFol" hidden>
+<div class="lh"><img class="logo" src="icon-192.png" alt="" width="58" height="58"><div><div class="lt" id="ftit"></div><div class="ls" id="fsub"></div></div></div>
+<button class="p" id="fnew" style="width:100%;margin-bottom:12px"></button>
+<div id="flist"></div>
+</section>
 </main>
-<div id="player"><div id="game"></div></div><button id="bell" aria-label="Notifications"><span>🔔</span><b></b></button><button id="help" aria-label="Help">?</button><button id="rot" aria-label="Rotate" hidden>🔄</button><button id="pc" data-i="cl"></button><div id="toast"></div><div id="fps"></div><div id="pad"></div>
+
+<div id="player"><div id="game"></div></div><button id="bell" aria-label="Notifications"><span>🔔</span><b></b></button><button id="help" aria-label="Help">?</button><button id="rot" aria-label="Rotate" hidden>🔄</button>
+<nav id="bn"><button data-v="home" class="on"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span id="nv_home"></span></button><button data-v="lib"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12a4 4 0 0 1 4 4v2a3 3 0 0 1-5.2 2L15 14H9l-1.8 2A3 3 0 0 1 2 14v-2a4 4 0 0 1 4-4z"/><path d="M8 10v3M6.5 11.5h3"/><circle cx="16" cy="11" r=".8"/><circle cx="18" cy="13" r=".8"/></svg><span id="nv_lib"></span></button><button data-v="fol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span id="nv_fol"></span></button><button data-v="set"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg><span id="nv_set"></span></button></nav>
+<input type="file" id="cvf" accept="image/*" hidden>
+<div id="gm"><div class="card"><h2 id="gmt"></h2><div id="gml"></div><div class="row"><button class="p" id="gmx"></button></div></div></div>
+<button id="pc" data-i="cl"></button><div id="toast"></div><div id="fps"></div><div id="pad"></div>
 <div id="st"><div class="card"><h2 data-i="set"></h2>
 <label><span data-i="lang"></span><select id="lg"><option value="pt">Português (BR)</option><option value="es">Español (ES)</option><option value="en">English (US)</option><option value="ru">Русский</option><option value="ja">日本語</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="it">Italiano</option></select></label>
 <label class="row"><input type="checkbox" id="cu"><span data-i="ctl"></span></label>
@@ -263,12 +336,12 @@ r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)}catch(e){no(e)}})}
 const tx=(st,m,f)=>new Promise((ok,no)=>{try{const q0=db.transaction(st,m),q=f(q0.objectStore(st));q0.oncomplete=()=>ok(q&&q.result);q0.onerror=()=>no(q0.error)}catch(e){no(e)}});
 async function load(){
  try{db=await open();items=await tx('games','readonly',s=>s.getAll())||[];
- const f=await tx('meta','readonly',s=>s.get('folders'));if(f)folders=f.map(x=>typeof x==='string'?{name:x,exts:[]}:x);const p=await tx('meta','readonly',s=>s.get('profile'));if(p)prof=p;const sk=await tx('meta','readonly',s=>s.get('skins'));if(sk)Object.assign(SK,sk);const ks=await tx('meta','readonly',s=>s.getAllKeys());(ks||[]).forEach(k=>{if(String(k).startsWith('st:'))HAS.add(+String(k).slice(3))})}catch(e){}
+ const f=await tx('meta','readonly',s=>s.get('folders'));if(f)folders=f.map(x=>typeof x==='string'?{name:x,exts:[]}:x);const p=await tx('meta','readonly',s=>s.get('profile'));if(p)prof=p;const sk=await tx('meta','readonly',s=>s.get('skins'));if(sk)Object.assign(SK,sk);const cvs=await tx('meta','readonly',s=>s.get('covers'));if(cvs)Object.assign(COV,cvs);const ks=await tx('meta','readonly',s=>s.getAllKeys());(ks||[]).forEach(k=>{if(String(k).startsWith('st:'))HAS.add(+String(k).slice(3))})}catch(e){}
  checkAch();applyLang();updNotes();renderBell();if(prof.id&&prof.num)publish().then(()=>startFr()).catch(e=>{if(String(e&&e.message||e).includes('taken'))note(ta('f_taken'))});
  else{if(prof.id)prof.set=true;claimId().then(()=>{renderProf();checkAch();return startFr()}).catch(()=>{if(prof.id)return publish().then(()=>startFr()).catch(()=>{})})}}
 const saveF=()=>tx('meta','readwrite',s=>s.put(folders,'folders')).catch(()=>{});
 const fo=n=>folders.find(f=>f.name===n);
-function draw(){
+function drawHome(){
  const tb=$('#tabs');tb.innerHTML='';
  ['Todos',...folders.map(f=>f.name)].forEach(n=>{const b=document.createElement('button');b.className='tab';const f=fo(n);
  b.textContent=lab(n)+(f&&f.exts.length?' · '+f.exts.join(' '):'')+' ('+items.filter(i=>n==='Todos'||i.folder===n).length+')';
@@ -280,15 +353,7 @@ function draw(){
  if(cur==='Sem pasta'&&v.length){const b=document.createElement('button');b.className='p';b.textContent=fxs('ai');b.onclick=autoOrg;bar.append(b)}
  if(bar.childNodes.length)l.append(bar);
  if(!v.length){const f=fo(cur),em=document.createElement('div');em.className='empty';em.textContent=(f&&f.exts.length?t('eF')+f.exts.join(', ')+'. ':'')+t('e0');l.append(em);return}
- v.forEach(i=>{const d=document.createElement('div');d.className='item';
- const n=document.createElement('div');n.className='n';n.textContent=i.name;const s=document.createElement('span');s.className='s';s.textContent=fmt(i.size)+' · '+lab(i.folder);n.append(s);
- const sel=document.createElement('select');sel.setAttribute('aria-label',t('mv'));
- folders.filter(f=>i.folder==='Sem pasta'||acc(f,i.name)||f.name===i.folder).forEach(f=>sel.add(new Option(lab(f.name),f.name,false,f.name===i.folder)));
- sel.onchange=async()=>{i.folder=sel.value;await tx('games','readwrite',s=>s.put(i));draw()};
- const pl=document.createElement('button');pl.className='p';pl.textContent=t('play');pl.onclick=()=>play(i);
- const dl=document.createElement('button');dl.textContent=t('dl');dl.onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(i.blob);a.download=i.name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)};
- const rm=document.createElement('button');rm.textContent=t('rm');rm.onclick=async()=>{await tx('games','readwrite',s=>s.delete(i.id));tx('meta','readwrite',s=>s.delete('st:'+i.id)).catch(()=>{});HAS.delete(i.id);items=items.filter(x=>x!==i);draw()};
- d.append(n,pl,sel,dl,rm);if(HAS.has(i.id)){const rs=document.createElement('button');rs.textContent='↺ '+ta('f_restart');rs.onclick=async()=>{await tx('meta','readwrite',s=>s.delete('st:'+i.id)).catch(()=>{});HAS.delete(i.id);draw()};d.append(rs)}l.append(d)})}
+ v.forEach(i=>l.append(gameRow(i)))}
 const FXT={pt:{d:'🗑 Excluir esta pasta',dq:'Excluir a pasta “%s”? Os jogos dela não serão apagados: vão para “%t”.',ai:'🔍 Identificar e organizar',ar:'%1 jogo(s) organizado(s). %2 sem identificação — escolha a pasta manualmente na lista de cada jogo.',n0:'Nenhum jogo para identificar.'},
 es:{d:'🗑 Eliminar esta carpeta',dq:'¿Eliminar la carpeta “%s”? Sus juegos no se borrarán: pasarán a “%t”.',ai:'🔍 Identificar y organizar',ar:'%1 juego(s) organizado(s). %2 sin identificar — elige la carpeta a mano en la lista de cada juego.',n0:'No hay juegos para identificar.'},
 en:{d:'🗑 Delete this folder',dq:'Delete the folder “%s”? Its games won’t be deleted: they move to “%t”.',ai:'🔍 Identify and organize',ar:'%1 game(s) organized. %2 not identified — pick the folder by hand in each game’s list.',n0:'No games to identify.'},
@@ -414,7 +479,7 @@ segaSaturn:{yabause_frameskip:'enabled'}};
 const X2={gba:{mgba_frameskip:'fixed_interval',mgba_frameskip_interval:'1'},snes:{snes9x_hires_blend:'disabled'},psp:{ppsspp_frameskip:'3',ppsspp_lazy_texture_caching:'enabled'},psx:{pcsx_rearmed_frameskip:'2'},nds:{desmume_frameskip:'2'},n64:{'mupen64plus-EnableFBEmulation':'False'},sega32x:{picodrive_frameskip:'manual'}};
 const PERF2=Object.fromEntries(Object.keys(PERF).map(k=>[k,Object.assign({},PERF[k],X2[k]||{})]));
 const CORES={'.gba':'gba','.gb':'gb','.gbc':'gb','.nes':'nes','.sfc':'snes','.smc':'snes','.z64':'n64','.n64':'n64','.v64':'n64','.nds':'nds','.md':'segaMD','.gen':'segaMD','.smd':'segaMD','.sms':'segaMS','.gg':'segaGG','.32x':'sega32x','.a26':'atari2600','.a52':'a5200','.a78':'atari7800','.lnx':'lynx','.j64':'jaguar','.jag':'jaguar','.pce':'pce','.ngp':'ngp','.ngc':'ngp','.vb':'vb','.col':'coleco'};
-async function play(i){
+async function play(i){try{cfg.last=cfg.last||{};cfg.last[i.id]=Date.now();saveCfg()}catch(e){}
  const fd=fo(i.folder),core=(fd&&fd.core)||CORES[ext(i.name)];
  if(!core||core==='none'){say(t('uns'));return}
  $('#player').classList.add('on');document.body.classList.add('ing');onPlay(core,i.name);wl();
@@ -622,11 +687,12 @@ const CH=[
 {id:'c-pxframe',code:'ZEO-MOLDURAPIXEL-8B3S',pt:'Moldura pixelada — código:',es:'Marco pixelado — código:',en:'Pixel frame — code:'},
 {id:'c-creator',own:1,pt:'👑 Moldura exclusiva do Criador liberada só para você! Abra Perfil → Molduras.',es:'👑 ¡Marco exclusivo del Creador desbloqueado solo para ti! Abre Perfil → Marcos.',en:'👑 The exclusive Creator frame is unlocked just for you! Open Profile → Frames.'},
 {id:'u-rot',pt:'Novo: botão de girar a tela (ligue em Configurações) e novas dicas na Ajuda sobre arquivos .cue, PSP e PS1.',es:'Nuevo: botón para girar la pantalla (actívalo en Configuración) y nuevos consejos en la Ayuda sobre archivos .cue, PSP y PS1.',en:'New: screen rotate button (turn it on in Settings) and new Help tips about .cue files, PSP and PS1.'},
+{id:'u-layout',pt:'Novo visual! Banner do Zeo, menu de baixo (Início, Biblioteca, Pastas, Configurações), jogos compactos com capa, favoritos, recentes e busca.',es:'¡Nuevo diseño! Banner de Zeo, menú inferior (Inicio, Biblioteca, Carpetas, Ajustes), juegos compactos con portada, favoritos, recientes y búsqueda.',en:'New look! Zeo banner, bottom menu (Home, Library, Folders, Settings), compact games with covers, favorites, recents and search.'},
 {id:'u-aud',pt:'Novo botão Ajustar áudio nas Configurações, para reduzir chiado e travadas no som (por jogo).',es:'Nuevo botón Ajustar audio en Configuración para reducir chasquidos y cortes de sonido (por juego).',en:'New Adjust audio button in Settings to reduce crackling and stutter (per game).'},
 {id:'u-help',pt:'Novo botão ? com perguntas e respostas para ajudar quem está começando.',es:'Nuevo botón ? con preguntas y respuestas para quien empieza.',en:'New ? button with questions and answers for newcomers.'},
 {id:'u-live',pt:'Avisos de atualização em tempo real: quando sair uma versão nova, o sininho te avisa.',es:'Avisos de actualización en tiempo real: cuando salga una versión nueva, la campanita te avisa.',en:'Live update alerts: when a new version is out, the bell tells you.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-10.11';let verSeen=APP_VER;
+const APP_VER='2026-10-10.12';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname,{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
@@ -781,6 +847,86 @@ async function rotateScreen(){const o=screen.orientation,land=o&&o.type?o.type.s
 $('#rot').onclick=rotateScreen;$('#rt').onchange=e=>{cfg.rot=e.target.checked;saveCfg();applyRot()};
 try{new MutationObserver(placeRot).observe($('#player'),{attributes:true,attributeFilter:['class']})}catch(e){}
 addEventListener('resize',placeRot);addEventListener('orientationchange',()=>setTimeout(placeRot,300));
+
+const LXT={pt:{home:'Início',lib:'Biblioteca',fol:'Pastas',set:'Configurações',online:'Online no emulador',tl:'Biblioteca',tr:'Recentes',tf:'Favoritos',ta:'Todos',sort:'Ordenar',sn:'Nome',ss:'Tamanho',sr:'Recentes',g1:'%n jogo',gn:'%n jogos',fav:'Favoritar',unfav:'Remover dos favoritos',tag:'JOGUE O QUE VOCÊ AMA',libsub:'SUA BIBLIOTECA DE JOGOS',ren:'Renomear',cov:'Trocar capa',rcov:'Remover capa',delg:'Remover “%s” do Zeo?',srch:'Buscar jogo...',foldt:'Pastas',fnew:'＋ Nova pasta',open:'Abrir',more:'Mais',empf:'Nenhum favorito ainda. Toque em ⋮ e depois em Favoritar.',empr:'Você ainda não jogou nada.',mvt:'Mover para a pasta',dels:'Excluir'},
+es:{home:'Inicio',lib:'Biblioteca',fol:'Carpetas',set:'Ajustes',online:'En línea en el emulador',tl:'Biblioteca',tr:'Recientes',tf:'Favoritos',ta:'Todos',sort:'Ordenar',sn:'Nombre',ss:'Tamaño',sr:'Recientes',g1:'%n juego',gn:'%n juegos',fav:'Marcar favorito',unfav:'Quitar de favoritos',tag:'JUEGA LO QUE AMAS',libsub:'TU BIBLIOTECA DE JUEGOS',ren:'Renombrar',cov:'Cambiar portada',rcov:'Quitar portada',delg:'¿Quitar “%s” de Zeo?',srch:'Buscar juego...',foldt:'Carpetas',fnew:'＋ Nueva carpeta',open:'Abrir',more:'Más',empf:'Aún no hay favoritos. Toca ⋮ y luego Marcar favorito.',empr:'Aún no has jugado nada.',mvt:'Mover a la carpeta',dels:'Eliminar'},
+en:{home:'Home',lib:'Library',fol:'Folders',set:'Settings',online:'Online in emulator',tl:'Library',tr:'Recent',tf:'Favorites',ta:'All',sort:'Sort',sn:'Name',ss:'Size',sr:'Recent',g1:'%n game',gn:'%n games',fav:'Favorite',unfav:'Remove from favorites',tag:'PLAY WHAT YOU LOVE',libsub:'YOUR GAME LIBRARY',ren:'Rename',cov:'Change cover',rcov:'Remove cover',delg:'Remove “%s” from Zeo?',srch:'Search game...',foldt:'Folders',fnew:'＋ New folder',open:'Open',more:'More',empf:'No favorites yet. Tap ⋮ then Favorite.',empr:'You haven’t played anything yet.',mvt:'Move to folder',dels:'Delete'},
+ru:{home:'Главная',lib:'Библиотека',fol:'Папки',set:'Настройки',online:'В сети в эмуляторе',tl:'Библиотека',tr:'Недавние',tf:'Избранное',ta:'Все',sort:'Сортировка',sn:'Имя',ss:'Размер',sr:'Недавние',g1:'%n игра',gn:'%n игр',fav:'В избранное',unfav:'Убрать из избранного'},
+ja:{home:'ホーム',lib:'ライブラリ',fol:'フォルダ',set:'設定',online:'エミュレーターでオンライン',tl:'ライブラリ',tr:'最近',tf:'お気に入り',ta:'すべて',sort:'並べ替え',sn:'名前',ss:'サイズ',sr:'最近',g1:'%n本',gn:'%n本',fav:'お気に入りに追加',unfav:'お気に入りから外す'},
+de:{home:'Start',lib:'Bibliothek',fol:'Ordner',set:'Einstellungen',online:'Online im Emulator',tl:'Bibliothek',tr:'Zuletzt',tf:'Favoriten',ta:'Alle',sort:'Sortieren',sn:'Name',ss:'Größe',sr:'Zuletzt',g1:'%n Spiel',gn:'%n Spiele',fav:'Favorit',unfav:'Aus Favoriten entfernen'},
+fr:{home:'Accueil',lib:'Bibliothèque',fol:'Dossiers',set:'Réglages',online:'En ligne dans l’émulateur',tl:'Bibliothèque',tr:'Récents',tf:'Favoris',ta:'Tous',sort:'Trier',sn:'Nom',ss:'Taille',sr:'Récents',g1:'%n jeu',gn:'%n jeux',fav:'Favori',unfav:'Retirer des favoris'},
+it:{home:'Home',lib:'Libreria',fol:'Cartelle',set:'Impostazioni',online:'Online nell’emulatore',tl:'Libreria',tr:'Recenti',tf:'Preferiti',ta:'Tutti',sort:'Ordina',sn:'Nome',ss:'Dimensione',sr:'Recenti',g1:'%n gioco',gn:'%n giochi',fav:'Preferito',unfav:'Rimuovi dai preferiti'}};
+const lx=k=>{const a=LXT[cfg.lang];return (a&&a[k]!==undefined)?a[k]:LXT.en[k]};
+const COV={};let VIEW='home',LT='lib',LF='',QS='',SORT='name',covFor=null;
+const ABBR={'GBA':'GBA','Game Boy':'GB','Game Boy Color':'GBC','NES':'NES','SNES':'SNES','Nintendo 64':'N64','Nintendo DS':'DS','Mega Drive':'MD','PlayStation':'PS1','PSP':'PSP','Sega Saturn':'SAT','WonderSwan':'WS','Master System':'SMS','Game Gear':'GG','Sega 32X':'32X','Sega CD':'SCD','Atari 2600':'2600','Atari 5200':'5200','Atari 7800':'7800','Atari Lynx':'LYNX','Atari Jaguar':'JAG','PC Engine':'PCE','Neo Geo Pocket':'NGP','Virtual Boy':'VB','ColecoVision':'COL','Arcade':'ARC','Sem pasta':'?'};
+const hue=s=>{let x=0;for(const c of String(s))x=(x*31+c.charCodeAt(0))%360;return x};
+const cleanN=n=>n.replace(/\.[^.]+$/,'');
+const gtitle=i=>i.title||cleanN(i.name);
+const isFav=i=>!!(cfg.fav&&cfg.fav[i.id]);
+const saveCov=()=>tx('meta','readwrite',s=>s.put(COV,'covers')).catch(()=>{});
+function tile(i,fname){const d=document.createElement('div');d.className='cv';const u=i&&COV[i.id];
+ if(u){d.style.backgroundImage='url("'+u+'")'}else{const f=fname||i.folder,hh=hue(f);d.style.background='linear-gradient(145deg,hsl('+hh+' 62% 44%),hsl('+((hh+45)%360)+' 70% 22%))';d.textContent=ABBR[f]||String(f).replace(/[^A-Za-z0-9]/g,'').slice(0,3).toUpperCase()||'🎮'}return d}
+function gameRow(i){const d=document.createElement('div');d.className='gi';
+ const g=document.createElement('div');g.className='gt';const b=document.createElement('b');b.textContent=gtitle(i);const s=document.createElement('span');s.textContent='🎮 '+fmt(i.size)+' · '+lab(i.folder)+(isFav(i)?' · ★':'');g.append(b,s);
+ const pl=document.createElement('button');pl.className='gp';pl.textContent='▶ '+t('play');pl.onclick=()=>play(i);
+ const mb=document.createElement('button');mb.className='gm';mb.textContent='⋮';mb.setAttribute('aria-label',lx('more'));mb.onclick=()=>gameMenu(i);
+ d.append(tile(i),g,pl,mb);return d}
+function openSheet(title,build){const l=$('#gml');l.innerHTML='';$('#gmt').textContent=title;$('#gmx').textContent=cx('cl');
+ const add=(txt,fn,cls)=>{const b=document.createElement('button');b.textContent=txt;b.style.cssText='display:block;width:100%;text-align:left;margin-bottom:8px';if(cls)b.className=cls;b.onclick=async()=>{$('#gm').classList.remove('on');await fn()};l.append(b)};
+ build(l,add);$('#gm').classList.add('on')}
+$('#gmx').onclick=()=>$('#gm').classList.remove('on');
+const putGame=i=>tx('games','readwrite',s=>s.put(i)).catch(()=>{});
+function gameMenu(i){openSheet(gtitle(i),(l,add)=>{
+ add((isFav(i)?'★ '+lx('unfav'):'☆ '+lx('fav')),()=>{cfg.fav=cfg.fav||{};if(isFav(i))delete cfg.fav[i.id];else cfg.fav[i.id]=1;saveCfg();draw()});
+ add('✏️ '+lx('ren'),async()=>{const n=prompt(lx('ren'),gtitle(i));if(n===null)return;i.title=n.trim();await putGame(i);draw()});
+ const mv=document.createElement('select');mv.style.cssText='display:block;width:100%;margin-bottom:8px';mv.setAttribute('aria-label',lx('mvt'));
+ folders.filter(f=>i.folder==='Sem pasta'||acc(f,i.name)||f.name===i.folder).forEach(f=>mv.add(new Option('📁 '+lx('mvt')+': '+lab(f.name),f.name,false,f.name===i.folder)));
+ mv.onchange=async()=>{$('#gm').classList.remove('on');i.folder=mv.value;await putGame(i);draw()};l.append(mv);
+ add('🖼 '+lx('cov'),()=>{covFor=i;$('#cvf').click()});
+ if(COV[i.id])add('✕ '+lx('rcov'),async()=>{delete COV[i.id];await saveCov();draw()});
+ if(HAS.has(i.id))add('↺ '+ta('f_restart'),async()=>{await tx('meta','readwrite',s=>s.delete('st:'+i.id)).catch(()=>{});HAS.delete(i.id);draw()});
+ add('⬇ '+t('dl'),()=>{const a=document.createElement('a');a.href=URL.createObjectURL(i.blob);a.download=i.name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)});
+ add('🗑 '+t('rm'),async()=>{if(!confirm(lx('delg').replace('%s',gtitle(i))))return;await tx('games','readwrite',s=>s.delete(i.id));tx('meta','readwrite',s=>s.delete('st:'+i.id)).catch(()=>{});HAS.delete(i.id);delete COV[i.id];items=items.filter(x=>x!==i);draw()})})}
+$('#cvf').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f||!covFor)return;
+ try{const bm=await createImageBitmap(f),sc=Math.min(1,260/Math.max(bm.width,bm.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(bm.width*sc));c.height=Math.max(1,Math.round(bm.height*sc));c.getContext('2d').drawImage(bm,0,0,c.width,c.height);
+  COV[covFor.id]=c.toDataURL('image/jpeg',.85);await saveCov();draw()}catch(x){note(ta('f_err'))}};
+function setView(v){if(v==='set'){$('#set').click();return}VIEW=v;
+ $('#vHome').hidden=v!=='home';$('#vLib').hidden=v!=='lib';$('#vFol').hidden=v!=='fol';document.body.classList.toggle('nh',v!=='home');
+ if(v==='lib'&&(!LF||!fo(LF))){const f=folders.find(x=>items.some(i=>i.folder===x.name))||folders[0];LF=f?f.name:''}
+ scrollTo(0,0);draw()}
+function renderNav(){const m={home:'home',lib:'lib',fol:'fol',set:'set'};Object.keys(m).forEach(k=>{const e=$('#nv_'+k);if(e)e.textContent=lx(k)});
+ document.querySelectorAll('#bn button').forEach(b=>b.classList.toggle('on',b.dataset.v===VIEW));
+ const tg=$('#bntag');if(tg)tg.textContent=lx('tag');const o=$('#onl');if(o)o.textContent=navigator.onLine?lx('online'):''}
+document.querySelectorAll('#bn button').forEach(b=>b.onclick=()=>setView(b.dataset.v));
+addEventListener('online',renderNav);addEventListener('offline',renderNav);
+const cnt=n=>(n===1?lx('g1'):lx('gn')).replace('%n',n);
+function libItems(){let v=items.slice();
+ if(LT==='recent')v=v.filter(i=>cfg.last&&cfg.last[i.id]).sort((a,b)=>cfg.last[b.id]-cfg.last[a.id]);
+ else{if(LT==='fav')v=v.filter(isFav);else if(LT==='lib')v=v.filter(i=>i.folder===LF);
+  if(SORT==='size')v.sort((a,b)=>b.size-a.size);else if(SORT==='recent')v.sort((a,b)=>((cfg.last&&cfg.last[b.id])||0)-((cfg.last&&cfg.last[a.id])||0));else v.sort((a,b)=>gtitle(a).localeCompare(gtitle(b)))}
+ if(QS)v=v.filter(i=>gtitle(i).toLowerCase().includes(QS));return v}
+function drawLibList(){const l=$('#llist');l.innerHTML='';const v=libItems();
+ const hd=$('#lhead');hd.innerHTML='';const hn=document.createElement('div');hn.className='hn';const b=document.createElement('b');b.textContent=LT==='lib'?lab(LF):lx({recent:'tr',fav:'tf',all:'ta'}[LT]);const s=document.createElement('small');s.textContent=cnt(v.length);hn.append(b,s);hd.append(hn);
+ if(LT!=='recent'){const so=document.createElement('select');so.setAttribute('aria-label',lx('sort'));[['name','sn'],['size','ss'],['recent','sr']].forEach(([k,n])=>so.add(new Option(lx('sort')+': '+lx(n),k,false,k===SORT)));so.onchange=()=>{SORT=so.value;drawLibList()};hd.append(so)}
+ if(!v.length){const em=document.createElement('div');em.className='empty';em.textContent=LT==='fav'?lx('empf'):LT==='recent'?lx('empr'):t('e0');l.append(em);return}
+ v.forEach(i=>l.append(gameRow(i)))}
+function drawLib(){$('#lsub').textContent=lx('libsub');$('#lq').placeholder=lx('srch');
+ const tb=$('#ltabs');tb.innerHTML='';[['lib','tl'],['recent','tr'],['fav','tf'],['all','ta']].forEach(([k,n])=>{const b=document.createElement('button');b.textContent=({lib:'📚 ',recent:'🕘 ',fav:'♡ ',all:'▦ '})[k]+lx(n);b.setAttribute('aria-pressed',LT===k);b.onclick=()=>{LT=k;drawLib()};tb.append(b)});
+ const sd=$('#lside');sd.innerHTML='';
+ if(LT==='lib')folders.forEach(f=>{const n=items.filter(i=>i.folder===f.name).length,b=document.createElement('button');b.className='sd';b.setAttribute('aria-pressed',f.name===LF);
+  const tl=tile(null,f.name),d=document.createElement('div'),nm=document.createElement('b'),sm=document.createElement('small');nm.textContent=lab(f.name);sm.textContent=cnt(n);d.append(nm,sm);b.append(tl,d);b.onclick=()=>{LF=f.name;drawLib()};sd.append(b)});
+ drawLibList()}
+function drawFol(){$('#ftit').textContent=lx('foldt');$('#fsub').textContent=cnt(items.length);$('#fnew').textContent=lx('fnew');
+ const l=$('#flist');l.innerHTML='';folders.forEach(f=>{const n=items.filter(i=>i.folder===f.name).length,c=document.createElement('div');c.className='fc';
+  const d=document.createElement('div'),nm=document.createElement('b'),sm=document.createElement('small');nm.textContent=lab(f.name);sm.textContent=cnt(n)+(f.exts&&f.exts.length?' · '+f.exts.join(' '):'');d.append(nm,sm);
+  const ob=document.createElement('button');ob.textContent=lx('open');ob.onclick=()=>{LF=f.name;LT='lib';setView('lib')};c.append(tile(null,f.name),d,ob);
+  if(f.name!=='Sem pasta'){const db=document.createElement('button');db.textContent='🗑';db.setAttribute('aria-label',lx('dels'));db.onclick=()=>delFolder(f.name);c.append(db)}
+  l.append(c)})}
+function draw(){drawHome();if(VIEW==='lib')drawLib();else if(VIEW==='fol')drawFol();renderNav()}
+$('#lsrch').onclick=()=>{const w=$('#lsw');w.hidden=!w.hidden;if(!w.hidden)$('#lq').focus();else{QS='';$('#lq').value='';drawLibList()}};
+$('#lq').oninput=e=>{QS=e.target.value.trim().toLowerCase();drawLibList()};
+$('#lmore').onclick=()=>openSheet(lx('lib'),(l,add)=>{add('🎮 '+t('add'),()=>{setView('home');$('#add').click()});add('🗂 '+t('nf'),()=>{setView('home');$('#nf').click()})});
+$('#fnew').onclick=()=>{setView('home');$('#nf').click()};
 
 load();
 if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").then(()=>navigator.serviceWorker.ready).then(()=>{if(!window.crossOriginIsolated&&!/noiso/.test(location.search)&&!sessionStorage.getItem('zeoiso')&&navigator.serviceWorker.controller){sessionStorage.setItem('zeoiso','1');location.reload()}}).catch(()=>{})}catch(e){}}
