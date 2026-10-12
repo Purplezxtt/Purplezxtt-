@@ -738,11 +738,12 @@ const CH=[
 {id:'c-old',code:'ZEO-CLASSICO-6P2D',pt:'Tema Clássico (as cores do Zeo antigo) — código:',es:'Tema Clásico (los colores del Zeo antiguo) — código:',en:'Classic theme (the old Zeo colors) — code:'},
 {id:'u-voice',pt:'Novo: áudio no chat de amigos! Toque em Gravar áudio, abaixo do botão Enviar. Também corrigi a conquista secreta das letras do título.',es:'¡Nuevo: audio en el chat de amigos! Toca Grabar audio, debajo del botón Enviar. También arreglé el logro secreto de las letras del título.',en:'New: voice messages in friends chat! Tap Record audio, under the Send button. Also fixed the secret achievement for the title letters.'},
 {id:'u-group',pt:'Novo: grupos! Em Amigos, toque em Criar grupo (ao lado de Concluir). Chat em grupo com texto e áudio.',es:'¡Nuevo: grupos! En Amigos toca Crear grupo (junto a Concluir). Chat de grupo con texto y audio.',en:'New: groups! In Friends tap Create group (next to Done). Group chat with text and voice messages.'},
+{id:'u-grole',pt:'Grupos com cargos! Dono, ADM, Vice-ADM e Recruta, perfil do grupo (nome e foto), lista de membros, banir e @everyone.',es:'¡Grupos con rangos! Dueño, ADM, Vice-ADM y Recluta, perfil del grupo (nombre y foto), lista de miembros, banear y @everyone.',en:'Groups with roles! Owner, Admin, Vice-Admin and Recruit, group profile (name and photo), member list, ban and @everyone.'},
 {id:'u-aud',pt:'Novo botão Ajustar áudio nas Configurações, para reduzir chiado e travadas no som (por jogo).',es:'Nuevo botón Ajustar audio en Configuración para reducir chasquidos y cortes de sonido (por juego).',en:'New Adjust audio button in Settings to reduce crackling and stutter (per game).'},
 {id:'u-help',pt:'Novo botão ? com perguntas e respostas para ajudar quem está começando.',es:'Nuevo botón ? con preguntas y respuestas para quien empieza.',en:'New ? button with questions and answers for newcomers.'},
 {id:'u-live',pt:'Avisos de atualização em tempo real: quando sair uma versão nova, o sininho te avisa.',es:'Avisos de actualización en tiempo real: cuando salga una versión nueva, la campanita te avisa.',en:'Live update alerts: when a new version is out, the bell tells you.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-10.16';let verSeen=APP_VER;
+const APP_VER='2026-10-10.17';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname,{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
@@ -984,18 +985,41 @@ $('#lq').oninput=e=>{QS=e.target.value.trim().toLowerCase();drawLibList()};
 $('#lmore').onclick=()=>openSheet(lx('lib'),(l,add)=>{add('🎮 '+t('add'),()=>{setView('home');$('#add').click()});add('🗂 '+t('nf'),()=>{setView('home');$('#nf').click()})});
 $('#fnew').onclick=()=>{setView('home');$('#nf').click()};
 
-const GXT={pt:{gnew:'Criar grupo',gname:'Nome do grupo',gpick:'Marque os amigos que vão entrar. O grupo tem de 2 a 20 pessoas, contando com você.',gcreate:'Criar',gleave:'Sair do grupo',gdel:'Apagar grupo',gmem:'%n membros',gmin:'Marque pelo menos 1 amigo.',gmax:'O grupo aceita no máximo 20 pessoas.',gempty:'Você ainda não tem amigos para colocar no grupo.',gleaveq:'Sair do grupo “%s”?',gdelq:'Apagar o grupo “%s” para todo mundo?'},
-es:{gnew:'Crear grupo',gname:'Nombre del grupo',gpick:'Marca a los amigos que entrarán. El grupo tiene de 2 a 20 personas, contándote a ti.',gcreate:'Crear',gleave:'Salir del grupo',gdel:'Eliminar grupo',gmem:'%n miembros',gmin:'Marca al menos 1 amigo.',gmax:'El grupo admite como máximo 20 personas.',gempty:'Aún no tienes amigos para añadir al grupo.',gleaveq:'¿Salir del grupo “%s”?',gdelq:'¿Eliminar el grupo “%s” para todos?'},
-en:{gnew:'Create group',gname:'Group name',gpick:'Tick the friends who will join. A group has 2 to 20 people, counting you.',gcreate:'Create',gleave:'Leave group',gdel:'Delete group',gmem:'%n members',gmin:'Tick at least 1 friend.',gmax:'A group takes at most 20 people.',gempty:'You don’t have friends to add to a group yet.',gleaveq:'Leave the group “%s”?',gdelq:'Delete the group “%s” for everyone?'},
-ru:{gnew:'Создать группу',gname:'Название группы',gcreate:'Создать',gleave:'Выйти из группы',gdel:'Удалить группу',gmem:'%n участников'},
-ja:{gnew:'グループを作成',gname:'グループ名',gcreate:'作成',gleave:'グループを退出',gdel:'グループを削除',gmem:'%n人'},
-de:{gnew:'Gruppe erstellen',gname:'Gruppenname',gcreate:'Erstellen',gleave:'Gruppe verlassen',gdel:'Gruppe löschen',gmem:'%n Mitglieder'},
-fr:{gnew:'Créer un groupe',gname:'Nom du groupe',gcreate:'Créer',gleave:'Quitter le groupe',gdel:'Supprimer le groupe',gmem:'%n membres'},
-it:{gnew:'Crea gruppo',gname:'Nome del gruppo',gcreate:'Crea',gleave:'Esci dal gruppo',gdel:'Elimina gruppo',gmem:'%n membri'}};
+const GXT={pt:{rowner:'Dono',radm:'ADM',rvice:'Vice-ADM',rrec:'Recruta',ginfo:'Perfil do grupo',gren:'Mudar nome',gphoto:'Mudar foto',gadd:'Adicionar membros',gmembers:'Membros',gbanned:'Banidos',gunban:'Desbanir',ggive:'Dar %r',gdemote:'Rebaixar',gremove:'Remover do grupo',gban:'Banir do grupo',gyou:'(você)',gnoev:'Só Dono, ADM e Vice-ADM podem usar @everyone.',gout:'Você não está mais neste grupo.',gremq:'Remover %s do grupo?',gbanq:'Banir %s do grupo? Ele só volta se for desbanido e adicionado de novo.',gaddgo:'Adicionar',gfull:'O grupo já está cheio (20 pessoas).',gcadm:'Se você der ADM, você vira Vice-ADM. Continuar?',gcvice:'Se você der Vice-ADM, você vira Recruta. Continuar?',gnew:'Criar grupo',gname:'Nome do grupo',gpick:'Marque os amigos que vão entrar. O grupo tem de 2 a 20 pessoas, contando com você.',gcreate:'Criar',gleave:'Sair do grupo',gdel:'Apagar grupo',gmem:'%n membros',gmin:'Marque pelo menos 1 amigo.',gmax:'O grupo aceita no máximo 20 pessoas.',gempty:'Você ainda não tem amigos para colocar no grupo.',gleaveq:'Sair do grupo “%s”?',gdelq:'Apagar o grupo “%s” para todo mundo?'},
+es:{rowner:'Dueño',radm:'ADM',rvice:'Vice-ADM',rrec:'Recluta',ginfo:'Perfil del grupo',gren:'Cambiar nombre',gphoto:'Cambiar foto',gadd:'Añadir miembros',gmembers:'Miembros',gbanned:'Baneados',gunban:'Desbanear',ggive:'Dar %r',gdemote:'Bajar de rango',gremove:'Quitar del grupo',gban:'Banear del grupo',gyou:'(tú)',gnoev:'Solo Dueño, ADM y Vice-ADM pueden usar @everyone.',gout:'Ya no estás en este grupo.',gremq:'¿Quitar a %s del grupo?',gbanq:'¿Banear a %s del grupo? Solo vuelve si lo desbanean y lo añaden de nuevo.',gaddgo:'Añadir',gfull:'El grupo ya está lleno (20 personas).',gcadm:'Si das ADM, pasas a Vice-ADM. ¿Continuar?',gcvice:'Si das Vice-ADM, pasas a Recluta. ¿Continuar?',gnew:'Crear grupo',gname:'Nombre del grupo',gpick:'Marca a los amigos que entrarán. El grupo tiene de 2 a 20 personas, contándote a ti.',gcreate:'Crear',gleave:'Salir del grupo',gdel:'Eliminar grupo',gmem:'%n miembros',gmin:'Marca al menos 1 amigo.',gmax:'El grupo admite como máximo 20 personas.',gempty:'Aún no tienes amigos para añadir al grupo.',gleaveq:'¿Salir del grupo “%s”?',gdelq:'¿Eliminar el grupo “%s” para todos?'},
+en:{rowner:'Owner',radm:'Admin',rvice:'Vice-Admin',rrec:'Recruit',ginfo:'Group profile',gren:'Change name',gphoto:'Change photo',gadd:'Add members',gmembers:'Members',gbanned:'Banned',gunban:'Unban',ggive:'Make %r',gdemote:'Demote',gremove:'Remove from group',gban:'Ban from group',gyou:'(you)',gnoev:'Only Owner, Admin and Vice-Admin can use @everyone.',gout:'You are no longer in this group.',gremq:'Remove %s from the group?',gbanq:'Ban %s from the group? They only return if unbanned and added again.',gaddgo:'Add',gfull:'The group is full (20 people).',gcadm:'If you give Admin, you become Vice-Admin. Continue?',gcvice:'If you give Vice-Admin, you become Recruit. Continue?',gnew:'Create group',gname:'Group name',gpick:'Tick the friends who will join. A group has 2 to 20 people, counting you.',gcreate:'Create',gleave:'Leave group',gdel:'Delete group',gmem:'%n members',gmin:'Tick at least 1 friend.',gmax:'A group takes at most 20 people.',gempty:'You don’t have friends to add to a group yet.',gleaveq:'Leave the group “%s”?',gdelq:'Delete the group “%s” for everyone?'},
+ru:{rowner:'Владелец',radm:'Админ',rvice:'Вице-админ',rrec:'Новичок',gnew:'Создать группу',gname:'Название группы',gcreate:'Создать',gleave:'Выйти из группы',gdel:'Удалить группу',gmem:'%n участников'},
+ja:{rowner:'オーナー',radm:'管理者',rvice:'副管理者',rrec:'新人',gnew:'グループを作成',gname:'グループ名',gcreate:'作成',gleave:'グループを退出',gdel:'グループを削除',gmem:'%n人'},
+de:{rowner:'Besitzer',radm:'Admin',rvice:'Vize-Admin',rrec:'Rekrut',gnew:'Gruppe erstellen',gname:'Gruppenname',gcreate:'Erstellen',gleave:'Gruppe verlassen',gdel:'Gruppe löschen',gmem:'%n Mitglieder'},
+fr:{rowner:'Propriétaire',radm:'Admin',rvice:'Vice-admin',rrec:'Recrue',gnew:'Créer un groupe',gname:'Nom du groupe',gcreate:'Créer',gleave:'Quitter le groupe',gdel:'Supprimer le groupe',gmem:'%n membres'},
+it:{rowner:'Proprietario',radm:'Admin',rvice:'Vice-admin',rrec:'Recluta',gnew:'Crea gruppo',gname:'Nome del gruppo',gcreate:'Crea',gleave:'Esci dal gruppo',gdel:'Elimina gruppo',gmem:'%n membri'}};
 const gx=k=>{const a=GXT[cfg.lang];return (a&&a[k]!==undefined)?a[k]:GXT.en[k]};
 let GROUPS=[];
-function grpWatch(f){const{collection,query,where,onSnapshot}=f.fs;onSnapshot(query(collection(f.db,'groups'),where('members','array-contains',f.uid)),s=>{GROUPS=s.docs.map(d=>({id:d.id,...d.data()}));frRefresh()},()=>{})}
-function grow(g){const e=document.createElement('div');e.className='fi';const a=document.createElement('div');a.className='gav';a.textContent='👥';const n=document.createElement('div');n.className='nm';n.textContent=g.name+' · '+gx('gmem').replace('%n',(g.members||[]).length);e.append(a,n,mkb(ta('f_chat'),()=>openGroup(g),1));return e}
+const GW={};let GV=null;
+const gRole=(g,u)=>u===g.owner?'owner':((g.roles&&g.roles[u])||'rec');
+const isStaff=(g,u)=>gRole(g,u)!=='rec';
+const rbadge=r=>r==='owner'?'👑 '+gx('rowner'):r==='adm'?'⭐ '+gx('radm'):r==='vice'?'🛡 '+gx('rvice'):'';
+const RANK={rec:1,vice:2,adm:3};
+function canRemove(g,a,t){if(a===t||t===g.owner)return false;const ra=gRole(g,a);if(ra==='owner'||ra==='adm')return true;if(ra==='vice')return gRole(g,t)==='rec';return false}
+function canGive(g,a,t,nr){if(a===t||t===g.owner)return false;const ra=gRole(g,a),rt=gRole(g,t);if(RANK[nr]<=RANK[rt])return false;if(ra==='owner'||ra==='adm')return true;if(ra==='vice')return nr==='vice'&&rt==='rec';return false}
+const costRole=(g,a,nr)=>{const ra=gRole(g,a);return ra==='adm'&&nr==='adm'?'vice':(ra==='vice'&&nr==='vice'?'rec':null)};
+const gref=g=>FB.fs.doc(FB.db,'groups',g.id),gupd=(g,o)=>FB.fs.updateDoc(gref(g),o),delF=()=>FB.fs.deleteField();
+async function doGive(g,a,t,nr){const o={};o['roles.'+t]=nr;const c=costRole(g,a,nr);if(c)o['roles.'+a]=c==='rec'?delF():c;await gupd(g,o)}
+async function doDemote(g,t){const nr=gRole(g,t)==='adm'?'vice':'rec';await gupd(g,{['roles.'+t]:nr==='rec'?delF():nr})}
+async function doRemove(g,t,ban){const o={members:FB.fs.arrayRemove(t),['roles.'+t]:delF(),['mem.'+t]:delF()};if(ban)o['banned.'+t]=(g.mem&&g.mem[t])||'?';await gupd(g,o)}
+const memId=(g,u)=>u===g.owner?(g.ownerId||(g.mem&&g.mem[u])||''):((g.mem&&g.mem[u])||'');
+function gAv(g,px){if(g.photo){const i=document.createElement('img');i.className='av';i.alt='';i.src=g.photo;i.style.cssText='width:'+px+'px;height:'+px+'px;border-radius:50%;object-fit:cover;flex:none';return i}
+ const a=document.createElement('div');a.className='gav';a.textContent='👥';a.style.cssText='width:'+px+'px;height:'+px+'px;font-size:'+Math.round(px*.5)+'px';return a}
+function grpWatch(f){const{collection,query,where,onSnapshot}=f.fs;onSnapshot(query(collection(f.db,'groups'),where('members','array-contains',f.uid)),s=>{GROUPS=s.docs.map(d=>({id:d.id,...d.data()}));grpMsgWatch(f);
+ if(chatKey&&(chatKey.startsWith('g:')||chatKey.startsWith('gi:'))){const id=chatKey.slice(chatKey.indexOf(':')+1),g=GROUPS.find(x=>x.id===id);if(!g){frHome();note(gx('gout'))}else if(GV)GV(g)}else frRefresh()},()=>{})}
+function grpMsgWatch(f){const{collection,query,orderBy,limitToLast,onSnapshot}=f.fs;
+ Object.keys(GW).forEach(id=>{if(!GROUPS.find(g=>g.id===id)){GW[id]();delete GW[id];delete UNR['g:'+id]}});
+ GROUPS.forEach(g=>{if(GW[g.id])return;let first=1;
+  GW[g.id]=onSnapshot(query(collection(f.db,'groups',g.id,'msgs'),orderBy('t'),limitToLast(1)),s=>{if(first){first=0;return}
+   s.docChanges().forEach(c=>{if(c.type!=='added')return;const m=c.doc.data();if(m.fromUid===f.uid||chatKey==='g:'+g.id)return;
+    UNR['g:'+g.id]=(UNR['g:'+g.id]||0)+1;badge();const cg=GROUPS.find(x=>x.id===g.id)||g,ev=/@everyone/i.test(m.text||'');
+    notify((ev?'📣 @everyone · ':'')+cg.name,(m.name||('ID '+m.from))+': '+(m.aud?'🎤 '+cx('vm'):m.text),'g:'+g.id)});frRefresh()},()=>{})})}
+function grow(g){const e=document.createElement('div');e.className='fi';const n=document.createElement('div');n.className='nm';n.textContent=g.name+' · '+gx('gmem').replace('%n',(g.members||[]).length);const u=UNR['g:'+g.id];e.append(gAv(g,40),n,mkb(ta('f_chat')+(u?' ('+u+')':''),()=>openGroup(g),1));return e}
 function makeRec(arow,sendAud){let mr=null,chunks=[],stream=null,rt0=0,tm=null,cancelled=false;
  const mic=mkb('🎤 '+cx('rec'),()=>startRec());mic.style.flex='1';
  const resetUI=()=>{clearInterval(tm);arow.innerHTML='';arow.append(mic)};
@@ -1018,39 +1042,88 @@ function makeRec(arow,sendAud){let mr=null,chunks=[],stream=null,rt0=0,tm=null,c
   tm=setInterval(()=>{const s=Math.floor((Date.now()-rt0)/1000);lb.textContent='🔴 '+Math.floor(s/60)+':'+String(s%60).padStart(2,'0');if(s>=60&&mr.state==='recording')mr.stop()},250);
   arow.append(lb,mkb('✕',()=>{cancelled=true;if(mr.state==='recording')mr.stop()}),mkb('➤ '+cx('asend'),()=>{if(mr.state==='recording')mr.stop()},1))}
  resetUI()}
-function openGroup(g){chatKey='g:'+g.id;const b=$('#frb');b.innerHTML='';const col=FB.fs.collection(FB.db,'groups',g.id,'msgs'),mine=g.owner===FB.uid;
- const hd=document.createElement('div');hd.className='row';const t0=document.createElement('b');t0.style.flex='1';t0.textContent='👥 '+g.name+' · '+gx('gmem').replace('%n',(g.members||[]).length);hd.append(mkb('←',frHome),t0);
+function msgNodes(text){const f=document.createDocumentFragment();String(text||'').split(/(@everyone)/i).forEach(p=>{if(/^@everyone$/i.test(p)){const s=document.createElement('b');s.textContent=p;s.style.cssText='color:#ffd23f';f.append(s)}else f.append(document.createTextNode(p))});return f}
+function openGroup(g0){let cg=g0;chatKey='g:'+g0.id;delete UNR['g:'+g0.id];badge();const b=$('#frb');b.innerHTML='';const col=FB.fs.collection(FB.db,'groups',g0.id,'msgs');
+ const hd=document.createElement('div');hd.className='row';
+ const renderHd=()=>{hd.innerHTML='';const t0=document.createElement('b');t0.style.cssText='flex:1;min-width:0;display:flex;align-items:center;gap:8px;cursor:pointer';t0.append(gAv(cg,34),document.createTextNode(cg.name+' · '+gx('gmem').replace('%n',(cg.members||[]).length)));t0.onclick=()=>openGroupInfo(cg);hd.append(mkb('←',frHome),t0)};
+ renderHd();GV=g=>{cg=g;renderHd()};
  const act=document.createElement('div');act.className='row';
- const ab=mkb(mine?gx('gdel'):gx('gleave'),async()=>{if(!confirm((mine?gx('gdelq'):gx('gleaveq')).replace('%s',g.name)))return;
-  try{if(mine)await FB.fs.deleteDoc(FB.fs.doc(FB.db,'groups',g.id));else await FB.fs.updateDoc(FB.fs.doc(FB.db,'groups',g.id),{members:FB.fs.arrayRemove(FB.uid)});frHome()}catch(e){note(ta('f_err'))}});
+ const ib=mkb('ℹ️ '+gx('ginfo'),()=>openGroupInfo(cg));ib.style.cssText='padding:4px 10px;min-height:32px;font-size:13px';act.append(ib);
+ const mine=cg.owner===FB.uid;
+ const ab=mkb(mine?gx('gdel'):gx('gleave'),async()=>{if(!confirm((mine?gx('gdelq'):gx('gleaveq')).replace('%s',cg.name)))return;
+  try{if(mine)await FB.fs.deleteDoc(gref(cg));else await doRemove(cg,FB.uid,false);frHome()}catch(e){note(ta('f_err'))}});
  ab.style.cssText='padding:4px 10px;min-height:32px;font-size:13px';act.append(ab);
  const ms=document.createElement('div');ms.id='msgs';
  const inp=document.createElement('input');inp.type='text';inp.maxLength=500;inp.placeholder=ta('f_msg');inp.style.cssText='flex:1;min-width:0';
  const base=()=>({fromUid:FB.uid,from:prof.id,name:prof.name||('ID '+prof.id),t:Date.now()});
- const send=async()=>{const x=inp.value.trim();if(!x)return;inp.value='';try{await FB.fs.addDoc(col,Object.assign(base(),{text:x}))}catch(e){note(ta('f_err'))}};
+ const send=async()=>{const x=inp.value.trim();if(!x)return;if(/@everyone/i.test(x)&&!isStaff(cg,FB.uid)){note(gx('gnoev'));return}inp.value='';try{await FB.fs.addDoc(col,Object.assign(base(),{text:x}))}catch(e){note(ta('f_err'))}};
  inp.onkeydown=e=>{if(e.key==='Enter')send()};
  const cr=document.createElement('div');cr.className='row';cr.append(inp,mkb(ta('f_send'),send,1));
  const arow=document.createElement('div');arow.className='row';makeRec(arow,(url,dur)=>FB.fs.addDoc(col,Object.assign(base(),{text:'',aud:url,dur})));
  b.append(hd,act,ms,cr,arow);
  const{query,orderBy,limitToLast,onSnapshot}=FB.fs;
  chatU=onSnapshot(query(col,orderBy('t'),limitToLast(100)),s=>{ms.innerHTML='';s.docs.forEach(d=>{const m=d.data(),me=m.fromUid===FB.uid,e=document.createElement('div');e.className='mb'+(me?' me':'');
-  if(!me){const nx=document.createElement('small');nx.textContent=m.name||('ID '+m.from);nx.style.cssText='display:block;margin:0 0 2px;font-weight:700';e.append(nx)}
-  if(m.aud){const a=document.createElement('audio');a.controls=true;a.preload='metadata';a.src=m.aud;e.append(a);if(m.dur){const sm=document.createElement('small');sm.textContent='🎤 '+Math.floor(m.dur/60)+':'+String(m.dur%60).padStart(2,'0');e.append(sm)}}else e.append(document.createTextNode(m.text||''));
-  if(me){const x=document.createElement('button');x.className='xm';x.textContent='🗑';x.setAttribute('aria-label',cx('del'));x.onclick=async()=>{if(!confirm(cx('delq')))return;try{await FB.fs.deleteDoc(FB.fs.doc(FB.db,'groups',g.id,'msgs',d.id))}catch(er){note(ta('f_err'))}};e.append(x)}
+  if(!me){const nx=document.createElement('small');const rb=rbadge(gRole(cg,m.fromUid));nx.textContent=(m.name||('ID '+m.from))+(rb?' · '+rb:'');nx.style.cssText='display:block;margin:0 0 2px;font-weight:700';e.append(nx)}
+  else{const rb=rbadge(gRole(cg,FB.uid));if(rb){const nx=document.createElement('small');nx.textContent=rb;nx.style.cssText='display:block;margin:0 0 2px;font-weight:700';e.append(nx)}}
+  if(m.aud){const a=document.createElement('audio');a.controls=true;a.preload='metadata';a.src=m.aud;e.append(a);if(m.dur){const sm=document.createElement('small');sm.textContent='🎤 '+Math.floor(m.dur/60)+':'+String(m.dur%60).padStart(2,'0');e.append(sm)}}else e.append(msgNodes(m.text));
+  if(me){const x=document.createElement('button');x.className='xm';x.textContent='🗑';x.setAttribute('aria-label',cx('del'));x.onclick=async()=>{if(!confirm(cx('delq')))return;try{await FB.fs.deleteDoc(FB.fs.doc(FB.db,'groups',g0.id,'msgs',d.id))}catch(er){note(ta('f_err'))}};e.append(x)}
   ms.append(e)});ms.scrollTop=ms.scrollHeight},()=>note(ta('f_err')))}
-function groupNew(){chatKey='gn';const b=$('#frb');b.innerHTML='';
+function friendPicker(skip){const list=document.createElement('div'),checks=[];let n=0;
+ REQ.filter(r=>r.status==='accepted').forEach(r=>{const o=r.from===prof.id?r.to:r.from,uid=r.fromUid===FB.uid?r.toUid:r.fromUid;if(skip&&skip(uid))return;n++;
+  const lb=document.createElement('label');lb.className='row';const cb=document.createElement('input');cb.type='checkbox';cb.style.cssText='width:22px;height:22px;flex:none';
+  const sp=document.createElement('span');sp.textContent='ID '+o;getP(o).then(p=>{if(p)sp.textContent=p.name+' · ID '+o}).catch(()=>{});lb.append(cb,sp);list.append(lb);checks.push([cb,uid,o])});
+ if(!n)list.textContent=gx('gempty');return{list,checks}}
+function groupNew(){chatKey='gn';GV=null;const b=$('#frb');b.innerHTML='';
  const hd=document.createElement('div');hd.className='row';const t0=document.createElement('b');t0.style.flex='1';t0.textContent='👥 '+gx('gnew');hd.append(mkb('←',frHome),t0);
  const nm=document.createElement('input');nm.type='text';nm.maxLength=40;nm.placeholder=gx('gname');nm.style.cssText='width:100%;margin:8px 0';
  const info=document.createElement('div');info.textContent=gx('gpick');info.style.cssText='color:var(--mut);font-size:13px;margin-bottom:8px';
- const list=document.createElement('div'),err=document.createElement('div');err.style.cssText='color:#ff8a8a;min-height:20px;margin:6px 0';
- const fl=REQ.filter(r=>r.status==='accepted'),checks=[];
- if(!fl.length)list.textContent=gx('gempty');
- fl.forEach(r=>{const o=r.from===prof.id?r.to:r.from,uid=r.fromUid===FB.uid?r.toUid:r.fromUid,lb=document.createElement('label');lb.className='row';
-  const cb=document.createElement('input');cb.type='checkbox';cb.style.cssText='width:22px;height:22px;flex:none';const sp=document.createElement('span');sp.textContent='ID '+o;getP(o).then(p=>{if(p)sp.textContent=p.name+' · ID '+o}).catch(()=>{});lb.append(cb,sp);list.append(lb);checks.push([cb,uid])});
- const go=mkb(gx('gcreate'),async()=>{const name=nm.value.trim();if(!name){nm.focus();return}const uids=checks.filter(([c])=>c.checked).map(([,u])=>u);
-  if(uids.length<1){err.textContent=gx('gmin');return}if(uids.length+1>20){err.textContent=gx('gmax');return}
-  try{await FB.fs.addDoc(FB.fs.collection(FB.db,'groups'),{name,owner:FB.uid,ownerId:prof.id,members:[FB.uid,...uids],t:Date.now()});frHome()}catch(e){note(ta('f_err'))}},1);
- b.append(hd,nm,info,list,err,go)}
+ const err=document.createElement('div');err.style.cssText='color:#ff8a8a;min-height:20px;margin:6px 0';const pk=friendPicker();
+ const go=mkb(gx('gcreate'),async()=>{const name=nm.value.trim();if(!name){nm.focus();return}const sel=pk.checks.filter(([c])=>c.checked);
+  if(sel.length<1){err.textContent=gx('gmin');return}if(sel.length+1>20){err.textContent=gx('gmax');return}
+  const mem={[FB.uid]:prof.id};sel.forEach(([,u,o])=>{mem[u]=o});
+  try{await FB.fs.addDoc(FB.fs.collection(FB.db,'groups'),{name,photo:'',owner:FB.uid,ownerId:prof.id,members:[FB.uid,...sel.map(x=>x[1])],roles:{},mem,banned:{},t:Date.now()});frHome()}catch(e){note(ta('f_err'))}},1);
+ b.append(hd,nm,info,pk.list,err,go)}
+function openGroupAdd(g0){chatKey='gi:'+g0.id;GV=null;const b=$('#frb');b.innerHTML='';
+ const hd=document.createElement('div');hd.className='row';const t0=document.createElement('b');t0.style.flex='1';t0.textContent='＋ '+gx('gadd');hd.append(mkb('←',()=>openGroupInfo(GROUPS.find(x=>x.id===g0.id)||g0)),t0);
+ const err=document.createElement('div');err.style.cssText='color:#ff8a8a;min-height:20px;margin:6px 0';
+ const pk=friendPicker(u=>(g0.members||[]).includes(u)||(g0.banned&&g0.banned[u]));
+ const go=mkb(gx('gaddgo'),async()=>{const g=GROUPS.find(x=>x.id===g0.id)||g0,sel=pk.checks.filter(([c])=>c.checked);if(!sel.length)return;
+  if((g.members||[]).length+sel.length>20){err.textContent=gx('gfull');return}
+  const o={members:FB.fs.arrayUnion(...sel.map(x=>x[1]))};sel.forEach(([,u,id])=>{o['mem.'+u]=id});
+  try{await gupd(g,o);openGroupInfo(g)}catch(e){note(ta('f_err'))}},1);
+ b.append(hd,pk.list,err,go)}
+function openGroupInfo(g0){chatKey='gi:'+g0.id;const me=FB.uid;
+ const render=g=>{const b=$('#frb');b.innerHTML='';const staff=isStaff(g,me);
+  const hd=document.createElement('div');hd.className='row';const t0=document.createElement('b');t0.style.flex='1';t0.textContent='ℹ️ '+gx('ginfo');hd.append(mkb('←',()=>openGroup(g)),t0);
+  const pb=document.createElement('div');pb.style.cssText='display:flex;flex-direction:column;align-items:center;gap:6px;margin:10px 0';
+  const nm=document.createElement('b');nm.style.fontSize='20px';nm.textContent=g.name;const sub=document.createElement('div');sub.style.color='var(--mut)';sub.textContent=gx('gmem').replace('%n',(g.members||[]).length);
+  pb.append(gAv(g,84),nm,sub);b.append(hd,pb);
+  if(staff){const r=document.createElement('div');r.className='row';r.style.justifyContent='center';
+   r.append(mkb('✏️ '+gx('gren'),()=>{const n=prompt(gx('gname'),g.name);if(n===null)return;const v=n.trim().slice(0,40);if(!v)return;gupd(g,{name:v}).catch(()=>note(ta('f_err')))}),
+    mkb('🖼 '+gx('gphoto'),()=>{const fi=document.createElement('input');fi.type='file';fi.accept='image/*';fi.onchange=async()=>{const f=fi.files[0];if(!f)return;if(f.size>5242880){note(t('big'));return}const p=await shrink(f);if(!p||p.length>250000){note(ta('f_err'));return}gupd(g,{photo:p}).catch(()=>note(ta('f_err')))};fi.click()}),
+    mkb('＋ '+gx('gadd'),()=>openGroupAdd(g)));b.append(r)}
+  const mh=document.createElement('b');mh.textContent=gx('gmembers')+' ('+(g.members||[]).length+')';mh.style.cssText='display:block;margin:14px 0 6px';b.append(mh);
+  const ord={owner:0,adm:1,vice:2,rec:3};
+  [...(g.members||[])].sort((x,y)=>ord[gRole(g,x)]-ord[gRole(g,y)]).forEach(u=>{
+   const e=document.createElement('div');e.className='fi';const im=document.createElement('img');im.className='av';im.alt='';im.src='icon-192.png';im.style.cssText='width:40px;height:40px;border-radius:50%;object-fit:cover;flex:none';
+   const nx=document.createElement('div');nx.className='nm';const id=memId(g,u),role=gRole(g,u),rb=rbadge(role);
+   const paint=n=>{nx.textContent=n+(u===me?' '+gx('gyou'):'')+(rb?' · '+rb:'')};paint(u===me?(prof.name||('ID '+prof.id)):('ID '+(id||'?')));
+   if(id)getP(id).then(p=>{if(p){if(u!==me)paint(p.name);if(p.photo)im.src=p.photo;if(p.frame)setFrame(im,frameOK(p.frame,id))}}).catch(()=>{});
+   e.append(im,nx);
+   const acts=[];const rl=gRole(g,u);
+   if(rl==='rec'){if(canGive(g,me,u,'vice'))acts.push(['vice']);if(canGive(g,me,u,'adm'))acts.push(['adm'])}else if(rl==='vice'){if(canGive(g,me,u,'adm'))acts.push(['adm'])}
+   const cd=canRemove(g,me,u)&&rl!=='rec',cr=canRemove(g,me,u);
+   if(acts.length||cd||cr){const mb=document.createElement('button');mb.className='gm';mb.textContent='⋮';mb.onclick=()=>openSheet(nx.textContent,(l,add)=>{
+     acts.forEach(([nr])=>add((nr==='adm'?'⭐ ':'🛡 ')+gx('ggive').replace('%r',gx(nr==='adm'?'radm':'rvice')),async()=>{const c=costRole(g,me,nr);if(c&&!confirm(gx(nr==='adm'?'gcadm':'gcvice')))return;try{await doGive(g,me,u,nr)}catch(er){note(ta('f_err'))}}));
+     if(cd)add('⬇ '+gx('gdemote'),async()=>{try{await doDemote(g,u)}catch(er){note(ta('f_err'))}});
+     if(cr){add('🚪 '+gx('gremove'),async()=>{if(!confirm(gx('gremq').replace('%s',nx.textContent)))return;try{await doRemove(g,u,false)}catch(er){note(ta('f_err'))}});
+      add('🚫 '+gx('gban'),async()=>{if(!confirm(gx('gbanq').replace('%s',nx.textContent)))return;try{await doRemove(g,u,true)}catch(er){note(ta('f_err'))}})}});e.append(mb)}
+   b.append(e)});
+  const bn=g.banned||{},bk=Object.keys(bn);
+  if(staff&&bk.length){const bh=document.createElement('b');bh.textContent='🚫 '+gx('gbanned')+' ('+bk.length+')';bh.style.cssText='display:block;margin:14px 0 6px';b.append(bh);
+   bk.forEach(u=>{const e=document.createElement('div');e.className='fi';const nx=document.createElement('div');nx.className='nm';nx.textContent='ID '+(bn[u]||'?');if(bn[u]&&bn[u]!=='?')getP(bn[u]).then(p=>{if(p)nx.textContent=p.name+' · ID '+bn[u]}).catch(()=>{});
+    e.append(nx,mkb(gx('gunban'),async()=>{try{await gupd(g,{['banned.'+u]:delF()})}catch(er){note(ta('f_err'))}}));b.append(e)})}};
+ GV=render;render(g0)}
 $('#grb').onclick=async()=>{if(!prof.pub){note(ta('f_need'));return}try{await startFr()}catch(e){note(ta('f_err'));return}groupNew()};
 
 load();
