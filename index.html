@@ -100,7 +100,7 @@ main{padding-bottom:104px}
 .gt{flex:1;min-width:0}.gt b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;font-weight:700;line-height:1.2}
 .gt span{display:block;color:var(--mut);font-size:13px;margin-top:3px}
 .gp{border-radius:12px;padding:8px 14px;min-height:40px;font-weight:700;background:linear-gradient(180deg,#6a35e8,#4120a6);border-color:#a070ff;color:#fff;box-shadow:0 0 12px rgba(130,70,255,.45);white-space:nowrap}
-.mb audio{display:block;max-width:100%;width:230px}.mb small{display:block;margin:4px 0 0}
+.mb audio{display:block;max-width:100%;width:230px}.mb small{display:block;margin:4px 0 0;color:inherit;opacity:.8}
 .gav{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--sel);border:2px solid var(--acc);font-size:20px;flex:none}
 .gm{background:none;border:0;font-size:22px;min-height:40px;min-width:34px;padding:0 4px;color:var(--mut)}
 #bn{position:fixed;left:0;right:0;bottom:0;z-index:14;display:flex;background:linear-gradient(180deg,rgba(16,9,40,.97),#0a0520);border-top:1px solid #3a2478;padding:8px 6px calc(6px + env(safe-area-inset-bottom,0px))}
@@ -743,7 +743,7 @@ const CH=[
 {id:'u-help',pt:'Novo botão ? com perguntas e respostas para ajudar quem está começando.',es:'Nuevo botón ? con preguntas y respuestas para quien empieza.',en:'New ? button with questions and answers for newcomers.'},
 {id:'u-live',pt:'Avisos de atualização em tempo real: quando sair uma versão nova, o sininho te avisa.',es:'Avisos de actualización en tiempo real: cuando salga una versión nueva, la campanita te avisa.',en:'Live update alerts: when a new version is out, the bell tells you.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-10.17';let verSeen=APP_VER;
+const APP_VER='2026-10-10.18';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname,{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
@@ -1007,7 +1007,7 @@ const gref=g=>FB.fs.doc(FB.db,'groups',g.id),gupd=(g,o)=>FB.fs.updateDoc(gref(g)
 async function doGive(g,a,t,nr){const o={};o['roles.'+t]=nr;const c=costRole(g,a,nr);if(c)o['roles.'+a]=c==='rec'?delF():c;await gupd(g,o)}
 async function doDemote(g,t){const nr=gRole(g,t)==='adm'?'vice':'rec';await gupd(g,{['roles.'+t]:nr==='rec'?delF():nr})}
 async function doRemove(g,t,ban){const o={members:FB.fs.arrayRemove(t),['roles.'+t]:delF(),['mem.'+t]:delF()};if(ban)o['banned.'+t]=(g.mem&&g.mem[t])||'?';await gupd(g,o)}
-const memId=(g,u)=>u===g.owner?(g.ownerId||(g.mem&&g.mem[u])||''):((g.mem&&g.mem[u])||'');
+const memId=(g,u)=>{if(FB&&u===FB.uid)return prof.id;let v=u===g.owner?(g.ownerId||''):'';if(!v&&g.mem&&g.mem[u])v=g.mem[u];if(!v){const r=REQ.find(x=>x.status==='accepted'&&(x.fromUid===u||x.toUid===u));if(r)v=r.fromUid===u?r.from:r.to}return v||''};
 function gAv(g,px){if(g.photo){const i=document.createElement('img');i.className='av';i.alt='';i.src=g.photo;i.style.cssText='width:'+px+'px;height:'+px+'px;border-radius:50%;object-fit:cover;flex:none';return i}
  const a=document.createElement('div');a.className='gav';a.textContent='👥';a.style.cssText='width:'+px+'px;height:'+px+'px;font-size:'+Math.round(px*.5)+'px';return a}
 function grpWatch(f){const{collection,query,where,onSnapshot}=f.fs;onSnapshot(query(collection(f.db,'groups'),where('members','array-contains',f.uid)),s=>{GROUPS=s.docs.map(d=>({id:d.id,...d.data()}));grpMsgWatch(f);
