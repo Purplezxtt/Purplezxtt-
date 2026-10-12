@@ -127,6 +127,7 @@ body.nh #player:not(.on)~#bell,body.nh #player:not(.on)~#help,body.nh #player:no
 .fc{display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,#170f38,#100829);border:1px solid #3b2478;border-radius:18px;padding:10px;margin-bottom:10px}.fc .cv{width:46px;height:46px}.fc>div{flex:1;min-width:0}.fc b{display:block}.fc small{margin:0}
 #gm{z-index:27}
 body.ing{background:#000!important}
+#fps{white-space:pre;line-height:1.3}
 body.bgold{background:#14171f!important}
 body.bgold{--bg:#14171f;--card:#1e222d;--ink:#eceef4;--mut:#9aa2b5;--acc:#b58bff;--line:#2e3445;--sel:#2c2347}
 body.bgold #bnr{background:linear-gradient(135deg,#232838 0%,#1a1e2a 60%,#232838 100%);border-bottom:1px solid #2e3445;box-shadow:none}
@@ -232,6 +233,7 @@ body.bgpix:not(.ing)::after{z-index:15;height:120px;background:linear-gradient(t
 <label class="row"><input type="checkbox" id="rz"><span id="rzl"></span></label>
 <label class="row"><input type="checkbox" id="ns"><span id="nsl"></span></label>
 <label class="row"><input type="checkbox" id="rt"><span id="rtl"></span></label>
+<label class="row"><input type="checkbox" id="dg"><span id="dgl"></span></label>
 <label hidden><span><span data-i="size"></span>: <b id="szv"></b></span><input type="range" id="sz" min="60" max="160" step="5"></label>
 <div class="row"><button id="em" data-i="ed"></button><button class="p" id="sx" data-i="ok"></button></div></div></div>
 <div id="cs"><div class="card"><h2 id="cst"></h2><div id="csl"></div><div class="row"><button class="p" id="csx"></button></div></div></div>
@@ -250,7 +252,7 @@ body.bgpix:not(.ing)::after{z-index:15;height:120px;background:linear-gradient(t
 <div id="skp"><div class="card"><h2 id="skt"></h2><div id="skl"></div><div class="row"><button class="p" id="skx"></button></div><input type="file" id="skf" accept="image/*" hidden></div></div>
 <div id="ed"><div class="scr"></div><div id="padE"></div><div class="eb"><span data-i="tip"></span><select id="edc"></select><button id="eimg"></button><input type="range" id="sz2" min="60" max="160" step="5"><button id="rs" data-i="rs"></button><button class="p" id="ex" data-i="ok"></button></div></div>
 <script>
-(()=>{const A=window.AudioContext||window.webkitAudioContext;if(!A)return;class Z extends A{constructor(o){const x=window.ZAH;super(x===undefined?o:Object.assign({},o,{latencyHint:x}))}}try{window.AudioContext=Z;if(window.webkitAudioContext)window.webkitAudioContext=Z}catch(e){}})();
+(()=>{const A=window.AudioContext||window.webkitAudioContext;if(!A)return;class Z extends A{constructor(o){const x=window.ZAH;super(x===undefined?o:Object.assign({},o,{latencyHint:x}));(window.__acs=window.__acs||[]).push(this)}}try{window.AudioContext=Z;if(window.webkitAudioContext)window.webkitAudioContext=Z}catch(e){}})();
 const $=s=>document.querySelector(s);
 const L={
 pt:{add:'Adicionar jogos',nf:'Nova pasta',set:'Configurações',all:'Todos',nof:'Sem pasta',play:'Jogar',dl:'Baixar',rm:'Remover',
@@ -536,13 +538,13 @@ async function play(i){try{cfg.last=cfg.last||{};cfg.last[i.id]=Date.now();saveC
  $('#player').classList.add('on');document.body.classList.add('ing');onPlay(core,i.name);wl();
  if(['psx','psp','segaSaturn','n64','nds'].includes(core))note(ta('heavy'));
  const lv=cfg.opt[i.id]===undefined?(['psp','psx','n64','nds','segaSaturn','sega32x','segaCD'].includes(core)?2:1):cfg.opt[i.id];
- if(lv>0){document.body.classList.add('pf');startFps()}
+ window.__zlv=lv;if(lv>0||cfg.diag){document.body.classList.add('pf');startFps()}
  if(lv>=2){try{if(FB&&FB.fs.disableNetwork)FB.fs.disableNetwork(FB.db).catch(()=>{})}catch(e){}}
  if(lv>0)window.EJS_defaultOptions=Object.assign({shader:'disabled',fastForward:'disabled',slowMotion:'disabled',rewindEnabled:'disabled','rewind-enabled':'disabled'},(lv>=2?PERF2:PERF)[core]||{});
  {const au=(cfg.au&&cfg.au[i.id])||0;if(au>0){window.EJS_defaultOptions=Object.assign(window.EJS_defaultOptions||{},AUD[core]||{});window.ZAH=au>=2?0.3:'playback'}else window.ZAH=undefined}
  if(cfg.custom&&CPS[core]){window.EJS_VirtualGamepadSettings=[];document.body.classList.add('cp');mountPad($('#pad'),false,core);$('#pad').classList.add('on')}
  const url=URL.createObjectURL(new File([i.blob],i.name));
- window.EJS_player='#game';window.EJS_core=(core==='nds'?({1:'desmume2015',2:'melonds'})[(cfg.eng&&cfg.eng[i.id])||0]||'nds':core);window.EJS_gameUrl=url;
+ window.EJS_player='#game';window.EJS_core=(core==='nds'?({1:'desmume2015',2:'melonds'})[(cfg.eng&&cfg.eng[i.id])||0]||'nds':core);window.__zcore=core;window.__zT0=performance.now();window.EJS_gameUrl=url;
  window.EJS_gameName=i.name.replace(/\.[^.]+$/,'');
  window.EJS_pathtodata='https://cdn.emulatorjs.org/stable/data/';
  if(window.crossOriginIsolated)window.EJS_threads=true;
@@ -574,7 +576,30 @@ function renderAchList(){const l=$('#achl');l.innerHTML='';const h=document.crea
 function onPlay(core,name){if(!cfg.achOn)return;cfg.ach.plays++;cfg.ach.cores[core]=1;cfg.ach.games[name]=1;saveCfg();checkAch();
  setInterval(()=>{if(document.visibilityState==='visible'){cfg.ach.secs+=15;saveCfg();checkAch()}},15000)}
 const coreTag=()=>{try{const c=window.EJS_emulator&&window.EJS_emulator.getCore&&window.EJS_emulator.getCore();return c&&typeof c==='string'?' · '+c:''}catch(e){return ''}};
-let fpsOn=0,hzW=0,hi=0;function startFps(){if(fpsOn)return;fpsOn=1;let fr=0,lt=performance.now();const tick=n=>{fr++;if(n-lt>=1000){const v=Math.round(fr*1000/(n-lt));$('#fps').textContent='FPS '+v+(window.crossOriginIsolated?' · MT':' · 1T')+coreTag();if(v>66&&!hzW&&++hi>=3){hzW=1;note(ta('hz'))}fr=0;lt=n}requestAnimationFrame(tick)};requestAnimationFrame(tick)}
+const NF={gba:59.73,gb:59.73,nes:60.1,snes:60.1,nds:59.83,n64:60,psx:60,psp:60,segaMD:59.92,segaMS:59.92,segaGG:59.92,sega32x:59.92,segaCD:59.92,segaSaturn:59.82,pce:60.05,atari2600:60,atari7800:60,lynx:75,ws:75.47,vb:50.27,ngp:59.95,coleco:59.92,arcade:60};
+let BAT=null;try{if(navigator.getBattery)navigator.getBattery().then(b=>{BAT=b}).catch(()=>{})}catch(e){}
+const DIAG={fps:0,avg:0,max:0,fa:0,ac:null,lm:0,txt:''};
+function audioInfo(){const L=(window.__acs||[]).filter(c=>c&&c.state!=='closed'),c=L[L.length-1];if(!c)return null;const now=performance.now(),o={sr:c.sampleRate,st:c.state,lat:(c.baseLatency||0)+(c.outputLatency||0),r:null};
+ if(DIAG.ac&&DIAG.ac.c===c){const dr=(now-DIAG.ac.r)/1000;if(dr>0.5)o.r=(c.currentTime-DIAG.ac.t)/dr}DIAG.ac={c,t:c.currentTime,r:now};return o}
+function diagLines(){const nf=NF[window.__zcore]||60,v=DIAG.fps,sp=v?(v<=nf*1.08?Math.min(100,Math.round(v/nf*100))+'%':'n/d'):'…',a=DIAG.au;
+ const lvn=[dxs('lv0'),dxs('lv1'),dxs('lv2')][window.__zlv]||'';
+ const L=['FPS '+v+(DIAG.fa?' (méd '+DIAG.fa+')':'')+(window.crossOriginIsolated?' · MT':' · 1T')+coreTag(),
+  'Vel ~'+sp+' · frame '+DIAG.avg.toFixed(1)+'ms (máx '+Math.round(DIAG.max)+')'];
+ if(a)L.push('Áudio '+a.sr+'Hz · '+a.st+' · lat '+a.lat.toFixed(3)+'s'+(a.r!=null?' · relógio '+a.r.toFixed(2)+'x':''));
+ L.push((navigator.hardwareConcurrency||'?')+' CPU · '+(navigator.deviceMemory?'~'+navigator.deviceMemory+'GB RAM':'RAM n/d')+(BAT?' · 🔋'+Math.round(BAT.level*100)+'%'+(BAT.charging?'⚡':''):'')+(lvn?' · '+lvn:'')+(DIAG.lm?' · carga '+(DIAG.lm/1000).toFixed(1)+'s':''));
+ return L}
+function diagReport(){const ua=navigator.userAgent,m=(ua.match(/Android [\d.]+/)||[''])[0],c=(ua.match(/Chrome\/(\d+)/)||[])[1];
+ return ['Zeo diag '+APP_VER+' · '+(window.__zcore||'?')].concat(diagLines(),[m+(c?' · Chrome '+c:'')]).join('\n')}
+const DXT={pt:{l:'Diagnóstico de desempenho (mais dados no jogo; toque no painel para copiar o relatório)',copied:'Relatório copiado. Cole na conversa.',lv0:'Desligada',lv1:'Leve',lv2:'Máxima'},es:{l:'Diagnóstico de rendimiento (más datos en el juego; toca el panel para copiar el informe)',copied:'Informe copiado. Pégalo en la conversación.',lv0:'Desactivada',lv1:'Ligera',lv2:'Máxima'},en:{l:'Performance diagnostics (more data in game; tap the panel to copy the report)',copied:'Report copied. Paste it in the chat.',lv0:'Off',lv1:'Light',lv2:'Maximum'}};
+const dxs=k=>(DXT[cfg.lang]||DXT.en)[k];
+let fpsOn=0,hzW=0,hi=0;function startFps(){if(fpsOn)return;fpsOn=1;let fr=0,lt=performance.now(),last=lt,sum=0,mx=0,n2=0,s2=0;
+ const el=$('#fps');el.onclick=()=>{const r=diagReport();try{navigator.clipboard.writeText(r).then(()=>note(dxs('copied'))).catch(()=>{})}catch(e){}};
+ const tick=n=>{const d=n-last;last=n;fr++;sum+=d;if(d>mx)mx=d;
+  if(!DIAG.lm&&window.EJS_emulator&&window.EJS_emulator.started)DIAG.lm=Math.round(performance.now()-(window.__zT0||performance.now()));
+  if(n-lt>=1000){const v=Math.round(fr*1000/(n-lt));DIAG.fps=v;DIAG.avg=sum/fr;DIAG.max=mx;n2++;s2+=v;DIAG.fa=Math.round(s2/n2);DIAG.au=audioInfo();
+   el.textContent=cfg.diag?diagLines().join('\n'):'FPS '+v+(window.crossOriginIsolated?' · MT':' · 1T')+coreTag();
+   if(v>66&&!hzW&&++hi>=3){hzW=1;note(ta('hz'))}fr=0;sum=0;mx=0;lt=n}
+  requestAnimationFrame(tick)};requestAnimationFrame(tick)}
 const note=m=>{const e=$('#toast');e.textContent=m;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),5000)};
 const wl=()=>{try{navigator.wakeLock&&navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&$('#player').classList.contains('on'))wl()});
@@ -734,7 +759,7 @@ const A1=['Roxo','Neon','Pixel','Turbo','Astro','Cosmo','Sombra','Nova','Lunar',
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 const rndName=()=>pick(A1)+pick(A2)+(10+Math.floor(Math.random()*90));
 const setAv=(img,b)=>{img.src=b?URL.createObjectURL(b):'icon-192.png'};
-function renderProf(){$('#pnm').textContent=prof.id?prof.name:t('prof');$('#pid').textContent=prof.id?'ID #'+prof.id+(cfg.achOn?' · 🏆 '+Object.keys(cfg.ach.u).length:''):'';$('#ao').checked=cfg.achOn;$('#aol').textContent=ta('aon');$('#og').textContent=ta('og');badge();$('#nt').checked=cfg.notif;$('#ntl').textContent=ta('f_not');$('#ns').checked=cfg.nsound!==false;$('#nsl').textContent=nx('s');$('#rt').checked=!!cfg.rot;$('#rtl').textContent=rx('l');$('#rz').checked=cfg.resume;$('#rzl').textContent=ta('f_res');renderAchList();setAv($('#pav'),prof.avatar);applyLook()}
+function renderProf(){$('#pnm').textContent=prof.id?prof.name:t('prof');$('#pid').textContent=prof.id?'ID #'+prof.id+(cfg.achOn?' · 🏆 '+Object.keys(cfg.ach.u).length:''):'';$('#ao').checked=cfg.achOn;$('#aol').textContent=ta('aon');$('#og').textContent=ta('og');badge();$('#nt').checked=cfg.notif;$('#ntl').textContent=ta('f_not');$('#ns').checked=cfg.nsound!==false;$('#nsl').textContent=nx('s');$('#rt').checked=!!cfg.rot;$('#rtl').textContent=rx('l');$('#dg').checked=!!cfg.diag;$('#dgl').textContent=dxs('l');$('#rz').checked=cfg.resume;$('#rzl').textContent=ta('f_res');renderAchList();setAv($('#pav'),prof.avatar);applyLook()}
 $('#prof').onclick=()=>{tmpAv=prof.avatar;$('#pn').value=prof.name;$('#pi').value=prof.id?'#'+prof.id:'…';$('#pmsg').textContent='';setAv($('#pav2'),tmpAv);$('#pfr').textContent=kx('fr');$('#pbg').textContent=kx('bg');$('#prd').textContent=kx('rd');applyLook();$('#pf').classList.add('on')};
 $('#pph').onclick=()=>$('#pfile').click();
 $('#pfile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;if(f.size>5242880){$('#pmsg').textContent=t('big');return}tmpAv=f;setAv($('#pav2'),f);$('#pmsg').textContent=''};
@@ -780,11 +805,12 @@ const CH=[
 {id:'u-grole',pt:'Grupos com cargos! Dono, ADM, Vice-ADM e Recruta, perfil do grupo (nome e foto), lista de membros, banir e @everyone.',es:'¡Grupos con rangos! Dueño, ADM, Vice-ADM y Recluta, perfil del grupo (nombre y foto), lista de miembros, banear y @everyone.',en:'Groups with roles! Owner, Admin, Vice-Admin and Recruit, group profile (name and photo), member list, ban and @everyone.'},
 {id:'u-perf2',pt:'Otimização melhorada: opções extras para Nintendo DS, escolha do motor do DS (DeSmuME ou melonDS) no otimizador e o contador de FPS agora mostra o motor em uso.',es:'Optimización mejorada: opciones extra para Nintendo DS, elección del motor de DS (DeSmuME o melonDS) en el optimizador y el contador de FPS muestra el motor en uso.',en:'Better optimization: extra Nintendo DS options, DS engine choice (DeSmuME or melonDS) in the optimizer and the FPS counter now shows the engine in use.'},
 {id:'u-zip',pt:'Agora o Zeo descompacta arquivos .zip sozinho ao adicionar jogos e coloca o jogo na pasta certa (ou em Sem pasta).',es:'Ahora Zeo descomprime los .zip solo al añadir juegos y coloca el juego en la carpeta correcta (o en Sin carpeta).',en:'Zeo now unzips .zip files by itself when you add games and puts the game in the right folder (or No folder).'},
+{id:'u-diag',pt:'Novo: Diagnóstico de desempenho nas Configurações. Mostra FPS, velocidade estimada, tempo por frame, áudio e aparelho, e o painel copia um relatório para você me mandar.',es:'Nuevo: Diagnóstico de rendimiento en Configuración. Muestra FPS, velocidad estimada, tiempo por frame, audio y dispositivo, y el panel copia un informe.',en:'New: Performance diagnostics in Settings. Shows FPS, estimated speed, frame time, audio and device, and tapping the panel copies a report.'},
 {id:'u-aud',pt:'Novo botão Ajustar áudio nas Configurações, para reduzir chiado e travadas no som (por jogo).',es:'Nuevo botón Ajustar audio en Configuración para reducir chasquidos y cortes de sonido (por juego).',en:'New Adjust audio button in Settings to reduce crackling and stutter (per game).'},
 {id:'u-help',pt:'Novo botão ? com perguntas e respostas para ajudar quem está começando.',es:'Nuevo botón ? con preguntas y respuestas para quien empieza.',en:'New ? button with questions and answers for newcomers.'},
 {id:'u-live',pt:'Avisos de atualização em tempo real: quando sair uma versão nova, o sininho te avisa.',es:'Avisos de actualización en tiempo real: cuando salga una versión nueva, la campanita te avisa.',en:'Live update alerts: when a new version is out, the bell tells you.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-10.20';let verSeen=APP_VER;
+const APP_VER='2026-10-10.21';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname,{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
@@ -945,6 +971,7 @@ async function rotateScreen(){const o=screen.orientation,land=o&&o.type?o.type.s
  try{if(o&&o.lock){try{await o.lock(want)}catch(e){if(!document.fullscreenElement&&document.documentElement.requestFullscreen){await document.documentElement.requestFullscreen();await o.lock(want)}else throw e}
   note(rx(want==='landscape'?'h':'v'));return}}catch(e){}
  note(rx('no'))}
+$('#dg').onchange=e=>{cfg.diag=e.target.checked;saveCfg()};
 $('#rot').onclick=rotateScreen;$('#rt').onchange=e=>{cfg.rot=e.target.checked;saveCfg();applyRot()};
 try{new MutationObserver(placeRot).observe($('#player'),{attributes:true,attributeFilter:['class']})}catch(e){}
 addEventListener('resize',placeRot);addEventListener('orientationchange',()=>setTimeout(placeRot,300));
