@@ -126,6 +126,7 @@ body.nh #player:not(.on)~#bell,body.nh #player:not(.on)~#help,body.nh #player:no
 #lhead select{max-width:130px;padding:6px 8px;min-height:38px;border-radius:12px;font-size:13px}
 .fc{display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,#170f38,#100829);border:1px solid #3b2478;border-radius:18px;padding:10px;margin-bottom:10px}.fc .cv{width:46px;height:46px}.fc>div{flex:1;min-width:0}.fc b{display:block}.fc small{margin:0}
 #gm{z-index:27}
+body.ing{background:#000!important}
 body.bgold{background:#14171f!important}
 body.bgold{--bg:#14171f;--card:#1e222d;--ink:#eceef4;--mut:#9aa2b5;--acc:#b58bff;--line:#2e3445;--sel:#2c2347}
 body.bgold #bnr{background:linear-gradient(135deg,#232838 0%,#1a1e2a 60%,#232838 100%);border-bottom:1px solid #2e3445;box-shadow:none}
@@ -492,7 +493,7 @@ snes:{snes9x_blargg:'disabled',snes9x_overclock_cycles:'disabled',snes9x_audio_i
 segaMD:SEGA,segaMS:SEGA,segaGG:SEGA,segaCD:SEGA,
 sega32x:{picodrive_dynamic_recompiler:'enabled'},
 n64:{'mupen64plus-43screensize':'320x240','mupen64plus-cpucore':'dynamic_recompiler','mupen64plus-rdp-plugin':'gliden64','mupen64plus-rsp-plugin':'hle','mupen64plus-FXAA':'0','mupen64plus-EnableLODEmulation':'False'},
-nds:{desmume_frameskip:'1',desmume_internal_resolution:'256x192',desmume_gfx_edgemark:'disabled',desmume_gfx_texture_smoothing:'disabled'},
+nds:{desmume_frameskip:'1',desmume_internal_resolution:'256x192',desmume_gfx_edgemark:'disabled',desmume_gfx_texture_smoothing:'disabled',desmume_gfx_multisampling:'disabled',desmume_num_cores:'2',desmume_advanced_timing:'disabled',melonds_threaded_renderer:'enabled',melonds_audio_interpolation:'None',melonds_audio_bitrate:'10-bit',melonds_render_mode:'software'},
 psx:{pcsx_rearmed_frameskip:'1',pcsx_rearmed_drc:'enabled'},
 psp:{ppsspp_internal_resolution:'480x272',ppsspp_frameskip:'1',ppsspp_auto_frameskip:'enabled',ppsspp_skip_buffer_effects:'enabled',ppsspp_fast_memory:'enabled',ppsspp_cpu_core:'JIT',ppsspp_vertex_cache:'enabled',ppsspp_texture_anisotropic_filtering:'disabled'},
 segaSaturn:{yabause_frameskip:'enabled'}};
@@ -506,11 +507,12 @@ async function play(i){try{cfg.last=cfg.last||{};cfg.last[i.id]=Date.now();saveC
  if(['psx','psp','segaSaturn','n64','nds'].includes(core))note(ta('heavy'));
  const lv=cfg.opt[i.id]===undefined?(['psp','psx','n64','nds','segaSaturn','sega32x','segaCD'].includes(core)?2:1):cfg.opt[i.id];
  if(lv>0){document.body.classList.add('pf');startFps()}
+ if(lv>=2){try{if(FB&&FB.fs.disableNetwork)FB.fs.disableNetwork(FB.db).catch(()=>{})}catch(e){}}
  if(lv>0)window.EJS_defaultOptions=Object.assign({shader:'disabled',fastForward:'disabled',slowMotion:'disabled',rewindEnabled:'disabled','rewind-enabled':'disabled'},(lv>=2?PERF2:PERF)[core]||{});
  {const au=(cfg.au&&cfg.au[i.id])||0;if(au>0){window.EJS_defaultOptions=Object.assign(window.EJS_defaultOptions||{},AUD[core]||{});window.ZAH=au>=2?0.3:'playback'}else window.ZAH=undefined}
  if(cfg.custom&&CPS[core]){window.EJS_VirtualGamepadSettings=[];document.body.classList.add('cp');mountPad($('#pad'),false,core);$('#pad').classList.add('on')}
  const url=URL.createObjectURL(new File([i.blob],i.name));
- window.EJS_player='#game';window.EJS_core=core;window.EJS_gameUrl=url;
+ window.EJS_player='#game';window.EJS_core=(core==='nds'?({1:'desmume2015',2:'melonds'})[(cfg.eng&&cfg.eng[i.id])||0]||'nds':core);window.EJS_gameUrl=url;
  window.EJS_gameName=i.name.replace(/\.[^.]+$/,'');
  window.EJS_pathtodata='https://cdn.emulatorjs.org/stable/data/';
  if(window.crossOriginIsolated)window.EJS_threads=true;
@@ -541,13 +543,16 @@ function renderAchList(){const l=$('#achl');l.innerHTML='';const h=document.crea
  ACH.forEach(([k])=>{const r=document.createElement('div'),ok=cfg.ach.u[k];r.className='arow'+(ok?'':' lk');r.textContent=(ok?'🏆 ':'🔒 ')+ta('n_'+k)+' — '+((k==='secret'&&!ok)?'???':ta('d_'+k));if(ok&&AL.en['q_'+k]){const q=document.createElement('div');q.textContent='“'+ta('q_'+k)+'”';q.style.cssText='font-style:italic;color:var(--mut);font-size:13px;margin-top:2px';r.append(q)}l.append(r)})}
 function onPlay(core,name){if(!cfg.achOn)return;cfg.ach.plays++;cfg.ach.cores[core]=1;cfg.ach.games[name]=1;saveCfg();checkAch();
  setInterval(()=>{if(document.visibilityState==='visible'){cfg.ach.secs+=15;saveCfg();checkAch()}},15000)}
-let fpsOn=0,hzW=0,hi=0;function startFps(){if(fpsOn)return;fpsOn=1;let fr=0,lt=performance.now();const tick=n=>{fr++;if(n-lt>=1000){const v=Math.round(fr*1000/(n-lt));$('#fps').textContent='FPS '+v+(window.crossOriginIsolated?' · MT':' · 1T');if(v>66&&!hzW&&++hi>=3){hzW=1;note(ta('hz'))}fr=0;lt=n}requestAnimationFrame(tick)};requestAnimationFrame(tick)}
+const coreTag=()=>{try{const c=window.EJS_emulator&&window.EJS_emulator.getCore&&window.EJS_emulator.getCore();return c&&typeof c==='string'?' · '+c:''}catch(e){return ''}};
+let fpsOn=0,hzW=0,hi=0;function startFps(){if(fpsOn)return;fpsOn=1;let fr=0,lt=performance.now();const tick=n=>{fr++;if(n-lt>=1000){const v=Math.round(fr*1000/(n-lt));$('#fps').textContent='FPS '+v+(window.crossOriginIsolated?' · MT':' · 1T')+coreTag();if(v>66&&!hzW&&++hi>=3){hzW=1;note(ta('hz'))}fr=0;lt=n}requestAnimationFrame(tick)};requestAnimationFrame(tick)}
 const note=m=>{const e=$('#toast');e.textContent=m;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),5000)};
 const wl=()=>{try{navigator.wakeLock&&navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&$('#player').classList.contains('on'))wl()});
 
 $('#ao').onchange=e=>{cfg.achOn=e.target.checked;saveCfg();checkAch();renderProf()};
 const lvOf=id=>cfg.opt[id]===undefined?1:cfg.opt[id];
+const EXT={pt:{t:'Motor do Nintendo DS (experimental)',d0:'Padrão',d1:'DeSmuME (costuma ser mais leve)',d2:'melonDS',n:'Se o jogo não abrir com um motor, volte para Padrão.'},es:{t:'Motor de Nintendo DS (experimental)',d0:'Estándar',d1:'DeSmuME (suele ser más ligero)',d2:'melonDS',n:'Si el juego no abre con un motor, vuelve a Estándar.'},en:{t:'Nintendo DS engine (experimental)',d0:'Default',d1:'DeSmuME (usually lighter)',d2:'melonDS',n:'If the game won’t open with an engine, go back to Default.'}};
+const ex=k=>(EXT[cfg.lang]||EXT.en)[k];
 function drawOt(sel){
  const l=$('#otl');l.innerHTML='';const bs='display:block;width:100%;text-align:left;margin-bottom:8px';
  if(!items.length){l.textContent=t('e0');return}
@@ -556,6 +561,10 @@ function drawOt(sel){
  else{const g=items.find(x=>x.id===sel);if(!g){drawOt(null);return}
   const n=document.createElement('b');n.textContent=g.name;n.style.cssText='display:block;margin-bottom:10px;overflow-wrap:anywhere';l.append(n);
   [0,1,2].forEach(v=>{const b=document.createElement('button');b.textContent=(lvOf(sel)===v?'✔ ':'')+ta('lv'+v)+' — '+ta('ld'+v);b.style.cssText=bs;b.onclick=()=>{cfg.opt[sel]=v;saveCfg();drawOt(null)};l.append(b)});
+  const gc=(fo(g.folder)&&fo(g.folder).core)||CORES[ext(g.name)];
+  if(gc==='nds'){cfg.eng=cfg.eng||{};const eh=document.createElement('b');eh.textContent=ex('t');eh.style.cssText='display:block;margin:14px 0 8px';l.append(eh);
+   [0,1,2].forEach(v=>{const b=document.createElement('button');b.textContent=((cfg.eng[sel]||0)===v?'✔ ':'')+ex('d'+v);b.style.cssText=bs;b.onclick=()=>{cfg.eng[sel]=v;saveCfg();drawOt(sel)};l.append(b)});
+   const en=document.createElement('div');en.textContent=ex('n');en.style.cssText='color:var(--mut);font-size:13px;margin-bottom:10px';l.append(en)}
   const bk=document.createElement('button');bk.textContent='←';bk.onclick=()=>drawOt(null);l.append(bk)}}
 $('#og').onclick=()=>{$('#st').classList.remove('on');$('#oth').textContent=ta('og');drawOt(null);$('#ot').classList.add('on')};
 $('#otx').onclick=()=>{$('#ot').classList.remove('on');$('#st').classList.add('on')};
@@ -739,11 +748,12 @@ const CH=[
 {id:'u-voice',pt:'Novo: áudio no chat de amigos! Toque em Gravar áudio, abaixo do botão Enviar. Também corrigi a conquista secreta das letras do título.',es:'¡Nuevo: audio en el chat de amigos! Toca Grabar audio, debajo del botón Enviar. También arreglé el logro secreto de las letras del título.',en:'New: voice messages in friends chat! Tap Record audio, under the Send button. Also fixed the secret achievement for the title letters.'},
 {id:'u-group',pt:'Novo: grupos! Em Amigos, toque em Criar grupo (ao lado de Concluir). Chat em grupo com texto e áudio.',es:'¡Nuevo: grupos! En Amigos toca Crear grupo (junto a Concluir). Chat de grupo con texto y audio.',en:'New: groups! In Friends tap Create group (next to Done). Group chat with text and voice messages.'},
 {id:'u-grole',pt:'Grupos com cargos! Dono, ADM, Vice-ADM e Recruta, perfil do grupo (nome e foto), lista de membros, banir e @everyone.',es:'¡Grupos con rangos! Dueño, ADM, Vice-ADM y Recluta, perfil del grupo (nombre y foto), lista de miembros, banear y @everyone.',en:'Groups with roles! Owner, Admin, Vice-Admin and Recruit, group profile (name and photo), member list, ban and @everyone.'},
+{id:'u-perf2',pt:'Otimização melhorada: opções extras para Nintendo DS, escolha do motor do DS (DeSmuME ou melonDS) no otimizador e o contador de FPS agora mostra o motor em uso.',es:'Optimización mejorada: opciones extra para Nintendo DS, elección del motor de DS (DeSmuME o melonDS) en el optimizador y el contador de FPS muestra el motor en uso.',en:'Better optimization: extra Nintendo DS options, DS engine choice (DeSmuME or melonDS) in the optimizer and the FPS counter now shows the engine in use.'},
 {id:'u-aud',pt:'Novo botão Ajustar áudio nas Configurações, para reduzir chiado e travadas no som (por jogo).',es:'Nuevo botón Ajustar audio en Configuración para reducir chasquidos y cortes de sonido (por juego).',en:'New Adjust audio button in Settings to reduce crackling and stutter (per game).'},
 {id:'u-help',pt:'Novo botão ? com perguntas e respostas para ajudar quem está começando.',es:'Nuevo botón ? con preguntas y respuestas para quien empieza.',en:'New ? button with questions and answers for newcomers.'},
 {id:'u-live',pt:'Avisos de atualização em tempo real: quando sair uma versão nova, o sininho te avisa.',es:'Avisos de actualización en tiempo real: cuando salga una versión nueva, la campanita te avisa.',en:'Live update alerts: when a new version is out, the bell tells you.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-10.18';let verSeen=APP_VER;
+const APP_VER='2026-10-10.19';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname,{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
