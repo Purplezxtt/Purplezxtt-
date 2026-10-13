@@ -230,7 +230,7 @@ body.bgpix:not(.ing)::after{z-index:15;height:120px;background:linear-gradient(t
 <label><span data-i="lang"></span><select id="lg"><option value="pt">Português (BR)</option><option value="es">Español (ES)</option><option value="en">English (US)</option><option value="ru">Русский</option><option value="ja">日本語</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="it">Italiano</option></select></label>
 <label class="row"><input type="checkbox" id="cu"><span data-i="ctl"></span></label>
 <label class="row"><input type="checkbox" id="ao"><span id="aol"></span></label>
-<button id="og"></button><button id="ag"></button>
+<button id="og"></button><button id="ag"></button><button id="po"></button>
 <label class="row"><input type="checkbox" id="nt"><span id="ntl"></span></label>
 <label class="row"><input type="checkbox" id="rz"><span id="rzl"></span></label>
 <label class="row"><input type="checkbox" id="ns"><span id="nsl"></span></label>
@@ -492,7 +492,7 @@ function mountPad(host,edit,core){
   const su=SK[core+':'+k];if(su){el.style.cssText+=';background:url("'+su+'") center/contain no-repeat;border:0;'+(k==='dpad'?'':'color:transparent');if(k==='dpad')el.querySelectorAll('i').forEach(i=>{i.style.background='transparent';i.style.border='0';i.style.color='transparent'})}
   host.append(el)})}
 const setScale=v=>{LYK(ECORE).scale=v/100;saveCfg();checkAch();$('#sz').value=$('#sz2').value=v;$('#szv').textContent=v+'%';if($('#ed').classList.contains('on'))mountPad($('#padE'),true,ECORE)};
-$('#set').onclick=()=>{$('#ag').textContent=ax('b');$('#st').classList.add('on')};
+$('#set').onclick=()=>{$('#ag').textContent=ax('b');$('#po').textContent=px('b');$('#st').classList.add('on')};
 $('#sx').onclick=()=>$('#st').classList.remove('on');
 $('#lg').onchange=e=>{cfg.lang=e.target.value;cfg.ach.lc=1;(cfg.ach.ls=cfg.ach.ls||{})[cfg.lang]=1;saveCfg();applyLang();checkAch()};
 $('#cu').onchange=e=>{cfg.custom=e.target.checked;saveCfg()};
@@ -534,11 +534,11 @@ segaSaturn:{yabause_frameskip:'enabled'}};
 const X2={gba:{mgba_frameskip:'fixed_interval',mgba_frameskip_interval:'1'},snes:{snes9x_hires_blend:'disabled'},psp:{ppsspp_frameskip:'3',ppsspp_lazy_texture_caching:'enabled'},psx:{pcsx_rearmed_frameskip:'2'},nds:{desmume_frameskip:'2'},n64:{'mupen64plus-EnableFBEmulation':'False'},sega32x:{picodrive_frameskip:'manual'}};
 const PERF2=Object.fromEntries(Object.keys(PERF).map(k=>[k,Object.assign({},PERF[k],X2[k]||{})]));
 const CORES={'.gba':'gba','.gb':'gb','.gbc':'gb','.nes':'nes','.sfc':'snes','.smc':'snes','.z64':'n64','.n64':'n64','.v64':'n64','.nds':'nds','.md':'segaMD','.gen':'segaMD','.smd':'segaMD','.sms':'segaMS','.gg':'segaGG','.32x':'sega32x','.a26':'atari2600','.a52':'a5200','.a78':'atari7800','.lnx':'lynx','.j64':'jaguar','.jag':'jaguar','.pce':'pce','.ngp':'ngp','.ngc':'ngp','.vb':'vb','.col':'coleco'};
-async function play(i){try{cfg.last=cfg.last||{};cfg.last[i.id]=Date.now();saveCfg()}catch(e){}
+async function play(i){try{if(!window.__prime){cfg.last=cfg.last||{};cfg.last[i.id]=Date.now();saveCfg()}}catch(e){}
  const fd=fo(i.folder),core=(fd&&fd.core)||CORES[ext(i.name)];
  if(!core||core==='none'){say(t('uns'));return}
- $('#player').classList.add('on');document.body.classList.add('ing');onPlay(core,i.name);wl();
- if(['psx','psp','segaSaturn','n64','nds'].includes(core))note(ta('heavy'));
+ $('#player').classList.add('on');document.body.classList.add('ing');if(!window.__prime)onPlay(core,i.name);wl();
+ if(!window.__prime&&['psx','psp','segaSaturn','n64','nds'].includes(core))note(ta('heavy'));
  const lv=cfg.opt[i.id]===undefined?(['psp','psx','n64','nds','segaSaturn','sega32x','segaCD'].includes(core)?2:1):cfg.opt[i.id];
  window.__zlv=lv;if(lv>0||cfg.diag){document.body.classList.add('pf');startFps()}
  if(lv>=2){try{if(FB&&FB.fs.disableNetwork)FB.fs.disableNetwork(FB.db).catch(()=>{})}catch(e){}}
@@ -552,10 +552,10 @@ async function play(i){try{cfg.last=cfg.last||{};cfg.last[i.id]=Date.now();saveC
  if(window.crossOriginIsolated)window.EJS_threads=true;
  window.EJS_startOnLoaded=true;window.EJS_color='#7a2fe0';window.EJS_language={pt:'pt-BR',es:'es-ES',en:'en-US',ru:'ru-RU',ja:'ja-JA',de:'de-GER',fr:'af-FR',it:'it-IT'}[cfg.lang];
  curGame=i;
- if(cfg.resume){let rs=null;try{rs=await tx('meta','readonly',s=>s.get('st:'+i.id))}catch(e){}
+ if(cfg.resume&&!window.__prime){let rs=null;try{rs=await tx('meta','readonly',s=>s.get('st:'+i.id))}catch(e){}
   if(rs&&rs.d){window.EJS_onGameStart=()=>{let n=0;const go=()=>{try{window.EJS_emulator.gameManager.loadState(rs.d);note(ta('f_resume'))}catch(e){if(++n<6)setTimeout(go,800)}};setTimeout(go,800)}}}
  const s=document.createElement('script');s.src=window.EJS_pathtodata+'loader.js';
- s.onerror=()=>{$('#game').textContent=t('lerr');$('#game').style.cssText='color:#fff;padding:80px 20px;text-align:center'};
+ s.onerror=()=>{window.__loadFail=1;$('#game').textContent=navigator.onLine?t('lerr'):px('noff');$('#game').style.cssText='color:#fff;padding:80px 20px;text-align:center'};
  document.body.append(s)}
 $('#pc').onclick=async()=>{await saveRun();location.reload()};
 const fsMove=()=>{const fe=document.fullscreenElement||document.webkitFullscreenElement;(fe||document.body).append($('#pad'),$('#pc'),$('#rot'),$('#toast'),$('#fps'))};
@@ -737,7 +737,7 @@ $('#frx').onclick=()=>{if(window.__rs)window.__rs();if(chatU){chatU();chatU=null
   if(hit<0)return;const s=sp[hit];s.style.opacity='.35';setTimeout(()=>{s.style.opacity=''},160);try{if(navigator.vibrate)navigator.vibrate(8)}catch(_){}
   (cfg.ach.tl=cfg.ach.tl||{})[hit]=1;saveCfg();checkAch()})})();
 const HAS=new Set();let curGame=null;
-async function saveRun(){if(!curGame||!cfg.resume||!$('#player').classList.contains('on'))return;
+async function saveRun(){if(window.__prime||!curGame||!cfg.resume||!$('#player').classList.contains('on'))return;
  try{const gm=window.EJS_emulator&&window.EJS_emulator.gameManager;if(!gm)return;const st=gm.getState();if(!st||!st.length||st.length>83886080)return;
   await tx('meta','readwrite',s=>s.put({t:Date.now(),d:st},'st:'+curGame.id));HAS.add(curGame.id)}catch(e){}}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')saveRun()});
@@ -809,11 +809,12 @@ const CH=[
 {id:'u-zip',pt:'Agora o Zeo descompacta arquivos .zip sozinho ao adicionar jogos e coloca o jogo na pasta certa (ou em Sem pasta).',es:'Ahora Zeo descomprime los .zip solo al añadir juegos y coloca el juego en la carpeta correcta (o en Sin carpeta).',en:'Zeo now unzips .zip files by itself when you add games and puts the game in the right folder (or No folder).'},
 {id:'u-diag',pt:'Novo: Diagnóstico de desempenho nas Configurações. Mostra FPS, velocidade estimada, tempo por frame, áudio e aparelho, e o painel copia um relatório para você me mandar.',es:'Nuevo: Diagnóstico de rendimiento en Configuración. Muestra FPS, velocidad estimada, tiempo por frame, audio y dispositivo, y el panel copia un informe.',en:'New: Performance diagnostics in Settings. Shows FPS, estimated speed, frame time, audio and device, and tapping the panel copies a report.'},
 {id:'u-offline',pt:'Jogar sem internet! Abra cada console uma vez com internet e depois ele funciona offline. Também corrigi a lista da Biblioteca e atualizei a Ajuda.',es:'¡Jugar sin internet! Abre cada consola una vez con internet y luego funciona sin conexión. También arreglé la lista de la Biblioteca y actualicé la Ayuda.',en:'Play offline! Open each console once with internet and it then works offline. Also fixed the Library list and updated Help.'},
+{id:'u-prime',pt:'Novo botão nas Configurações: Preparar para jogar offline. Ele baixa os arquivos de cada console de uma vez para você jogar sem internet.',es:'Nuevo botón en Configuración: Preparar para jugar sin conexión. Descarga los archivos de cada consola de una vez para jugar sin internet.',en:'New Settings button: Prepare to play offline. It downloads each console’s files at once so you can play without internet.'},
 {id:'u-aud',pt:'Novo botão Ajustar áudio nas Configurações, para reduzir chiado e travadas no som (por jogo).',es:'Nuevo botón Ajustar audio en Configuración para reducir chasquidos y cortes de sonido (por juego).',en:'New Adjust audio button in Settings to reduce crackling and stutter (per game).'},
 {id:'u-help',pt:'Novo botão ? com perguntas e respostas para ajudar quem está começando.',es:'Nuevo botón ? con preguntas y respuestas para quien empieza.',en:'New ? button with questions and answers for newcomers.'},
 {id:'u-live',pt:'Avisos de atualização em tempo real: quando sair uma versão nova, o sininho te avisa.',es:'Avisos de actualización en tiempo real: cuando salga una versión nueva, la campanita te avisa.',en:'Live update alerts: when a new version is out, the bell tells you.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-10.22';let verSeen=APP_VER;
+const APP_VER='2026-10-10.23';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname,{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
@@ -845,7 +846,7 @@ pt:[
 ['Como sei se meu jogo é de PSP ou de PlayStation 1?','PSP: um único arquivo .iso, .cso ou .pbp, normalmente com mais de 100 MB.\nPlayStation 1: arquivos .bin com .cue, ou um arquivo .chd.\nColoque cada um na pasta do console certo.'],
 ['Como giro a tela?','Em Configurações, ligue Botão de girar a tela. O botão 🔄 aparece abaixo do ? e também dentro do jogo, ao lado de Fechar jogo. Toque nele para alternar entre horizontal e vertical. Se o navegador não deixar, ligue a rotação automática do Android ou instale o app na tela inicial.'],
 ['Posso adicionar um arquivo .zip direto?','Pode. Em Adicionar jogos, escolha o .zip e o Zeo descompacta sozinho e coloca o jogo na pasta certa (ou em Sem pasta, se não souber qual é). Se ficar em Sem pasta, toque em Identificar e organizar ou escolha a pasta no ⋮ do jogo. Arquivos .7z e .rar ainda precisam ser extraídos antes, por exemplo com o ZArchiver. Se o arquivo for de Arcade, escolha a pasta Arcade antes de adicionar, que ele fica zipado.'],
-['Dá para jogar sem internet?','Sim. Os jogos ficam salvos no seu aparelho. Para o emulador funcionar sem internet, abra cada console pelo menos uma vez com internet: assim o Zeo guarda os arquivos do emulador. Depois disso dá para jogar até no modo avião. Amigos, chat, grupos e avisos precisam de internet.'],
+['Dá para jogar sem internet?','Sim. Os jogos ficam salvos no seu aparelho. Para o emulador funcionar sem internet, o Zeo precisa baixar os arquivos dele uma vez: em Configurações, toque em Preparar para jogar offline (com internet). Ele abre um jogo de cada console sozinho, sem som, e guarda tudo. Depois dá para jogar até no modo avião. Amigos, chat, grupos e avisos precisam de internet.'],
 ['Para que servem as pastas?','Cada pasta é de um console e só aceita arquivos daquele tipo. Toque em Nova pasta para criar uma. Para apagar uma pasta, abra ela e toque em Excluir esta pasta: os jogos não são apagados, vão para Sem pasta.'],
 ['Meu jogo ficou em "Sem pasta". E agora?','Abra a aba Sem pasta e toque em Identificar e organizar: o Zeo tenta reconhecer o console de cada jogo. Se não reconhecer, escolha a pasta manualmente na lista que aparece em cada jogo.'],
 ['Como jogo e salvo meu progresso?','Toque em Jogar. Ao tocar em Fechar jogo ou sair do app, o progresso é salvo sozinho e volta de onde você parou. Para recomeçar, toque em Do início no jogo.'],
@@ -864,7 +865,7 @@ es:[
 ['¿Cómo sé si mi juego es de PSP o de PlayStation 1?','PSP: un único archivo .iso, .cso o .pbp, normalmente de más de 100 MB.\nPlayStation 1: archivos .bin con .cue, o un archivo .chd.\nPon cada uno en la carpeta de la consola correcta.'],
 ['¿Cómo giro la pantalla?','En Configuración activa Botón para girar la pantalla. El botón 🔄 aparece debajo del ? y también dentro del juego, junto a Cerrar juego. Tócalo para alternar entre horizontal y vertical. Si el navegador no lo permite, activa la rotación automática de Android o instala la app en la pantalla de inicio.'],
 ['¿Puedo añadir un archivo .zip directamente?','Sí. En Añadir juegos elige el .zip y Zeo lo descomprime solo y pone el juego en la carpeta correcta (o en Sin carpeta si no sabe cuál es). Si queda en Sin carpeta, toca Identificar y organizar o elige la carpeta en el ⋮ del juego. Los archivos .7z y .rar aún hay que extraerlos antes, por ejemplo con ZArchiver. Si es de Arcade, elige la carpeta Arcade antes de añadir, porque se queda comprimido.'],
-['¿Se puede jugar sin internet?','Sí. Los juegos se guardan en tu dispositivo. Para que el emulador funcione sin internet, abre cada consola al menos una vez con internet: así Zeo guarda los archivos del emulador. Después puedes jugar incluso en modo avión. Amigos, chat, grupos y avisos necesitan internet.'],
+['¿Se puede jugar sin internet?','Sí. Los juegos se guardan en tu dispositivo. Para que el emulador funcione sin internet, Zeo debe descargar sus archivos una vez: en Configuración toca Preparar para jugar sin conexión (con internet). Abre un juego de cada consola solo, sin sonido, y guarda todo. Después puedes jugar incluso en modo avión. Amigos, chat, grupos y avisos necesitan internet.'],
 ['¿Para qué sirven las carpetas?','Cada carpeta es de una consola y solo acepta ese tipo de archivos. Toca Nueva carpeta para crear una. Para borrar una, ábrela y toca Eliminar esta carpeta: los juegos no se borran, pasan a Sin carpeta.'],
 ['Mi juego quedó en "Sin carpeta". ¿Y ahora?','Abre la pestaña Sin carpeta y toca Identificar y organizar. Si no lo reconoce, elige la carpeta a mano en la lista de cada juego.'],
 ['¿Cómo juego y guardo mi progreso?','Toca Jugar. Al tocar Cerrar juego o salir de la app, el progreso se guarda solo y continúas donde lo dejaste. Para empezar de nuevo, toca Del inicio.'],
@@ -883,7 +884,7 @@ en:[
 ['How do I tell a PSP game from a PlayStation 1 game?','PSP: a single .iso, .cso or .pbp file, usually over 100 MB.\nPlayStation 1: .bin files with a .cue, or a .chd file.\nPut each one in the right console folder.'],
 ['How do I rotate the screen?','In Settings turn on Screen rotate button. The 🔄 button appears under the ? and also inside the game, next to Close game. Tap it to switch between landscape and portrait. If the browser refuses, turn on Android auto-rotate or install the app on your home screen.'],
 ['Can I add a .zip file directly?','Yes. In Add games pick the .zip and Zeo unzips it by itself and puts the game in the right folder (or in No folder if it can’t tell). If it lands in No folder, tap Identify and organize or pick the folder from the game’s ⋮ menu. .7z and .rar files still need to be extracted first, for example with ZArchiver. For Arcade games, choose the Arcade folder before adding, since those stay zipped.'],
-['Can I play without internet?','Yes. Games are saved on your device. For the emulator to work offline, open each console at least once with internet: that way Zeo keeps the emulator files. After that you can play even in airplane mode. Friends, chat, groups and alerts need internet.'],
+['Can I play without internet?','Yes. Games are saved on your device. For the emulator to work offline, Zeo has to download its files once: in Settings tap Prepare to play offline (with internet). It opens one game from each console by itself, muted, and keeps everything. After that you can play even in airplane mode. Friends, chat, groups and alerts need internet.'],
 ['What are folders for?','Each folder belongs to one console and only accepts that file type. Tap New folder to create one. To remove a folder, open it and tap Delete this folder: the games are not deleted, they move to No folder.'],
 ['My game ended up in “No folder”. Now what?','Open the No folder tab and tap Identify and organize. If Zeo can’t tell, pick the folder by hand in the list on each game.'],
 ['How do I play and save my progress?','Tap Play. When you tap Close game or leave the app, progress is saved automatically and resumes where you left off. To start over, tap From the start.'],
@@ -1203,7 +1204,27 @@ function openGroupInfo(g0){chatKey='gi:'+g0.id;const me=FB.uid;
  GV=render;render(g0)}
 $('#grb').onclick=async()=>{if(!prof.pub){note(ta('f_need'));return}try{await startFr()}catch(e){note(ta('f_err'));return}groupNew()};
 
-load();
+const PXT={pt:{b:'⬇ Preparar para jogar offline',c:'O Zeo vai abrir um jogo de cada console, um por vez e sem som, para baixar os arquivos do emulador. Precisa de internet e pode levar alguns minutos. Continuar?',p:'Preparando para jogar offline… %1/%2 (%3)',d:'Pronto! %n console(s) preparado(s) para jogar offline.',f:'Não deu certo para: %s',of:'Conecte-se à internet para preparar.',ng:'Adicione jogos primeiro.',x:'Cancelar',noff:'Sem internet, e este emulador ainda não foi baixado. Conecte-se, use “Preparar para jogar offline” nas Configurações (ou abra um jogo deste console uma vez) e tente de novo.'},es:{b:'⬇ Preparar para jugar sin conexión',c:'Zeo abrirá un juego de cada consola, uno por uno y sin sonido, para descargar los archivos del emulador. Necesita internet y puede tardar unos minutos. ¿Continuar?',p:'Preparando para jugar sin conexión… %1/%2 (%3)',d:'¡Listo! %n consola(s) preparada(s) para jugar sin conexión.',f:'No funcionó para: %s',of:'Conéctate a internet para preparar.',ng:'Primero añade juegos.',x:'Cancelar',noff:'Sin internet, y este emulador aún no se ha descargado. Conéctate, usa “Preparar para jugar sin conexión” en Configuración (o abre un juego de esta consola una vez) e inténtalo de nuevo.'},en:{b:'⬇ Prepare to play offline',c:'Zeo will open one game from each console, one at a time and muted, to download the emulator files. It needs internet and can take a few minutes. Continue?',p:'Preparing to play offline… %1/%2 (%3)',d:'Done! %n console(s) ready to play offline.',f:'Didn’t work for: %s',of:'Connect to the internet to prepare.',ng:'Add games first.',x:'Cancel',noff:'No internet, and this emulator hasn’t been downloaded yet. Connect, use “Prepare to play offline” in Settings (or open a game from this console once) and try again.'}};
+const px=k=>(PXT[cfg.lang]||PXT.en)[k];
+const coreOf=g=>{const fd=fo(g.folder);return (fd&&fd.core)||CORES[ext(g.name)]};
+function primeStart(){if(!navigator.onLine){note(px('of'));return}
+ const by={};items.forEach(g=>{const c=coreOf(g);if(!c||c==='none')return;if(!by[c]||g.size<by[c].size)by[c]=g});
+ const q=Object.values(by).map(g=>g.id);if(!q.length){note(px('ng'));return}if(!confirm(px('c')))return;
+ sessionStorage.setItem('zprime',JSON.stringify({q,i:0,fail:[],n:q.length}));location.reload()}
+async function runPrime(){let st=null;try{st=JSON.parse(sessionStorage.getItem('zprime'))}catch(e){}if(!st){sessionStorage.removeItem('zprime');return}
+ const done=()=>{sessionStorage.removeItem('zprime');sessionStorage.setItem('zprimeMsg',JSON.stringify({ok:st.n-st.fail.length,fail:st.fail}));location.reload()};
+ if(st.i>=st.q.length)return done();
+ const g=items.find(x=>x.id===st.q[st.i]),next=bad=>{if(bad)st.fail.push(g?g.name:'?');st.i++;sessionStorage.setItem('zprime',JSON.stringify(st));location.reload()};
+ if(!g)return next(true);
+ window.__prime=1;window.EJS_volume=0;
+ const box=document.createElement('div');box.style.cssText='position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 56px);z-index:70;text-align:center;color:#fff;font:600 14px system-ui;text-shadow:0 1px 4px #000;pointer-events:none';
+ box.textContent=px('p').replace('%1',st.i+1).replace('%2',st.n).replace('%3',lab(g.folder));document.body.append(box);
+ const cb=document.createElement('button');cb.textContent=px('x');cb.style.cssText='position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 96px);z-index:71';cb.onclick=()=>{sessionStorage.removeItem('zprime');location.reload()};document.body.append(cb);
+ play(g);
+ const t0=Date.now(),iv=setInterval(()=>{const e=window.EJS_emulator;if(e&&e.started){clearInterval(iv);setTimeout(()=>next(false),4000)}else if(window.__loadFail||Date.now()-t0>180000){clearInterval(iv);next(true)}},1000)}
+$('#po').onclick=primeStart;
+
+load().then(()=>{if(sessionStorage.getItem('zprime'))runPrime();else{const m=sessionStorage.getItem('zprimeMsg');if(m){sessionStorage.removeItem('zprimeMsg');try{const r=JSON.parse(m);note(px('d').replace('%n',r.ok)+(r.fail.length?' '+px('f').replace('%s',r.fail.join(', ')):''))}catch(e){}}}});
 if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").then(()=>navigator.serviceWorker.ready).then(()=>{if(!window.crossOriginIsolated&&!/noiso/.test(location.search)&&!sessionStorage.getItem('zeoiso')&&navigator.serviceWorker.controller){sessionStorage.setItem('zeoiso','1');location.reload()}}).catch(()=>{})}catch(e){}}
 </script>
 </body>
