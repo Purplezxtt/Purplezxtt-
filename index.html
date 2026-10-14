@@ -544,15 +544,16 @@ async function play(i){try{if(!window.__prime){cfg.last=cfg.last||{};cfg.last[i.
  if(!core||core==='none'){say(t('uns'));return}
  $('#player').classList.add('on');document.body.classList.add('ing');try{history.pushState({zg:1},'')}catch(e){}if(!window.__prime)onPlay(core,i.name);wl();
  if(!window.__prime&&['psx','psp','segaSaturn','n64','nds'].includes(core))note(ta('heavy'));
- const heavy=['psp','psx','n64','nds','segaSaturn','sega32x','segaCD'].includes(core),lvRaw=cfg.opt[i.id]===undefined?3:cfg.opt[i.id],lv=lvRaw===3?(heavy?2:1):lvRaw;window.__zauto=lvRaw===3;window.__afsI=null;
+ const heavy=['psp','psx','n64','nds','segaSaturn','sega32x','segaCD'].includes(core),lvRaw=cfg.opt[i.id]===undefined?3:cfg.opt[i.id],lv=lvRaw===3?(heavy?2:1):lvRaw;window.__zauto=lvRaw===3;window.__afsI=null;TN.s='warm';TN.t=0;TN.hist=[];TN.lg=0;TN.tries=0;
  window.__zlv=lv;{const ms=['gba','gb','nes','snes','segaMD','segaMS','segaGG','pce','atari2600','atari7800','lynx','ws','ngp','vb','coleco'].includes(core)?20000:(['psx','nds','n64','segaSaturn','sega32x','segaCD'].includes(core)?75000:0);if(ms&&!window.__prime&&cfg.resume)setInterval(()=>{if(document.visibilityState==='visible'&&!zHid)saveRun()},ms)}
  if(lv>0||cfg.diag){document.body.classList.add('pf');startFps()}
+ {const tn=cfg.tune&&cfg.tune[i.id],d=AFS[core];if(tn&&tn.fs!=null&&d&&window.__zauto)window.EJS_defaultOptions=Object.assign(window.EJS_defaultOptions||{},{[d.k]:tn.fs})}
  if(lv>=2){try{if(FB&&FB.fs.disableNetwork)FB.fs.disableNetwork(FB.db).catch(()=>{})}catch(e){}}
  if(lv>0)window.EJS_defaultOptions=Object.assign({shader:'disabled',fastForward:'disabled',slowMotion:'disabled',rewindEnabled:'disabled','rewind-enabled':'disabled'},(lv>=2?PERF2:PERF)[core]||{});
  {const au=(cfg.au&&cfg.au[i.id])||0;if(au>0){window.EJS_defaultOptions=Object.assign(window.EJS_defaultOptions||{},AUD[core]||{});window.ZAH=au>=2?0.3:'playback'}else window.ZAH=(heavy&&lv>=2)?'playback':undefined}
  if(cfg.custom&&CPS[core]){window.EJS_VirtualGamepadSettings=[];document.body.classList.add('cp');mountPad($('#pad'),false,core);$('#pad').classList.add('on')}
  const url=URL.createObjectURL(new File([i.blob],i.name));
- window.EJS_player='#game';window.EJS_core=(core==='nds'?({1:'desmume2015',2:'melonds'})[(cfg.eng&&cfg.eng[i.id])||0]||'nds':core);window.__zcore=core;window.__zT0=performance.now();window.EJS_gameUrl=url;
+ window.EJS_player='#game';window.EJS_core=(core==='nds'?({1:'desmume2015',2:'melonds'})[(cfg.eng&&cfg.eng[i.id])||0]||'nds':core);window.__zcore=core;window.__zgid=i.id;window.__zT0=performance.now();window.EJS_gameUrl=url;
  window.EJS_gameName=i.name.replace(/\.[^.]+$/,'');
  window.EJS_pathtodata='https://cdn.emulatorjs.org/stable/data/';
  if(window.crossOriginIsolated)window.EJS_threads=true;
@@ -595,27 +596,59 @@ function diagLines(){const nf=NF[window.__zcore]||60,v=DIAG.fps,sp=v?(v<=nf*1.08
  const L=['FPS '+v+(DIAG.fa?' (méd '+DIAG.fa+')':'')+(window.crossOriginIsolated?' · MT':' · 1T')+coreTag(),
   'Vel ~'+sp+' · frame '+DIAG.avg.toFixed(1)+'ms (máx '+Math.round(DIAG.max)+')'];
  if(a)L.push('Áudio '+a.sr+'Hz · '+a.st+' · lat '+a.lat.toFixed(3)+'s'+(a.r!=null?' · relógio '+a.r.toFixed(2)+'x':''));
+ L.push('Travadas >50ms: '+(DIAG.long||0)+'/s (méd '+(DIAG.lgAvg||0).toFixed(1)+') · σ '+(DIAG.sd||0).toFixed(1)+'ms');
+ if(DIAG.mem)L.push(dxs('mem')+' '+Math.round(DIAG.mem)+'MB'+(DIAG.memG!=null?' ('+(DIAG.memG>=0?'+':'')+DIAG.memG.toFixed(1)+'MB/min)':'')+(DIAG.wasm?' · WASM '+DIAG.wasm+'MB':''));
  L.push((navigator.hardwareConcurrency||'?')+' CPU · '+(navigator.deviceMemory?'~'+navigator.deviceMemory+'GB RAM':'RAM n/d')+(BAT?' · 🔋'+Math.round(BAT.level*100)+'%'+(BAT.charging?'⚡':''):'')+(lvn?' · '+lvn:'')+(DIAG.lm?' · carga '+(DIAG.lm/1000).toFixed(1)+'s':''));
+ const bk=bottleneck();if(bk)L.push(bk);
  return L}
 function diagReport(){const ua=navigator.userAgent,m=(ua.match(/Android [\d.]+/)||[''])[0],c=(ua.match(/Chrome\/(\d+)/)||[])[1];
  return ['Zeo diag '+APP_VER+' · '+(window.__zcore||'?')].concat(diagLines(),[m+(c?' · Chrome '+c:'')]).join('\n')}
-const DXT={pt:{l:'Diagnóstico de desempenho (mais dados no jogo; toque no painel para copiar o relatório)',copied:'Relatório copiado. Cole na conversa.',lv0:'Desligada',lv1:'Leve',lv2:'Máxima'},es:{l:'Diagnóstico de rendimiento (más datos en el juego; toca el panel para copiar el informe)',copied:'Informe copiado. Pégalo en la conversación.',lv0:'Desactivada',lv1:'Ligera',lv2:'Máxima'},en:{l:'Performance diagnostics (more data in game; tap the panel to copy the report)',copied:'Report copied. Paste it in the chat.',lv0:'Off',lv1:'Light',lv2:'Maximum'}};
+const DXT={pt:{b0:'Gargalo: nenhum, estável',b1:'Gargalo provável: emulador/jogo pesado para o aparelho',b2:'Gargalo provável: travadas pontuais (navegador ou memória)',b3:'Gargalo provável: bateria baixa / economia de energia',b4:'Tela acima de 60 Hz: velocidade não mensurável',b5:'Gargalo provável: memória crescendo (possível vazamento)',mem:'Mem JS',l:'Diagnóstico de desempenho (mais dados no jogo; toque no painel para copiar o relatório)',copied:'Relatório copiado. Cole na conversa.',lv0:'Desligada',lv1:'Leve',lv2:'Máxima'},es:{b0:'Cuello de botella: ninguno, estable',b1:'Cuello probable: emulador/juego pesado para el dispositivo',b2:'Cuello probable: tirones puntuales (navegador o memoria)',b3:'Cuello probable: batería baja / ahorro de energía',b4:'Pantalla de más de 60 Hz: velocidad no medible',b5:'Cuello probable: memoria creciendo (posible fuga)',mem:'Mem JS',l:'Diagnóstico de rendimiento (más datos en el juego; toca el panel para copiar el informe)',copied:'Informe copiado. Pégalo en la conversación.',lv0:'Desactivada',lv1:'Ligera',lv2:'Máxima'},en:{b0:'Bottleneck: none, stable',b1:'Likely bottleneck: emulator/game too heavy for the device',b2:'Likely bottleneck: occasional stutter (browser or memory)',b3:'Likely bottleneck: low battery / power saving',b4:'Display above 60 Hz: speed not measurable',b5:'Likely bottleneck: memory growing (possible leak)',mem:'JS mem',l:'Performance diagnostics (more data in game; tap the panel to copy the report)',copied:'Report copied. Paste it in the chat.',lv0:'Off',lv1:'Light',lv2:'Maximum'}};
 const dxs=k=>(DXT[cfg.lang]||DXT.en)[k];
 const AFS={nds:{k:'desmume_frameskip',v:['0','1','2','3','4']},psx:{k:'pcsx_rearmed_frameskip',v:['0','1','2','3']},psp:{k:'ppsspp_frameskip',v:['Off','1','2','3','4']}};
-let aLow=0,aHigh=0,aCool=0;
-function autoTune(v){if(!window.__zauto)return;const c=window.__zcore,d=AFS[c],e=window.EJS_emulator;if(!d||!e||!e.started)return;
- const nf=NF[c]||60;if(v>nf*1.08)return;if(window.__afsI==null){const cur=(window.EJS_defaultOptions||{})[d.k],ix=d.v.indexOf(String(cur));window.__afsI=ix>=0?ix:0;window.__afs0=window.__afsI}
- if(aCool>0){aCool--;return}
- if(v<nf*.85){aLow++;aHigh=0}else if(v>=nf*.98){aHigh++;aLow=0}else{aLow=0;aHigh=0}
- if(aLow>=3&&window.__afsI<d.v.length-1){window.__afsI++;aLow=0;aCool=6;try{if(e.changeSettingOption){e.changeSettingOption(d.k,d.v[window.__afsI]);note('⚙ '+px('au')+' '+d.v[window.__afsI])}}catch(x){}}
- else if(aHigh>=25&&window.__afsI>window.__afs0){window.__afsI--;aHigh=0;aCool=6;try{if(e.changeSettingOption)e.changeSettingOption(d.k,d.v[window.__afsI])}catch(x){}}}
-let fpsOn=0,hzW=0,hi=0;function startFps(){if(fpsOn)return;fpsOn=1;let fr=0,lt=performance.now(),last=lt,sum=0,mx=0,n2=0,s2=0;
+const TN={s:'warm',t:0,hist:[],lg:0,base:null,prev:null,prevI:0,tries:0,res:null};
+function tnSet(d,val){try{const e=window.EJS_emulator;if(e&&e.changeSettingOption)e.changeSettingOption(d.k,val)}catch(x){}}
+function tnStart(d){const ix=window.__afsI;TN.prev=d.v[ix];TN.prevI=ix;window.__afsI=ix+1;TN.tries++;tnSet(d,d.v[window.__afsI]);TN.s='trial';TN.hist=[];TN.lg=0}
+function tnFinish(d,reverted){const r=TN.res||{a:TN.base?TN.base.sp:0,b:TN.base?TN.base.sp:0},fsv=d?d.v[window.__afsI]:null;
+ const rec={fs:d?fsv:null,a:r.a,b:r.b,t:Date.now()};cfg.tune=cfg.tune||{};cfg.tune[window.__zgid]=rec;saveCfg();
+ const a=Math.round(r.a*100),b=Math.round(r.b*100);
+ note('⚙ '+(reverted?px('tn1'):(r.a===r.b?px('tn0').replace('%a',a):px('tr').replace('%a',a).replace('%b',b).replace('%k',fsv))))}
+function autoTune(v,lg){if(!window.__zauto)return;const c=window.__zcore,d=AFS[c],e=window.EJS_emulator;if(!e||!e.started)return;
+ const nf=NF[c]||60;if(v>nf*1.08)return;const sp=Math.min(1,v/nf);
+ if(d&&window.__afsI==null){const cur=(window.EJS_defaultOptions||{})[d.k],ix=d.v.indexOf(String(cur));window.__afsI=ix>=0?ix:0;window.__afs0=window.__afsI;
+  const tr=cfg.tune&&cfg.tune[window.__zgid];if(tr&&Date.now()-tr.t<7*864e5)TN.s='done'}
+ if(TN.s==='done')return;TN.t++;
+ if(TN.s==='warm'){if(TN.t<6)return;TN.s='base';TN.hist=[];TN.lg=0}
+ TN.hist.push(sp);TN.lg+=lg;if(TN.hist.length<8)return;
+ const avg=TN.hist.reduce((x,y)=>x+y,0)/TN.hist.length,lgv=TN.lg;TN.hist=[];TN.lg=0;
+ if(TN.s==='base'){TN.base={sp:avg,lg:lgv};TN.res={a:avg,b:avg};
+  if(!d||(avg>=.95&&lgv<6)||window.__afsI>=d.v.length-1){TN.s='done';tnFinish(d,false);return}
+  tnStart(d);return}
+ const b=TN.base,gain=avg-b.sp;
+ if(gain>=.04||(avg>=.95&&b.sp<.95)||(lgv+2<b.lg&&avg>=b.sp-.01)){TN.base={sp:avg,lg:lgv};TN.res={a:TN.res.a,b:avg};
+  if(avg<.95&&window.__afsI<d.v.length-1&&TN.tries<3)tnStart(d);else{TN.s='done';tnFinish(d,false)}}
+ else{tnSet(d,TN.prev);window.__afsI=TN.prevI;TN.res={a:TN.res.a,b:TN.res.a};TN.s='done';tnFinish(d,true)}}
+const MEMH=[],LGH=[];
+const wasmMB=()=>{try{const m=window.EJS_emulator&&window.EJS_emulator.Module;return m&&m.HEAP8?Math.round(m.HEAP8.length/1048576):0}catch(e){return 0}};
+function memSample(){try{if(performance.memory){MEMH.push([performance.now(),performance.memory.usedJSHeapSize/1048576]);if(MEMH.length>30)MEMH.shift();DIAG.mem=MEMH[MEMH.length-1][1];
+ if(MEMH.length>=7){const a=MEMH[0],b=MEMH[MEMH.length-1],dt=(b[0]-a[0])/60000;DIAG.memG=dt>0?(b[1]-a[1])/dt:0}}}catch(e){}DIAG.wasm=wasmMB()}
+function bottleneck(){const nf=NF[window.__zcore]||60,v=DIAG.fps;if(!v)return '';if(v>nf*1.08)return dxs('b4');
+ const sp=v/nf,lg=DIAG.lgAvg||0;
+ if(BAT&&!BAT.charging&&BAT.level<.15)return dxs('b3');
+ if(sp>=.95&&lg<1.5)return dxs('b0');
+ if((DIAG.memG||0)>25)return dxs('b5');
+ if(sp<.9&&(DIAG.sd||0)<8)return dxs('b1');
+ if(sp>=.9||lg>=2)return dxs('b2');
+ return dxs('b1')}
+let fpsOn=0,hzW=0,hi=0;function startFps(){if(fpsOn)return;fpsOn=1;let fr=0,lt=performance.now(),last=lt,sum=0,sq=0,mx=0,lg=0,n2=0,s2=0,ns=0;
  const el=$('#fps');el.onclick=()=>{const r=diagReport();try{navigator.clipboard.writeText(r).then(()=>note(dxs('copied'))).catch(()=>{})}catch(e){}};
- const tick=n=>{const d=n-last;last=n;fr++;sum+=d;if(d>mx)mx=d;
+ const tick=n=>{const d=n-last;last=n;if(d<1000){fr++;sum+=d;sq+=d*d;if(d>mx)mx=d;if(d>50)lg++}
   if(!DIAG.lm&&window.EJS_emulator&&window.EJS_emulator.started)DIAG.lm=Math.round(performance.now()-(window.__zT0||performance.now()));
-  if(n-lt>=1000){const v=Math.round(fr*1000/(n-lt));DIAG.fps=v;autoTune(v);DIAG.avg=sum/fr;DIAG.max=mx;n2++;s2+=v;DIAG.fa=Math.round(s2/n2);DIAG.au=audioInfo();
+  if(n-lt>=1000){const v=Math.round(fr*1000/(n-lt));DIAG.fps=v;const av=fr?sum/fr:0;DIAG.avg=av;DIAG.sd=fr?Math.sqrt(Math.max(0,sq/fr-av*av)):0;DIAG.max=mx;DIAG.long=lg;
+   LGH.push(lg);if(LGH.length>10)LGH.shift();DIAG.lgAvg=LGH.reduce((a,b)=>a+b,0)/LGH.length;
+   if(++ns%5===0)memSample();autoTune(v,lg);n2++;s2+=v;DIAG.fa=Math.round(s2/n2);DIAG.au=audioInfo();
    el.textContent=cfg.diag?diagLines().join('\n'):'FPS '+v+(window.crossOriginIsolated?' · MT':' · 1T')+coreTag();
-   if(v>66&&!hzW&&++hi>=3){hzW=1;note(ta('hz'))}fr=0;sum=0;mx=0;lt=n}
+   if(v>66&&!hzW&&++hi>=3){hzW=1;note(ta('hz'))}fr=0;sum=0;sq=0;mx=0;lg=0;lt=n}
   requestAnimationFrame(tick)};requestAnimationFrame(tick)}
 const note=m=>{const e=$('#toast');e.textContent=m;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),5000)};
 const wl=()=>{try{navigator.wakeLock&&navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}};
@@ -633,6 +666,9 @@ function drawOt(sel){
  else{const g=items.find(x=>x.id===sel);if(!g){drawOt(null);return}
   const n=document.createElement('b');n.textContent=g.name;n.style.cssText='display:block;margin-bottom:10px;overflow-wrap:anywhere';l.append(n);
   [3,0,1,2].forEach(v=>{const b=document.createElement('button');b.textContent=(lvOf(sel)===v?'✔ ':'')+ta('lv'+v)+' — '+ta('ld'+v);b.style.cssText=bs;b.onclick=()=>{cfg.opt[sel]=v;saveCfg();drawOt(null)};l.append(b)});
+  const tnr=cfg.tune&&cfg.tune[sel];
+  if(tnr){const ltx=document.createElement('div');ltx.style.cssText='color:var(--mut);font-size:13px;margin:10px 0';ltx.textContent=px('lt')+': '+Math.round(tnr.a*100)+'% → '+Math.round(tnr.b*100)+'%'+(tnr.fs!=null?' ('+tnr.fs+')':'');l.append(ltx);
+   const rb=document.createElement('button');rb.textContent='↺ '+px('rs');rb.style.cssText=bs;rb.onclick=()=>{delete cfg.tune[sel];saveCfg();drawOt(sel)};l.append(rb)}
   const gc=(fo(g.folder)&&fo(g.folder).core)||CORES[ext(g.name)];
   if(gc==='nds'){cfg.eng=cfg.eng||{};const eh=document.createElement('b');eh.textContent=ex('t');eh.style.cssText='display:block;margin:14px 0 8px';l.append(eh);
    [0,1,2].forEach(v=>{const b=document.createElement('button');b.textContent=((cfg.eng[sel]||0)===v?'✔ ':'')+ex('d'+v);b.style.cssText=bs;b.onclick=()=>{cfg.eng[sel]=v;saveCfg();drawOt(sel)};l.append(b)});
@@ -745,15 +781,20 @@ function openChat(r){chatKey=r.id;const b=$('#frb');b.innerHTML='';const o=r.fro
 $('#fr0').onclick=async()=>{if(!prof.pub){note(ta('f_need'));return}try{await startFr()}catch(e){note(ta('f_err'));return}frHome();$('#fr').classList.add('on')};
 $('#frx').onclick=()=>{if(window.__rs)window.__rs();if(chatU){chatU();chatU=null}chatKey=null;$('#fr').classList.remove('on')};
 (function(){const t='Zeo Emulador';
- const build=(h,brk)=>{h.textContent='';h.style.userSelect='none';const arr=[];[...t].forEach((c,i)=>{const s=document.createElement('span');s.textContent=c;s.dataset.k=i;s.style.whiteSpace='pre';if(c===' '&&brk)s.style.cssText='display:block;height:0;overflow:hidden';h.append(s);arr.push(s)});return arr};
- const reg=(hit,s)=>{s.style.opacity='.35';setTimeout(()=>{s.style.opacity=''},160);try{if(navigator.vibrate)navigator.vibrate(8)}catch(_){}
-  cfg.ach.tl=cfg.ach.tl||{};const nw=!cfg.ach.tl[hit];cfg.ach.tl[hit]=1;if(nw){saveCfg();if(cfg.achOn&&!cfg.ach.u.secret)note('🔤 '+Object.keys(cfg.ach.tl).length+'/11')}checkAch()};
- const bind=(host,arr)=>host.addEventListener('click',e=>{const x=e.clientX,y=e.clientY;let hit=-1,best=1e9;
-  arr.forEach((s,i)=>{if(t[i]===' ')return;const r=s.getBoundingClientRect(),cx=(r.left+r.right)/2,cy=(r.top+r.bottom)/2;
-   if(x>=r.left-4&&x<=r.right+4&&y>=r.top-4&&y<=r.bottom+4){const d=Math.abs(x-cx)+Math.abs(y-cy);if(d<best){best=d;hit=i}}});
-  if(hit>=0)reg(hit,arr[hit])});
- const h1=$('.hd h1');if(h1)bind($('#bnr'),build(h1,true));
- const lt=$('#vLib .lt');if(lt)bind($('#vLib .lh'),build(lt,false))})();
+ const build=(h,brk)=>{h.textContent='';h.style.userSelect='none';[...t].forEach((c,i)=>{const s=document.createElement('span');s.textContent=c;s.dataset.k=i;s.style.whiteSpace='pre';if(c===' '&&brk)s.style.cssText='display:block;height:0;overflow:hidden';h.append(s)})};
+ const h1=$('.hd h1'),lt=$('#vLib .lt');if(h1)build(h1,true);if(lt)build(lt,false);
+ let lastI=-1,lastT=0;
+ const reg=(hit,s)=>{const n=Date.now();if(hit===lastI&&n-lastT<400)return;lastI=hit;lastT=n;
+  s.style.opacity='.35';setTimeout(()=>{s.style.opacity=''},160);try{if(navigator.vibrate)navigator.vibrate(8)}catch(_){}
+  cfg.ach.tl=cfg.ach.tl||{};const nw=!cfg.ach.tl[hit];cfg.ach.tl[hit]=1;
+  if(nw){saveCfg();if(!cfg.ach.u.secret)note('🔤 '+Object.keys(cfg.ach.tl).length+'/11'+(cfg.achOn?'':' · '+sct2()))}checkAch()};
+ const test=(x,y)=>{let best=1e9,hit=-1,el=null;
+  [h1,lt].forEach(h=>{if(!h)return;h.querySelectorAll('span[data-k]').forEach(s=>{const i=+s.dataset.k;if(t[i]===' ')return;const r=s.getBoundingClientRect();if(!r.width)return;
+   if(x>=r.left-5&&x<=r.right+5&&y>=r.top-5&&y<=r.bottom+5){const d=Math.abs(x-(r.left+r.right)/2)+Math.abs(y-(r.top+r.bottom)/2);if(d<best){best=d;hit=i;el=s}}})});
+  if(hit>=0)reg(hit,el)};
+ const on=e=>{const p=(e.changedTouches&&e.changedTouches[0])||e;if(p&&typeof p.clientX==='number')test(p.clientX,p.clientY)};
+ document.addEventListener('click',on,true);document.addEventListener('pointerup',on,true);document.addEventListener('touchend',on,true)})();
+const SCT2={pt:'ative as conquistas em Configurações',es:'activa los logros en Configuración',en:'turn on achievements in Settings'};const sct2=()=>SCT2[cfg.lang]||SCT2.en;
 const HAS=new Set();let curGame=null;
 async function saveRun(){if(window.__prime||!curGame||!cfg.resume||!$('#player').classList.contains('on'))return;
  try{const gm=window.EJS_emulator&&window.EJS_emulator.gameManager;if(!gm)return;const st=gm.getState();if(!st||!st.length||st.length>83886080)return;
@@ -836,11 +877,12 @@ const CH=[
 {id:'u-prime',pt:'Novo botão nas Configurações: Preparar para jogar offline. Ele baixa os arquivos de cada console de uma vez para você jogar sem internet.',es:'Nuevo botón en Configuración: Preparar para jugar sin conexión. Descarga los archivos de cada consola de una vez para jugar sin internet.',en:'New Settings button: Prepare to play offline. It downloads each console’s files at once so you can play without internet.'},
 {id:'u-opt3',pt:'Otimização melhorada! Novo modo Automática (padrão): começa leve e se ajusta sozinha. O jogo agora é salvo com mais frequência, pausa ao sair do app e o botão voltar do celular fecha o jogo salvando o progresso.',es:'¡Optimización mejorada! Nuevo modo Automática (por defecto): empieza ligera y se ajusta sola. El juego se guarda con más frecuencia, se pausa al salir de la app y el botón atrás cierra el juego guardando el progreso.',en:'Better optimization! New Automatic mode (default): starts light and adjusts itself. The game now saves more often, pauses when you leave the app and the back button closes the game while saving progress.'},
 {id:'u-secret2',pt:'Corrigi a conquista secreta: agora as letras de ZEO EMULADOR funcionam no Início e na Biblioteca e o app avisa no sininho quando você desbloqueia uma conquista. Jogos grandes agora mostram o motivo quando não entram (espaço, erro).',es:'Arreglé el logro secreto: ahora las letras de ZEO EMULADOR funcionan en Inicio y Biblioteca y la app avisa en la campanita cuando desbloqueas un logro. Los juegos grandes ahora muestran el motivo si no entran (espacio, error).',en:'Fixed the secret achievement: the ZEO EMULADOR letters now work on Home and Library and the bell tells you when you unlock an achievement. Big games now show the reason when they don’t go in (space, error).'},
+{id:'u-tune',pt:'Otimização guiada: o Zeo mede a velocidade do jogo, aplica um ajuste, mede de novo e só mantém se melhorar (senão volta ao que estava). O diagnóstico agora mostra travadas, memória e o gargalo provável.',es:'Optimización guiada: Zeo mide la velocidad del juego, aplica un ajuste, vuelve a medir y solo lo mantiene si mejora (si no, vuelve a como estaba). El diagnóstico ahora muestra tirones, memoria y el cuello de botella probable.',en:'Guided optimization: Zeo measures game speed, applies one adjustment, measures again and only keeps it if it helps (otherwise it goes back). Diagnostics now show stutter, memory and the likely bottleneck.'},
 {id:'u-aud',pt:'Novo botão Ajustar áudio nas Configurações, para reduzir chiado e travadas no som (por jogo).',es:'Nuevo botón Ajustar audio en Configuración para reducir chasquidos y cortes de sonido (por juego).',en:'New Adjust audio button in Settings to reduce crackling and stutter (per game).'},
 {id:'u-help',pt:'Novo botão ? com perguntas e respostas para ajudar quem está começando.',es:'Nuevo botón ? con preguntas y respuestas para quien empieza.',en:'New ? button with questions and answers for newcomers.'},
 {id:'u-live',pt:'Avisos de atualização em tempo real: quando sair uma versão nova, o sininho te avisa.',es:'Avisos de actualización en tiempo real: cuando salga una versión nueva, la campanita te avisa.',en:'Live update alerts: when a new version is out, the bell tells you.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-10.25';let verSeen=APP_VER;
+const APP_VER='2026-10-10.26';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname,{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
@@ -1233,7 +1275,7 @@ function openGroupInfo(g0){chatKey='gi:'+g0.id;const me=FB.uid;
  GV=render;render(g0)}
 $('#grb').onclick=async()=>{if(!prof.pub){note(ta('f_need'));return}try{await startFr()}catch(e){note(ta('f_err'));return}groupNew()};
 
-const PXT={pt:{au:'Ajuste automático: pulo de quadros',b:'⬇ Preparar para jogar offline',c:'O Zeo vai abrir um jogo de cada console, um por vez e sem som, para baixar os arquivos do emulador. Precisa de internet e pode levar alguns minutos. Continuar?',p:'Preparando para jogar offline… %1/%2 (%3)',d:'Pronto! %n console(s) preparado(s) para jogar offline.',f:'Não deu certo para: %s',of:'Conecte-se à internet para preparar.',ng:'Adicione jogos primeiro.',x:'Cancelar',noff:'Sem internet, e este emulador ainda não foi baixado. Conecte-se, use “Preparar para jogar offline” nas Configurações (ou abra um jogo deste console uma vez) e tente de novo.'},es:{au:'Ajuste automático: salto de cuadros',b:'⬇ Preparar para jugar sin conexión',c:'Zeo abrirá un juego de cada consola, uno por uno y sin sonido, para descargar los archivos del emulador. Necesita internet y puede tardar unos minutos. ¿Continuar?',p:'Preparando para jugar sin conexión… %1/%2 (%3)',d:'¡Listo! %n consola(s) preparada(s) para jugar sin conexión.',f:'No funcionó para: %s',of:'Conéctate a internet para preparar.',ng:'Primero añade juegos.',x:'Cancelar',noff:'Sin internet, y este emulador aún no se ha descargado. Conéctate, usa “Preparar para jugar sin conexión” en Configuración (o abre un juego de esta consola una vez) e inténtalo de nuevo.'},en:{au:'Auto adjust: frameskip',b:'⬇ Prepare to play offline',c:'Zeo will open one game from each console, one at a time and muted, to download the emulator files. It needs internet and can take a few minutes. Continue?',p:'Preparing to play offline… %1/%2 (%3)',d:'Done! %n console(s) ready to play offline.',f:'Didn’t work for: %s',of:'Connect to the internet to prepare.',ng:'Add games first.',x:'Cancel',noff:'No internet, and this emulator hasn’t been downloaded yet. Connect, use “Prepare to play offline” in Settings (or open a game from this console once) and try again.'}};
+const PXT={pt:{tr:'Otimização: %a% → %b% (pulo de quadros %k)',tn0:'Teste concluído: %a% da velocidade, sem ajuste necessário.',tn1:'Ajuste revertido: não melhorou, ficou como estava.',rs:'Restaurar padrão e testar de novo',lt:'Último teste',au:'Ajuste automático: pulo de quadros',b:'⬇ Preparar para jogar offline',c:'O Zeo vai abrir um jogo de cada console, um por vez e sem som, para baixar os arquivos do emulador. Precisa de internet e pode levar alguns minutos. Continuar?',p:'Preparando para jogar offline… %1/%2 (%3)',d:'Pronto! %n console(s) preparado(s) para jogar offline.',f:'Não deu certo para: %s',of:'Conecte-se à internet para preparar.',ng:'Adicione jogos primeiro.',x:'Cancelar',noff:'Sem internet, e este emulador ainda não foi baixado. Conecte-se, use “Preparar para jogar offline” nas Configurações (ou abra um jogo deste console uma vez) e tente de novo.'},es:{tr:'Optimización: %a% → %b% (salto de cuadros %k)',tn0:'Prueba terminada: %a% de la velocidad, sin ajuste necesario.',tn1:'Ajuste revertido: no mejoró, quedó como estaba.',rs:'Restaurar y probar de nuevo',lt:'Última prueba',au:'Ajuste automático: salto de cuadros',b:'⬇ Preparar para jugar sin conexión',c:'Zeo abrirá un juego de cada consola, uno por uno y sin sonido, para descargar los archivos del emulador. Necesita internet y puede tardar unos minutos. ¿Continuar?',p:'Preparando para jugar sin conexión… %1/%2 (%3)',d:'¡Listo! %n consola(s) preparada(s) para jugar sin conexión.',f:'No funcionó para: %s',of:'Conéctate a internet para preparar.',ng:'Primero añade juegos.',x:'Cancelar',noff:'Sin internet, y este emulador aún no se ha descargado. Conéctate, usa “Preparar para jugar sin conexión” en Configuración (o abre un juego de esta consola una vez) e inténtalo de nuevo.'},en:{tr:'Optimization: %a% → %b% (frameskip %k)',tn0:'Test done: %a% of full speed, no adjustment needed.',tn1:'Adjustment reverted: it didn’t help, kept as it was.',rs:'Restore default and test again',lt:'Last test',au:'Auto adjust: frameskip',b:'⬇ Prepare to play offline',c:'Zeo will open one game from each console, one at a time and muted, to download the emulator files. It needs internet and can take a few minutes. Continue?',p:'Preparing to play offline… %1/%2 (%3)',d:'Done! %n console(s) ready to play offline.',f:'Didn’t work for: %s',of:'Connect to the internet to prepare.',ng:'Add games first.',x:'Cancel',noff:'No internet, and this emulator hasn’t been downloaded yet. Connect, use “Prepare to play offline” in Settings (or open a game from this console once) and try again.'}};
 const px=k=>(PXT[cfg.lang]||PXT.en)[k];
 const coreOf=g=>{const fd=fo(g.folder);return (fd&&fd.core)||CORES[ext(g.name)]};
 function primeStart(){if(!navigator.onLine){note(px('of'));return}
