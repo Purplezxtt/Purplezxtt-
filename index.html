@@ -272,6 +272,13 @@ body.bgpix:not(.ing)::after{z-index:15;height:120px;background:linear-gradient(t
 #spl small,#spl em{position:relative;color:#c9b8ff;font-style:normal;letter-spacing:.3em;font-size:11px;text-align:center}#spl em{letter-spacing:.05em;font-size:13px;opacity:.8}
 #spl .bar{position:relative;width:min(260px,70vw);height:8px;margin-top:26px;border-radius:6px;background:#26115f;overflow:hidden;box-shadow:0 0 14px rgba(120,60,255,.35)}#spl .bar i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#8a4dff,#c9a4ff,#ffd23f);transition:width .12s}
 #spl .tx{position:relative;color:#a99ad6;font-size:13px}@media(prefers-reduced-motion:reduce){#spl img,#spl::before{animation:none}}
+#cs .card{max-width:440px;background:linear-gradient(180deg,#120a35,#0a0422);border:1px solid #5a2fd0;border-radius:24px;padding:16px;gap:10px;box-shadow:0 0 32px rgba(120,60,255,.35)}#cs h2{display:none}#cs .row{display:block}#csx{width:100%;padding:14px;border-radius:16px;font-weight:700;color:#fff;background:linear-gradient(180deg,#8a3dff,#5a1fd8);border-color:#c9a4ff;box-shadow:0 0 16px rgba(130,70,255,.5)}
+#csl{max-height:calc(100vh - 210px);overflow:auto;display:flex;flex-direction:column;gap:8px;padding:2px}#csH{display:flex;align-items:center;gap:10px;padding-bottom:8px;border-bottom:1px solid #2e1a6e}#csH b{display:block;font-size:24px;color:#fff;line-height:1.1}#csH small{color:#b58bff;margin:0}.csI{font-size:34px}
+.csB{font-size:12px;font-weight:700;color:#d9c8ff;border:1px solid #6a3fd0;background:#1b0f4a;border-radius:14px;padding:6px 10px;white-space:nowrap}.csX{width:36px;height:36px;padding:0;border-radius:50%;background:none;border:0;color:#c9b8ff;font-size:20px}
+.csR{display:flex;align-items:center;gap:12px;padding:8px 12px 8px 8px;border-radius:18px;border:1px solid #2e1a6e;background:linear-gradient(180deg,#140b3a,#0d0628);cursor:pointer}.csR.sel{border-color:#a070ff;background:linear-gradient(180deg,#2a1670,#170c45);box-shadow:0 0 16px rgba(140,80,255,.45)}.csR.lk{cursor:default;opacity:.92}.csR b{font-size:16px;color:#f1ecff}
+.csD{width:24px;height:24px;border-radius:50%;border:2px solid #7a4dff;flex:none;position:relative}.csR.sel .csD::after{content:'';position:absolute;inset:4px;border-radius:50%;background:#b58bff}
+.csG{padding:8px 12px;border-radius:14px;font-size:13px;font-weight:700;color:#e6dcff;background:#1b0f4a;border:1px solid #7a4dff;white-space:nowrap}
+.csV{display:flex;align-items:center;gap:10px;margin:8px 0 2px;color:#b58bff;font-weight:800;letter-spacing:.08em;font-size:13px}.csV::before,.csV::after{content:'';flex:1;height:1px;background:#3a2278}.csF{text-align:center;color:#a99ad6;font-size:13px;margin:6px 0 2px}
 </style>
 </head>
 <body>
@@ -1110,12 +1117,25 @@ function setFrame(img,fr,n=0){if(!img)return;fr=FRS.includes(fr)?fr:'';if(!img.p
 function applyLook(){const b=myBg(),cl=document.body.classList;Object.keys(BGCLS).forEach(k=>cl.toggle(BGCLS[k],b===k));
  ['#pav','#pav2'].forEach(s=>setFrame($(s),myFrame()));
  const a=$('#pfr'),c=$('#pbg');if(a)a.hidden=!FRS.some(v=>unl('frame:'+v));if(c)c.hidden=!BGS.some(v=>unl('bg:'+v));applyRot()}
-function openCs(mode,pre){const l=$('#csl');l.innerHTML='';const bs='display:block;width:100%;text-align:left;margin-bottom:8px';cfg.unl=cfg.unl||{};$('#csx').textContent=cx('cl');
- {const f=mode==='frame',key=f?'frame':'bg',cur=cfg[key]||'';$('#cst').textContent=f?kx('fr'):kx('bg');
-  const opts=f?[['',kx('none')]].concat(FRP.map(v=>[v,kx(v)]),unl('frame:creator')?[['creator',kx('creator')]]:[]):[['',kx('blk')]].concat(BGS.map(v=>[v,kx(v)]));
-  opts.forEach(([v,n])=>{const ok=!v||unl(key+':'+v),b=document.createElement('button');b.style.cssText=bs;b.textContent=(cur===v?'✔ ':'')+n+(ok?'':' — '+kx('lock'));b.disabled=!ok;
-   b.onclick=()=>{cfg[key]=v;saveCfg();applyLook();checkAch();if(f&&prof.pub)schedPub();openCs(mode)};l.append(b)})}
- $('#cs').classList.add('on')}
+const CST={pt:{sf:'Personalize seu perfil',sb:'Personalize o visual do app',av:'%n disponíveis',xf:'MOLDURAS EXCLUSIVAS',xb:'FUNDOS EXCLUSIVOS',ft:'Desbloqueie novos itens na Loja'},es:{sf:'Personaliza tu perfil',sb:'Personaliza el aspecto de la app',av:'%n disponibles',xf:'MARCOS EXCLUSIVOS',xb:'FONDOS EXCLUSIVOS',ft:'Desbloquea nuevos objetos en la Tienda'},en:{sf:'Customize your profile',sb:'Customize the app look',av:'%n available',xf:'EXCLUSIVE FRAMES',xb:'EXCLUSIVE BACKGROUNDS',ft:'Unlock new items in the Shop'}};
+function csThumb(f,v){const d=document.createElement('div');d.style.cssText='width:56px;height:56px;border-radius:14px;flex:none;display:grid;place-items:center;border:1px solid #3a2870;background:#06020f;'+(f?'':'overflow:hidden');
+ if(f){const im=document.createElement('img');im.className='av';im.alt='';im.src=prof.avatar||'icon-192.png';im.style.cssText='width:40px;height:40px;border-radius:50%;object-fit:cover';d.append(im);if(v)setFrame(im,v)}else if(v)d.style.background=BGPREV[v]||'#222';return d}
+function openCs(mode){const l=$('#csl'),sc=l.scrollTop;l.innerHTML='';cfg.unl=cfg.unl||{};$('#csx').textContent=cx('cl');
+ const f=mode==='frame',key=f?'frame':'bg',cur=cfg[key]||'',T=CST[cfg.lang]||CST.en,card=l.parentNode;
+ const opts=f?[['',kx('none')]].concat(FRP.map(v=>[v,kx(v)]),unl('frame:creator')?[['creator',kx('creator')]]:[]):[['',kx('blk')]].concat(BGS.map(v=>[v,kx(v)]));
+ const rr=v=>{const it=ITEMS.find(i=>i.t===key&&i.id===v);return it?it.r:-1},A=opts.filter(([v])=>!v||unl(key+':'+v)||v==='creator'),X=opts.filter(o=>!A.includes(o)).sort((a,b)=>rr(a[0])-rr(b[0]));
+ let H=$('#csH');if(!H){H=document.createElement('div');H.id='csH';card.insertBefore(H,l)}H.innerHTML='';
+ const ic=document.createElement('div');ic.className='csI';ic.textContent=f?'🖼️':'🌈';const tw=document.createElement('div');tw.style.cssText='flex:1;min-width:0';const h=document.createElement('b');h.textContent=(f?kx('fr'):kx('bg')).replace(/^\S+\s/,'');const sb=document.createElement('small');sb.textContent=f?T.sf:T.sb;tw.append(h,sb);
+ const bd=document.createElement('span');bd.className='csB';bd.textContent='👑 '+T.av.replace('%n',A.length);const x=document.createElement('button');x.className='csX';x.textContent='✕';x.onclick=()=>$('#csx').click();H.append(ic,tw,bd,x);
+ const row=([v,n],ok)=>{const r=document.createElement('div');r.className='csR'+(cur===v&&ok?' sel':'')+(ok?'':' lk');r.append(csThumb(f,v));
+  const nm=document.createElement('div');nm.style.cssText='flex:1;min-width:0;display:flex;flex-direction:column;gap:3px';const t=document.createElement('b');t.textContent=(ok?'':'🔒 ')+n;nm.append(t);const q=rr(v);if(q>=0&&typeof rarBadge==='function')nm.append(rarBadge(q));r.append(nm);
+  if(ok){const dot=document.createElement('i');dot.className='csD';r.append(dot);r.onclick=()=>{cfg[key]=v;saveCfg();applyLook();checkAch();if(f&&prof.pub)schedPub();openCs(mode)}}
+  else{const g=document.createElement('button');g.className='csG';g.textContent='🛒 '+shx('sh');g.onclick=()=>{$('#cs').classList.remove('on');const pf=$('#pf');if(pf)pf.classList.remove('on');const sb=document.querySelector('#bn button[data-v=shop]');if(sb)sb.click()};r.append(g)}
+  return r};
+ A.forEach(o=>l.append(row(o,1)));
+ if(X.length){const dv=document.createElement('div');dv.className='csV';dv.textContent='👑 '+(f?T.xf:T.xb);l.append(dv);X.forEach(o=>l.append(row(o,0)))}
+ const ft=document.createElement('div');ft.className='csF';ft.textContent='</>  '+T.ft;l.append(ft);
+ $('#cs').classList.add('on');l.scrollTop=sc}
 async function creatorCheck(){try{const f=await initFb(),{doc,getDoc}=f.fs,s=await getDoc(doc(f.db,'ids','1'));if(!s.exists())return;
  cfg.unl=cfg.unl||{};
  if(s.data().uid===f.uid){IS_CR=true;cfg.unl['frame:creator']=1;if(!cfg.seenU.includes('c-creator')){cfg.seenU.push('c-creator');pushN({k:'upd',u:'c-creator'})}saveCfg();applyLook()}
