@@ -250,6 +250,21 @@ body.bgpix:not(.ing)::after{z-index:15;height:120px;background:linear-gradient(t
 .nrow{padding:10px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;cursor:pointer}.nrow.un{border-color:var(--acc);background:rgba(122,47,224,.12)}.nrow b{display:block}.nrow small{color:var(--mut)}#ncl{max-height:60vh;overflow:auto}
 #pf .av{width:72px;height:72px}#pf input[type=text]{flex:1 1 120px;min-width:0}
 .cht{width:68px;height:68px;object-fit:contain;filter:drop-shadow(0 4px 6px rgba(0,0,0,.55))}.cht.big{width:150px;height:150px;animation:zchk .9s ease-in-out infinite}@keyframes zchk{0%,100%{transform:rotate(0) scale(1)}20%{transform:rotate(-8deg) scale(1.04)}40%{transform:rotate(8deg) scale(1.04)}60%{transform:rotate(-5deg)}80%{transform:rotate(5deg)}}
+#st{background:#080320;padding:0}#st .card{max-width:none;margin:0;border:0;border-radius:0;padding:0;background:none;display:block;min-height:100%}
+.stH{display:flex;align-items:center;gap:12px;padding:calc(env(safe-area-inset-top,0px) + 12px) 14px 12px;background:linear-gradient(135deg,#2b0a70,#12063a 60%,#2b0a70);border-bottom:1px solid #4a2a9a;box-shadow:0 6px 24px rgba(110,50,255,.25)}
+.stH button{width:40px;height:40px;border-radius:50%;padding:0;background:#1b0f4a;border:2px solid #7a4dff;color:#fff;font-size:24px;line-height:1;flex:none}.stH h2{margin:0;font-size:20px;color:#fff}.stH small{display:block;color:#c9b8ff;margin:0}
+.stB{display:flex;gap:10px;padding:12px;align-items:flex-start}.stN{display:flex;flex-direction:column;gap:4px;width:76px;flex:none;padding:6px;border-radius:18px;background:#0f0830;border:1px solid #2e1a6e;position:sticky;top:12px}
+.stN button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 0;border-radius:14px;background:none;border:1px solid transparent;color:#c9b8ff;font-size:10.5px;font-weight:600;box-shadow:none;min-width:0}.stN button i{font-style:normal;font-size:20px}
+.stN button[aria-pressed=true]{background:linear-gradient(180deg,#7a2fe8,#4a1fb8);color:#fff;border-color:#b58bff;box-shadow:0 0 14px rgba(140,80,255,.55)}
+.stR{flex:1;min-width:0}.stP{display:grid;gap:10px}.stP[hidden]{display:none}
+.stP>label,.stP>button,.stA{background:linear-gradient(180deg,#170f38,#100829);border:1px solid #3a2a8a;border-radius:18px;padding:14px;color:#f1ecff;margin:0}
+.stP>label.row{flex-wrap:nowrap;justify-content:space-between;gap:10px}.stP>label.row span{order:1;flex:1}.stP select{width:100%;margin-top:8px;background:#0d0626;color:#fff;border:1px solid #5a3fc0;border-radius:12px;padding:10px}
+.stP>button{width:100%;text-align:left;font-weight:600;border-color:#6a3fd0;background:linear-gradient(180deg,#24135a,#160a3c)}
+.stP input[type=checkbox]{-webkit-appearance:none;appearance:none;order:2;flex:none;width:48px;height:28px;border-radius:14px;background:#2a1a60;border:1px solid #5a3fc0;position:relative;margin:0;transition:.2s}
+.stP input[type=checkbox]::after{content:'';position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:#bba6f5;transition:.2s}
+.stP input[type=checkbox]:checked{background:linear-gradient(180deg,#8a4dff,#5a2fd0);border-color:#c9a4ff}.stP input[type=checkbox]:checked::after{left:22px;background:#fff}
+.stA{text-align:center}.stA b{display:block;font-size:20px;margin-bottom:4px}
+.stF{margin-top:12px}.stF button{width:100%;padding:14px;border-radius:16px;font-weight:700;color:#fff;background:linear-gradient(180deg,#8a3dff,#5a1fd8);border-color:#c9a4ff;box-shadow:0 0 16px rgba(130,70,255,.5)}
 </style>
 </head>
 <body>
@@ -1471,6 +1486,17 @@ function startAd(){const l=$('#mil');clearInterval(adTm);l.innerHTML='';let s=AD
 function openMissions(){renderMi();$('#mi').classList.add('on')}
 $('#zcH').onclick=openMissions;$('#zcS').onclick=openMissions;$('#mix').onclick=()=>{clearInterval(adTm);$('#mi').classList.remove('on')};
 
+(function(){const st=$('#st'),card=st.firstElementChild,h2=card.querySelector('h2'),g=id=>{const e=$('#'+id);return e&&(e.closest('label')||e)};
+const T={pt:['Geral','Jogo','Avisos','Interface','Áudio','Desempenho','Sobre'],es:['General','Juego','Avisos','Interfaz','Audio','Rendimiento','Acerca de'],en:['General','Game','Alerts','Interface','Audio','Performance','About']};
+const SUB={pt:'Personalize sua experiência no Zeo!',es:'¡Personaliza tu experiencia en Zeo!',en:'Customize your Zeo experience!'},ABT={pt:'Emulador de jogos retrô no navegador.',es:'Emulador de juegos retro en el navegador.',en:'Retro game emulator in the browser.'};
+const IC=['⚙️','🎮','🔔','🎨','🔊','⏱️','ℹ️'],map=[['lg','cu','ao','rz'],['og','em','sz'],['nt','ns'],['rt','cz'],['ag'],['po','dg'],[]];
+const hd=document.createElement('div');hd.className='stH';const bk=document.createElement('button');bk.textContent='‹';bk.onclick=()=>$('#sx').click();const tx=document.createElement('div'),sub=document.createElement('small');tx.append(h2,sub);hd.append(bk,tx);
+const body=document.createElement('div');body.className='stB';const nav=document.createElement('nav');nav.className='stN';const R=document.createElement('div');R.className='stR';const ps=[],bs=[];
+map.forEach((ids,i)=>{const p=document.createElement('div');p.className='stP';p.hidden=i>0;ids.forEach(id=>{const e=g(id);if(e)p.append(e)});ps.push(p);R.append(p);const b=document.createElement('button');b.innerHTML='<i>'+IC[i]+'</i><span></span>';b.setAttribute('aria-pressed',i==0);b.onclick=()=>{ps.forEach((q,j)=>{q.hidden=j!==i;bs[j].setAttribute('aria-pressed',j===i)})};bs.push(b);nav.append(b)});
+const ab=document.createElement('div');ab.className='stA';ab.innerHTML='<b>Zeo Emulador</b><span></span>';ps[6].append(ab);
+const ft=document.createElement('div');ft.className='stF';ft.append($('#sx'));R.append(ft);body.append(nav,R);card.replaceChildren(hd,body);
+function lab(){const k=T[cfg.lang]?cfg.lang:'en';bs.forEach((b,i)=>b.lastChild.textContent=T[k][i]);sub.textContent=SUB[k]||SUB.en;ab.lastChild.textContent=ABT[k]||ABT.en}
+lab();const o=$('#set').onclick;$('#set').onclick=()=>{o();lab()};$('#lg').addEventListener('change',()=>setTimeout(lab,0))})();
 load().then(()=>{coinUI();if(cfg.cursor)curOn();if(sessionStorage.getItem('zprime'))runPrime();else{const m=sessionStorage.getItem('zprimeMsg');if(m){sessionStorage.removeItem('zprimeMsg');try{const r=JSON.parse(m);note(px('d').replace('%n',r.ok)+(r.fail.length?' '+px('f').replace('%s',r.fail.join(', ')):''))}catch(e){}}}});
 if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").then(()=>navigator.serviceWorker.ready).then(()=>{if(!window.crossOriginIsolated&&!/noiso/.test(location.search)&&!sessionStorage.getItem('zeoiso')&&navigator.serviceWorker.controller){sessionStorage.setItem('zeoiso','1');location.reload()}}).catch(()=>{})}catch(e){}}
 </script>
