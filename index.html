@@ -1493,10 +1493,34 @@ const IC=['⚙️','🎮','🔔','🎨','🔊','⏱️','ℹ️'],map=[['lg','cu
 const hd=document.createElement('div');hd.className='stH';const bk=document.createElement('button');bk.textContent='‹';bk.onclick=()=>$('#sx').click();const tx=document.createElement('div'),sub=document.createElement('small');tx.append(h2,sub);hd.append(bk,tx);
 const body=document.createElement('div');body.className='stB';const nav=document.createElement('nav');nav.className='stN';const R=document.createElement('div');R.className='stR';const ps=[],bs=[];
 map.forEach((ids,i)=>{const p=document.createElement('div');p.className='stP';p.hidden=i>0;ids.forEach(id=>{const e=g(id);if(e)p.append(e)});ps.push(p);R.append(p);const b=document.createElement('button');b.innerHTML='<i>'+IC[i]+'</i><span></span>';b.setAttribute('aria-pressed',i==0);b.onclick=()=>{ps.forEach((q,j)=>{q.hidden=j!==i;bs[j].setAttribute('aria-pressed',j===i)})};bs.push(b);nav.append(b)});
-const ab=document.createElement('div');ab.className='stA';ab.innerHTML='<b>Zeo Emulador</b><span></span>';ps[6].append(ab);
+window.__stA=ps[4];const ab=document.createElement('div');ab.className='stA';ab.innerHTML='<b>Zeo Emulador</b><span></span>';ps[6].append(ab);
 const cz=g('cz');if(cz){cz.style.display='none';R.append(cz)}const ft=document.createElement('div');ft.className='stF';ft.append($('#sx'));R.append(ft);body.append(nav,R);card.replaceChildren(hd,body);
 function lab(){const k=T[cfg.lang]?cfg.lang:'en';bs.forEach((b,i)=>b.lastChild.textContent=T[k][i]);sub.textContent=SUB[k]||SUB.en;ab.lastChild.textContent=ABT[k]||ABT.en}
 lab();const o=$('#set').onclick;$('#set').onclick=()=>{o();lab()};$('#lg').addEventListener('change',()=>setTimeout(lab,0))})();
+(function(){const TX={pt:['Música ambiente','Volume da música','Música: ligada','Música: desligada'],es:['Música ambiental','Volumen de la música','Música: activada','Música: desactivada'],en:['Ambient music','Music volume','Music: on','Music: off']};
+const tt=i=>(TX[cfg.lang]||TX.en)[i];let C,M,wet,pad,bus,run=0,T1,T2,paused=0,ug=0;
+const on=()=>cfg.mus!==false,vol=()=>(cfg.musV==null?40:cfg.musV)/100;
+const CH=[[110,164.8,220,261.6,329.6],[87.3,130.8,174.6,220,261.6],[98,146.8,196,246.9,293.7],[82.4,123.5,164.8,207.7,246.9]],BL=[440,523.3,587.3,659.3,784,880,1046.5,1174.7],AM=[0,3,2,4];let ci=0;
+function init(){if(C)return;C=new (window.AudioContext||window.webkitAudioContext)();M=C.createGain();M.gain.value=0;M.connect(C.destination);
+const n=C.sampleRate*4,ir=C.createBuffer(2,n,C.sampleRate);for(let c=0;c<2;c++){const d=ir.getChannelData(c);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3)}
+const cv=C.createConvolver();cv.buffer=ir;wet=C.createGain();wet.gain.value=.7;cv.connect(wet);wet.connect(M);const dry=C.createGain();dry.gain.value=.45;dry.connect(M);
+bus=C.createGain();bus.connect(dry);bus.connect(cv);pad=C.createBiquadFilter();pad.type='lowpass';pad.frequency.value=1100;pad.connect(bus);
+const l=C.createOscillator(),lg=C.createGain();l.frequency.value=.05;lg.gain.value=500;l.connect(lg);lg.connect(pad.frequency);l.start()}
+function chord(){if(!run)return;const t=C.currentTime,f=CH[ci++%4];f.forEach((h,i)=>[-4,4].forEach(dt=>{const o=C.createOscillator(),g=C.createGain();o.type=i?'sine':'triangle';o.frequency.value=h;o.detune.value=dt;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.045,t+5);g.gain.linearRampToValueAtTime(0,t+15);o.connect(g);g.connect(pad);o.start(t);o.stop(t+15.5)}));T1=setTimeout(chord,10000)}
+function bell(){if(!run)return;const t=C.currentTime,o=C.createOscillator(),g=C.createGain();o.frequency.value=BL[Math.floor(Math.random()*BL.length)];g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.05,t+.05);g.gain.exponentialRampToValueAtTime(.0001,t+4);o.connect(g);g.connect(bus);o.start(t);o.stop(t+4.2);T2=setTimeout(bell,2500+Math.random()*4500)}
+function play(){if(!ug||run||!on()||paused)return;init();C.resume();run=1;chord();T2=setTimeout(bell,1500);M.gain.cancelScheduledValues(C.currentTime);M.gain.setTargetAtTime(vol(),C.currentTime,1.2);ui()}
+function stop(){if(!run)return;run=0;clearTimeout(T1);clearTimeout(T2);M.gain.setTargetAtTime(0,C.currentTime,.4);setTimeout(()=>{if(!run)C.suspend()},1800)}
+function sync(){const g=$('#player')&&$('#player').classList.contains('on'),h=document.visibilityState!=='visible';paused=g||h;b.style.display=g?'none':'';if(paused)stop();else if(on())play()}
+const b=document.createElement('button');b.style.cssText='position:fixed;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 84px);width:46px;height:46px;border-radius:50%;padding:0;z-index:9;font-size:20px;background:linear-gradient(180deg,#43229a,#26115f);border:1px solid #9a6bf0;color:#fff;box-shadow:0 0 14px rgba(140,80,255,.5)';document.body.append(b);
+function ui(){b.textContent=on()&&run?'🎵':'🔇';b.title=on()?tt(2):tt(3);const c=$('#muC');if(c)c.checked=on()}
+function tog(v){cfg.mus=v;saveCfg();if(v)play();else stop();ui()}
+b.onclick=()=>tog(!on());
+const lab=document.createElement('label');lab.className='row';lab.innerHTML='<input type="checkbox" id="muC"><span></span>';const rg=document.createElement('label');rg.innerHTML='<span></span><input type="range" id="muV" min="0" max="100" step="5" style="width:100%">';
+window.__stA.prepend(lab,rg);const R=rg.lastChild,sp=rg.firstChild;
+function fill(){lab.lastChild.textContent=tt(0);R.value=Math.round(vol()*100);sp.textContent=tt(1)+': '+R.value+'%';$('#muC').checked=on()}
+$('#muC').onchange=e=>tog(e.target.checked);R.oninput=()=>{cfg.musV=+R.value;sp.textContent=tt(1)+': '+R.value+'%';if(run)M.gain.setTargetAtTime(vol(),C.currentTime,.1)};R.onchange=()=>saveCfg();
+const o=$('#set').onclick;$('#set').onclick=()=>{o();fill()};fill();
+document.addEventListener('pointerdown',()=>{ug=1;if(C&&run&&C.state==='suspended')C.resume();if(on()&&!run&&!paused)play()},{capture:true});document.addEventListener('visibilitychange',sync);setInterval(sync,700);ui()})();
 load().then(()=>{coinUI();if(cfg.cursor){cfg.cursor=false;saveCfg()}if(sessionStorage.getItem('zprime'))runPrime();else{const m=sessionStorage.getItem('zprimeMsg');if(m){sessionStorage.removeItem('zprimeMsg');try{const r=JSON.parse(m);note(px('d').replace('%n',r.ok)+(r.fail.length?' '+px('f').replace('%s',r.fail.join(', ')):''))}catch(e){}}}});
 if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").then(()=>navigator.serviceWorker.ready).then(()=>{if(!window.crossOriginIsolated&&!/noiso/.test(location.search)&&!sessionStorage.getItem('zeoiso')&&navigator.serviceWorker.controller){sessionStorage.setItem('zeoiso','1');location.reload()}}).catch(()=>{})}catch(e){}}
 </script>
