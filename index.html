@@ -265,9 +265,17 @@ body.bgpix:not(.ing)::after{z-index:15;height:120px;background:linear-gradient(t
 .stP input[type=checkbox]:checked{background:linear-gradient(180deg,#8a4dff,#5a2fd0);border-color:#c9a4ff}.stP input[type=checkbox]:checked::after{left:22px;background:#fff}
 .stA{text-align:center}.stA b{display:block;font-size:20px;margin-bottom:4px}
 .stF{margin-top:12px}.stF button{width:100%;padding:14px;border-radius:16px;font-weight:700;color:#fff;background:linear-gradient(180deg,#8a3dff,#5a1fd8);border-color:#c9a4ff;box-shadow:0 0 16px rgba(130,70,255,.5)}
+#spl{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:env(safe-area-inset-top,0px) 24px env(safe-area-inset-bottom,0px);background:radial-gradient(120% 70% at 50% 25%,#2b0a70 0%,#12063a 55%,#06020f 100%);color:#fff;transition:opacity .6s}#spl.out{opacity:0;pointer-events:none}
+#spl::before{content:'';position:absolute;inset:0;opacity:.8;background-image:radial-gradient(circle,#fff 0 1px,transparent 1.5px),radial-gradient(circle,#cdb8ff 0 1px,transparent 1.5px);background-size:90px 90px,140px 140px;background-position:0 0,45px 60px;animation:zgal 60s linear infinite}
+#spl img{position:relative;width:132px;height:132px;border-radius:28px;box-shadow:0 0 40px rgba(160,90,255,.85);animation:zspl 2.4s ease-in-out infinite}@keyframes zspl{0%,100%{transform:scale(1);box-shadow:0 0 28px rgba(160,90,255,.6)}50%{transform:scale(1.06);box-shadow:0 0 56px rgba(190,120,255,.95)}}
+#spl h1{position:relative;margin:12px 0 0;font:italic 800 34px/1.05 Figtree,system-ui,sans-serif;text-align:center;background:linear-gradient(180deg,#fff,#cdb8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+#spl small,#spl em{position:relative;color:#c9b8ff;font-style:normal;letter-spacing:.3em;font-size:11px;text-align:center}#spl em{letter-spacing:.05em;font-size:13px;opacity:.8}
+#spl .bar{position:relative;width:min(260px,70vw);height:8px;margin-top:26px;border-radius:6px;background:#26115f;overflow:hidden;box-shadow:0 0 14px rgba(120,60,255,.35)}#spl .bar i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#8a4dff,#c9a4ff,#ffd23f);transition:width .12s}
+#spl .tx{position:relative;color:#a99ad6;font-size:13px}@media(prefers-reduced-motion:reduce){#spl img,#spl::before{animation:none}}
 </style>
 </head>
 <body>
+<div id="spl"><img src="icon-192.png" alt=""><h1>ZEO<br>EMULADOR</h1><em>por purplezxtt</em><small id="splT"></small><div class="bar"><i id="splB"></i></div><div class="tx"><span id="splL"></span> <span id="splP">0%</span></div></div>
 <main>
 <div id="msg" role="status" aria-live="polite"></div>
 <section id="vHome">
@@ -1521,7 +1529,10 @@ function fill(){lab.lastChild.textContent=tt(0);R.value=Math.round(vol()/1.5*100
 $('#muC').onchange=e=>tog(e.target.checked);R.oninput=()=>{cfg.musV=+R.value;sp.textContent=tt(1)+': '+R.value+'%';if(run)M.gain.setTargetAtTime(vol(),C.currentTime,.1)};R.onchange=()=>saveCfg();
 const o=$('#set').onclick;$('#set').onclick=()=>{o();fill()};fill();
 document.addEventListener('pointerdown',()=>{ug=1;if(C&&run&&C.state==='suspended')C.resume();if(on()&&!run&&!paused)play()},{capture:true});document.addEventListener('visibilitychange',sync);setInterval(sync,700);ui()})();
-load().then(()=>{coinUI();if(cfg.cursor){cfg.cursor=false;saveCfg()}if(sessionStorage.getItem('zprime'))runPrime();else{const m=sessionStorage.getItem('zprimeMsg');if(m){sessionStorage.removeItem('zprimeMsg');try{const r=JSON.parse(m);note(px('d').replace('%n',r.ok)+(r.fail.length?' '+px('f').replace('%s',r.fail.join(', ')):''))}catch(e){}}}});
+(function(){const el=$('#spl'),bar=$('#splB'),pc=$('#splP'),L=(navigator.language||'en').slice(0,2),pt=L==='pt',es=L==='es';$('#splL').textContent=pt?'Carregando…':es?'Cargando…':'Loading…';$('#splT').textContent=pt?'JOGUE O QUE VOCÊ AMA':es?'JUEGA LO QUE AMAS':'PLAY WHAT YOU LOVE';
+let p=0,done=0;const t0=Date.now(),iv=setInterval(()=>{p=Math.min(done?100:92,p+(done?10:Math.random()*4+1));bar.style.width=p+'%';pc.textContent=Math.floor(p)+'%';if(done&&p>=100){clearInterval(iv);el.classList.add('out');setTimeout(()=>el.remove(),700)}},60);
+window.__splDone=()=>{setTimeout(()=>{done=1},Math.max(0,1600-(Date.now()-t0)))};setTimeout(window.__splDone,7000)})();
+load().then(()=>{window.__splDone&&window.__splDone();coinUI();if(cfg.cursor){cfg.cursor=false;saveCfg()}if(sessionStorage.getItem('zprime'))runPrime();else{const m=sessionStorage.getItem('zprimeMsg');if(m){sessionStorage.removeItem('zprimeMsg');try{const r=JSON.parse(m);note(px('d').replace('%n',r.ok)+(r.fail.length?' '+px('f').replace('%s',r.fail.join(', ')):''))}catch(e){}}}});
 if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").then(()=>navigator.serviceWorker.ready).then(()=>{if(!window.crossOriginIsolated&&!/noiso/.test(location.search)&&!sessionStorage.getItem('zeoiso')&&navigator.serviceWorker.controller){sessionStorage.setItem('zeoiso','1');location.reload()}}).catch(()=>{})}catch(e){}}
 </script>
 </body>
