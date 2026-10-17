@@ -960,13 +960,19 @@ const CH=[
 {id:'u-items',pt:'Novidades na Loja: 12 molduras e fundos novos em todas as raridades, a nova raridade Mítica (Aura Mítica e Fenda Dimensional) e a Caixa Suprema.',es:'Novedades en la Tienda: 12 marcos y fondos nuevos en todas las rarezas, la nueva rareza Mítica (Aura Mítica y Grieta Dimensional) y la Caja Suprema.',en:'Shop news: 12 new frames and backgrounds across all rarities, the new Mythic rarity (Mythic Aura and Dimensional Rift) and the Supreme Box.'},
 {id:'u-aud',pt:'Novo botão Ajustar áudio nas Configurações, para reduzir chiado e travadas no som (por jogo).',es:'Nuevo botón Ajustar audio en Configuración para reducir chasquidos y cortes de sonido (por juego).',en:'New Adjust audio button in Settings to reduce crackling and stutter (per game).'},
 {id:'u-help',pt:'Novo botão ? com perguntas e respostas para ajudar quem está começando.',es:'Nuevo botón ? con preguntas y respuestas para quien empieza.',en:'New ? button with questions and answers for newcomers.'},
-{id:'u-live',pt:'Avisos de atualização em tempo real: quando sair uma versão nova, o sininho te avisa.',es:'Avisos de actualización en tiempo real: cuando salga una versión nueva, la campanita te avisa.',en:'Live update alerts: when a new version is out, the bell tells you.'}];
+{id:'u-live',pt:'Avisos de atualização em tempo real: quando sair uma versão nova, o sininho te avisa.',es:'Avisos de actualización en tiempo real: cuando salga una versión nueva, la campanita te avisa.',en:'Live update alerts: when a new version is out, the bell tells you.'},
+{id:'u-chest',pt:'Caixas da loja com baús novos em pixel art.',es:'Cajas de la tienda con cofres nuevos en pixel art.',en:'Shop boxes now use new pixel-art chests.'},
+{id:'u-set2',pt:'Configurações redesenhadas, com menu lateral e interruptores.',es:'Configuración rediseñada, con menú lateral e interruptores.',en:'Settings redesigned, with a side menu and switches.'},
+{id:'u-mis6',pt:'Agora são 6 missões por dia, com barras de progresso: anúncios, abrir caixa e 30 minutos no Zeo.',es:'Ahora son 6 misiones al día, con barras de progreso: anuncios, abrir caja y 30 minutos en Zeo.',en:'Now 6 daily missions with progress bars: ads, open a box and 30 minutes in Zeo.'},
+{id:'u-music',pt:'Música ambiente espacial. Ligue e ajuste o volume em Configurações → Áudio.',es:'Música ambiental espacial. Actívala y ajusta el volumen en Configuración → Audio.',en:'Space ambient music. Turn it on and set the volume in Settings → Audio.'},
+{id:'u-splash',pt:'Nova tela de carregamento do Zeo.',es:'Nueva pantalla de carga de Zeo.',en:'New Zeo loading screen.'},
+{id:'u-click',pt:'Som ao tocar nos botões. Dá para desligar em Configurações → Áudio.',es:'Sonido al tocar los botones. Puedes desactivarlo en Configuración → Audio.',en:'Button tap sound. You can turn it off in Settings → Audio.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-10.29';let verSeen=APP_VER;
+const APP_VER='2026-10-17.30';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
- try{const r=await fetch(location.pathname,{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
+ try{const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
-setInterval(chkVer,180000);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(chkVer,1500)});
+setInterval(chkVer,120000);setTimeout(chkVer,5000);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(chkVer,1500)});
 function pushN(n,q){n.t=Date.now();n.r=0;if(n.tag){const i=cfg.nt.findIndex(x=>x.tag===n.tag&&!x.r);if(i>=0)cfg.nt.splice(i,1)}
  cfg.nt.unshift(n);cfg.nt=cfg.nt.slice(0,60);saveCfg();renderBell(!q)}
 function updNotes(){cfg.nt=cfg.nt.filter(x=>x.k!=='ver'&&(x.k!=='upd'||CH.some(c=>c.id===x.u)));let ad=0;CH.forEach(c=>{if(c.own)return;if(!cfg.seenU.includes(c.id)){cfg.seenU.push(c.id);if(!FIRST||c.code){pushN({k:'upd',u:c.id},1);ad++}}});saveCfg();if(ad)renderBell(true)}
@@ -1532,6 +1538,11 @@ document.addEventListener('pointerdown',()=>{ug=1;if(C&&run&&C.state==='suspende
 (function(){const el=$('#spl'),bar=$('#splB'),pc=$('#splP'),L=(navigator.language||'en').slice(0,2),pt=L==='pt',es=L==='es';$('#splL').textContent=pt?'Carregando…':es?'Cargando…':'Loading…';$('#splT').textContent=pt?'JOGUE O QUE VOCÊ AMA':es?'JUEGA LO QUE AMAS':'PLAY WHAT YOU LOVE';
 let p=0,done=0;const t0=Date.now(),iv=setInterval(()=>{p=Math.min(done?100:92,p+(done?10:Math.random()*4+1));bar.style.width=p+'%';pc.textContent=Math.floor(p)+'%';if(done&&p>=100){clearInterval(iv);el.classList.add('out');setTimeout(()=>el.remove(),700)}},60);
 window.__splDone=()=>{setTimeout(()=>{done=1},Math.max(0,1600-(Date.now()-t0)))};setTimeout(window.__splDone,7000)})();
+(function(){const TX={pt:'Som ao tocar nos botões',es:'Sonido al tocar los botones',en:'Button click sound'};let C;const on=()=>cfg.clk!==false;
+function blip(){if(!on())return;try{C=C||new (window.AudioContext||window.webkitAudioContext)();if(C.state==='suspended')C.resume();const t=C.currentTime,o=C.createOscillator(),g=C.createGain();o.type='sine';o.frequency.setValueAtTime(820,t);o.frequency.exponentialRampToValueAtTime(1240,t+.06);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.2,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+.13);o.connect(g);g.connect(C.destination);o.start(t);o.stop(t+.15)}catch(e){}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('button,.tab,.sd,[role=button]');if(b&&!b.disabled&&!$('#player').classList.contains('on'))blip()},true);
+const lb=document.createElement('label');lb.className='row';lb.innerHTML='<input type="checkbox" id="clkC"><span></span>';window.__stA.prepend(lb);const c=lb.firstChild;
+c.onchange=()=>{cfg.clk=c.checked;saveCfg();if(c.checked)blip()};const fill=()=>{lb.lastChild.textContent=TX[cfg.lang]||TX.en;c.checked=on()};fill();const o=$('#set').onclick;$('#set').onclick=()=>{o();fill()}})();
 load().then(()=>{window.__splDone&&window.__splDone();coinUI();if(cfg.cursor){cfg.cursor=false;saveCfg()}if(sessionStorage.getItem('zprime'))runPrime();else{const m=sessionStorage.getItem('zprimeMsg');if(m){sessionStorage.removeItem('zprimeMsg');try{const r=JSON.parse(m);note(px('d').replace('%n',r.ok)+(r.fail.length?' '+px('f').replace('%s',r.fail.join(', ')):''))}catch(e){}}}});
 if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").then(()=>navigator.serviceWorker.ready).then(()=>{if(!window.crossOriginIsolated&&!/noiso/.test(location.search)&&!sessionStorage.getItem('zeoiso')&&navigator.serviceWorker.controller){sessionStorage.setItem('zeoiso','1');location.reload()}}).catch(()=>{})}catch(e){}}
 </script>
