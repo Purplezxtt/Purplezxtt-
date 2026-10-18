@@ -990,9 +990,10 @@ const CH=[
 {id:'u-click',pt:'Som ao tocar nos botões. Dá para desligar em Configurações → Áudio.',es:'Sonido al tocar los botones. Puedes desactivarlo en Configuración → Audio.',en:'Button tap sound. You can turn it off in Settings → Audio.'},
 {id:'u-rfp',pt:'Músicas novas: Rock Estrada, Flauta Serena e Piano Suave (Configurações → Áudio → Trocar música). A música de chuva foi removida.',es:'Música nueva: Rock Estrada, Flauta Serena y Piano Suave (Configuración → Audio → Cambiar música). Se quitó la música de lluvia.',en:'New music: Rock Estrada, Flauta Serena and Piano Suave (Settings → Audio → Change song). The rain music was removed.'},
 {id:'u-fone',pt:'Novo Modo fone em Configurações → Áudio: som mais suave, sem estourar e com menos travadas.',es:'Nuevo Modo auriculares en Configuración → Audio: sonido más suave, sin saturar y con menos cortes.',en:'New Headphone mode in Settings → Audio: softer sound, no clipping and fewer stutters.'},
-{id:'u-cov',pt:'Capas nas músicas! Veja em Configurações → Áudio → Trocar música.',es:'¡Portadas en las canciones! Míralas en Configuración → Audio → Cambiar música.',en:'Cover art for the songs! See it in Settings → Audio → Change song.'}];
+{id:'u-cov',pt:'Capas nas músicas! Veja em Configurações → Áudio → Trocar música.',es:'¡Portadas en las canciones! Míralas en Configuración → Audio → Cambiar música.',en:'Cover art for the songs! See it in Settings → Audio → Change song.'},
+{id:'u-daily',pt:'Novo: Recompensa diária! Entre todo dia, pegue Zeo coins e, no dia 31, escolha uma moldura ou fundo exclusivo.',es:'¡Nuevo: Recompensa diaria! Entra cada día, gana Zeo coins y el día 31 elige un marco o fondo exclusivo.',en:'New: Daily reward! Log in every day for Zeo coins and pick an exclusive frame or background on day 31.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-18.3';let verSeen=APP_VER;
+const APP_VER='2026-10-18.4';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
@@ -1513,6 +1514,7 @@ function drawShop(){const b=$('#shBody');if(!b)return;b.innerHTML='';$('#shT1').
 let adTm=null;
 function renderMi(){const l=$('#mil');if(!l)return;clearInterval(adTm);l.innerHTML='';$('#mit').textContent='🪙 '+shx('miss');$('#mix').textContent=cx('cl');
  const top=document.createElement('div');top.style.cssText='display:flex;align-items:center;gap:10px;font-size:26px;font-weight:800;color:#ffe680;margin-bottom:6px';top.innerHTML=coinImg(0,32)+'<span>'+zcoins()+'</span>';l.append(top);
+  {const db=document.createElement('button');db.style.cssText='width:100%;display:block;text-align:left;margin-bottom:8px';db.textContent='📅 '+dx('t')+' · '+dx('day').replace('%n',drDay())+(drCan()?' 🔴':'');db.onclick=()=>{$('#mi').classList.remove('on');drOpen()};l.append(db)}
  const ps=document.createElement('div');ps.style.cssText='color:var(--mut);font-size:13px;margin-bottom:12px';ps.textContent=shx('passive')+' '+shx('nextc').replace('%t',fmtS(120-(cfg.coinT||0)));l.append(ps);
  const d=dmGet(),left=Math.max(0,AD_CD-(Date.now()-(cfg.adT||0))),lim=(d.ads||0)>=AD_MAX;
  const ab=document.createElement('button');ab.className='p';ab.style.cssText='width:100%;display:block;text-align:left;margin-bottom:6px';
@@ -1703,7 +1705,57 @@ function open(){const t=T();openSheet('☁️ '+t.ttl,l=>{
 const btn=document.createElement('button'),sm=document.createElement('small');btn.style.cssText='text-align:left;display:flex;flex-direction:column;gap:2px';const bt=document.createElement('b');btn.append(bt,sm);sm.style.cssText='font-weight:400;color:#b9a8ee';btn.onclick=open;window.__stG.prepend(btn);
 const fill=()=>{const t=T();bt.textContent='☁️ '+t.card;sm.textContent=lk()?t.on+usr().email:t.off};fill();const o=$('#set').onclick;$('#set').onclick=()=>{o();fill();initFb().then(fill).catch(()=>{})};
 setInterval(()=>{if(lk()&&JSON.stringify(cfg)!==last)up().catch(()=>{})},30000);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&lk()&&JSON.stringify(cfg)!==last)up().catch(()=>{})})})();
-load().then(()=>{window.__splDone&&window.__splDone();coinUI();if(cfg.cursor){cfg.cursor=false;saveCfg()}if(sessionStorage.getItem('zprime'))runPrime();else{const m=sessionStorage.getItem('zprimeMsg');if(m){sessionStorage.removeItem('zprimeMsg');try{const r=JSON.parse(m);note(px('d').replace('%n',r.ok)+(r.fail.length?' '+px('f').replace('%s',r.fail.join(', ')):''))}catch(e){}}}});
+/* ===== Recompensa diária (calendário de 31 dias) ===== */
+const DRX={
+pt:{t:'Recompensa diária',day:'Dia %n de 31',claim:'Resgatar dia %d: +%n',claim31:'Escolher prêmio do dia 31',wait:'Volte amanhã para o dia %d',sub:'Entre todo dia e ganhe Zeo coins. No dia 31, escolha uma moldura ou um fundo exclusivo!',pick:'Dia 31! Escolha seu prêmio',ok:'Resgatado!',done:'Calendário completo! Um novo começa amanhã.',prz:'Prêmio'},
+es:{t:'Recompensa diaria',day:'Día %n de 31',claim:'Reclamar día %d: +%n',claim31:'Elige tu premio del día 31',wait:'Vuelve mañana para el día %d',sub:'Entra todos los días y gana Zeo coins. ¡El día 31 elige un marco o fondo exclusivo!',pick:'¡Día 31! Elige tu premio',ok:'¡Reclamado!',done:'¡Calendario completo! Mañana empieza uno nuevo.',prz:'Premio'},
+en:{t:'Daily reward',day:'Day %n of 31',claim:'Claim day %d: +%n',claim31:'Choose your day 31 prize',wait:'Come back tomorrow for day %d',sub:'Log in every day to earn Zeo coins. On day 31, pick an exclusive frame or background!',pick:'Day 31! Choose your prize',ok:'Claimed!',done:'Calendar complete! A new one starts tomorrow.',prz:'Prize'},
+ru:{t:'Ежедневная награда',day:'День %n из 31',claim:'Забрать день %d: +%n',claim31:'Выбрать приз 31-го дня',wait:'Возвращайтесь завтра за днём %d',sub:'Заходите каждый день и получайте Zeo coins. На 31-й день выберите эксклюзивную рамку или фон!',pick:'День 31! Выберите приз',ok:'Получено!',done:'Календарь завершён! Завтра начнётся новый.',prz:'Приз'},
+ja:{t:'デイリー報酬',day:'%n日目 / 31',claim:'%d日目を受け取る: +%n',claim31:'31日目の報酬を選ぶ',wait:'明日%d日目を受け取れます',sub:'毎日ログインしてZeoコインをゲット。31日目は限定のフレームか背景を選べます！',pick:'31日目！報酬を選んでください',ok:'受け取りました！',done:'カレンダー完了！明日から新しいカレンダーが始まります。',prz:'報酬'},
+de:{t:'Tägliche Belohnung',day:'Tag %n von 31',claim:'Tag %d abholen: +%n',claim31:'Preis für Tag 31 wählen',wait:'Komm morgen für Tag %d wieder',sub:'Melde dich jeden Tag an und erhalte Zeo coins. An Tag 31 wählst du einen exklusiven Rahmen oder Hintergrund!',pick:'Tag 31! Wähle deinen Preis',ok:'Abgeholt!',done:'Kalender komplett! Morgen beginnt ein neuer.',prz:'Preis'},
+fr:{t:'Récompense quotidienne',day:'Jour %n sur 31',claim:'Récupérer le jour %d : +%n',claim31:'Choisir le prix du jour 31',wait:'Reviens demain pour le jour %d',sub:'Connecte-toi chaque jour pour gagner des Zeo coins. Le jour 31, choisis un cadre ou un fond exclusif !',pick:'Jour 31 ! Choisis ton prix',ok:'Récupéré !',done:'Calendrier terminé ! Un nouveau commence demain.',prz:'Prix'},
+it:{t:'Premio giornaliero',day:'Giorno %n di 31',claim:'Riscatta giorno %d: +%n',claim31:'Scegli il premio del giorno 31',wait:'Torna domani per il giorno %d',sub:'Accedi ogni giorno e guadagna Zeo coins. Il giorno 31 scegli una cornice o uno sfondo esclusivo!',pick:'Giorno 31! Scegli il tuo premio',ok:'Riscattato!',done:'Calendario completo! Domani ne inizia uno nuovo.',prz:'Premio'}};
+const dx=k=>(DRX[cfg.lang]&&DRX[cfg.lang][k])||DRX.en[k];
+[['pt','Recompensa diária'],['es','Recompensa diaria'],['en','Daily reward'],['ru','Ежедневная награда'],['ja','デイリー報酬'],['de','Tägliche Belohnung'],['fr','Récompense quotidienne'],['it','Premio giornaliero']].forEach(([k,v])=>{if(SHX[k])SHX[k].s_daily=v});
+const DRC=[10,10,15,15,20,20,50,15,15,20,20,25,25,80,20,20,25,25,30,30,100,25,25,30,30,35,35,120,40,150],DRM=[7,14,21,28,30];
+const DRP=[ITEMS.find(i=>i.t==='frame'&&i.id==='mythic'),ITEMS.find(i=>i.t==='bg'&&i.id==='rift')];
+let drSeen='';
+document.head.append(Object.assign(document.createElement('style'),{textContent:'#dr{position:fixed;inset:0;z-index:30;display:none;background:rgba(0,0,0,.72);overflow:auto;padding:20px 16px}#dr.on{display:block}.drg{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:10px 0}.drc{position:relative;min-height:54px;border-radius:10px;border:1px solid #3a2a78;background:rgba(40,20,90,.35);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;color:#e8dcff;padding:2px}.drc i{position:absolute;top:2px;left:4px;font-size:9px;font-style:normal;opacity:.7}.drc.ok{border-color:#3ddc84;background:rgba(61,220,132,.14)}.drc.nx{border:2px solid #b388ff;background:rgba(140,80,255,.3);animation:drpl 1.4s ease-in-out infinite;cursor:pointer}.drc.lk{opacity:.55}.drc.ms:not(.ok){border-color:#ffb020}.drc.big{grid-column:span 5;flex-direction:row;gap:8px;font-weight:700}.drc.jt{animation:drj .6s ease}@keyframes drpl{50%{box-shadow:0 0 14px #b388ff}}@keyframes drj{0%{transform:scale(1.45)}100%{transform:scale(1)}}'}));
+function drSt(){let d=cfg.dr;if(!d||typeof d!=='object')d=cfg.dr={n:0,last:'',t:0,c:0};if(d.n>=31&&d.last!==todayKey()){d.n=0;d.c=(d.c||0)+1}return d}
+const drCan=()=>{const d=drSt();return d.last!==todayKey()&&Date.now()>=(d.t||0)};
+const drDay=()=>Math.min(31,drSt().n+(drCan()?1:0));
+function drClaim(){if(!drCan())return;const d=drSt(),day=d.n+1;if(day>=31){drPick();return}
+ const n=DRC[day-1];d.n=day;d.last=todayKey();d.t=Date.now();addCoins(n,'daily');coinPop(n);drDraw(day)}
+function drPick(){const b=$('#drb');b.innerHTML='';const h=document.createElement('b');h.textContent='🎁 '+dx('pick');h.style.cssText='display:block;font-size:18px;text-align:center;margin:6px 0 12px';b.append(h);
+ DRP.forEach(it=>{const c=document.createElement('button');c.style.cssText='display:flex;align-items:center;gap:12px;width:100%;text-align:left;margin-bottom:8px';const pv=itemPrev(it),s=document.createElement('span');s.style.cssText='display:flex;flex-direction:column;gap:4px;align-items:flex-start';const nm=document.createElement('b');nm.textContent=kx(it.id)+' · '+shx('t_'+it.t);s.append(nm,rarBadge(it.r));if(owned(it)){const o=document.createElement('small');o.textContent=shx('dup').replace('%n',Math.floor(it.p*.4));o.style.color='#ffe680';s.append(o)}c.append(pv,s);c.onclick=()=>drGive(it);b.append(c)});
+ const bk=document.createElement('button');bk.textContent='←';bk.onclick=()=>drDraw();b.append(bk);$('#drt').textContent='📅 '+dx('t')}
+function drGive(it){const d=drSt();if(!drCan())return;d.n=31;d.last=todayKey();d.t=Date.now();const dup=owned(it),ref=Math.floor(it.p*.4);if(dup){addCoins(ref,'dup');coinPop(ref)}else unlockItem(it);saveCfg();drDraw(31,{it,dup,ref})}
+function drDraw(just,res){let o=$('#dr');
+ if(!o){o=document.createElement('div');o.id='dr';const cd=document.createElement('div');cd.className='card';const h=document.createElement('h2');h.id='drt';const b=document.createElement('div');b.id='drb';const r=document.createElement('div');r.className='row';const x=document.createElement('button');x.id='drx';x.onclick=()=>o.classList.remove('on');r.append(x);cd.append(h,b,r);o.append(cd);document.body.append(o)}
+ const d=drSt(),can=drCan(),n=d.n,b=$('#drb');b.innerHTML='';$('#drt').textContent='📅 '+dx('t');$('#drx').textContent=cx('cl');
+ const top=document.createElement('div');top.style.cssText='display:flex;justify-content:space-between;align-items:center;font-weight:800;color:#ffe680;margin-bottom:4px';top.innerHTML='<span style="display:flex;align-items:center;gap:6px">'+coinImg(0,20)+'<span>'+zcoins()+'</span></span>';const dn=document.createElement('span');dn.style.color='#e8dcff';dn.textContent=dx('day').replace('%n',drDay());top.append(dn);b.append(top);
+ const pb=document.createElement('div');pb.style.cssText='height:6px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden;margin:4px 0 8px';const pf=document.createElement('div');pf.style.cssText='height:100%;background:linear-gradient(90deg,#7a2fe0,#b388ff);width:'+Math.round(n/31*100)+'%';pb.append(pf);b.append(pb);
+ const sb=document.createElement('div');sb.style.cssText='color:var(--mut);font-size:13px';sb.textContent=dx('sub');b.append(sb);
+ const g=document.createElement('div');g.className='drg';
+ for(let day=1;day<=31;day++){const c=document.createElement('div');let cls='drc',st=day<=n?'ok':(day===n+1&&can?'nx':'lk');cls+=' '+st;if(DRM.includes(day)||day===31)cls+=' ms';if(day===31)cls+=' big';if(day===just)cls+=' jt';c.className=cls;
+  const ix=document.createElement('i');ix.textContent=day;
+  if(day===31){c.append(ix);const t=document.createElement('span');t.textContent=st==='ok'?'✔':'🎁';t.style.fontSize='20px';const u=document.createElement('span');u.textContent=dx('prz')+': '+shx('t_frame')+' / '+shx('t_bg');c.append(t,u)}
+  else if(st==='ok'){c.append(ix);const t=document.createElement('b');t.textContent='✔';t.style.cssText='color:#3ddc84;font-size:16px';c.append(t)}
+  else{c.append(ix);const w=document.createElement('span');w.style.cssText='display:flex;align-items:center;gap:3px';w.innerHTML=coinImg(0,14)+'<b>'+DRC[day-1]+'</b>';c.append(w)}
+  if(st==='nx')c.onclick=drClaim;g.append(c)}
+ b.append(g);
+ if(res){const bx=document.createElement('div');bx.style.cssText='text-align:center;margin:8px 0';const t=document.createElement('div');t.textContent=dx('ok');t.style.cssText='color:var(--mut)';const nm=document.createElement('b');nm.style.cssText='display:block;font-size:18px;margin:6px 0';nm.textContent=kx(res.it.id)+' · '+shx('t_'+res.it.t);bx.append(t,itemPrev(res.it),rarBadge(res.it.r),nm);if(res.dup){const q=document.createElement('div');q.style.cssText='color:#ffe680;font-size:14px';q.textContent=shx('dup').replace('%n',res.ref);bx.append(q)}b.append(bx)}
+ const cb=document.createElement('button');cb.className='p';cb.style.cssText='width:100%;display:block;margin-bottom:6px';
+ if(can){cb.textContent=n+1>=31?'🎁 '+dx('claim31'):dx('claim').replace('%d',n+1).replace('%n',DRC[n]);cb.onclick=drClaim}
+ else{cb.disabled=true;cb.textContent=n>=31?dx('done'):dx('wait').replace('%d',n+1)}
+ b.append(cb)}
+function drOpen(){drDraw();$('#dr').classList.add('on')}
+function drAuto(){if(sessionStorage.getItem('zprime'))return;if(drCan()&&drSeen!==todayKey()){drSeen=todayKey();setTimeout(()=>{if(drCan())drOpen()},900)}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')drAuto()});
+{const db=document.createElement('button');db.style.cssText='text-align:left;display:flex;flex-direction:column;gap:2px';const bt=document.createElement('b'),sm=document.createElement('small');sm.style.cssText='font-weight:400;color:#b9a8ee';db.append(bt,sm);db.onclick=drOpen;window.__stG.prepend(db);
+ const fillDr=()=>{bt.textContent='📅 '+dx('t')+(drCan()?' 🔴':'');sm.textContent=dx('day').replace('%n',drDay())};fillDr();const o2=$('#set').onclick;$('#set').onclick=()=>{o2();fillDr()}}
+
+load().then(()=>{window.__splDone&&window.__splDone();coinUI();drAuto();if(cfg.cursor){cfg.cursor=false;saveCfg()}if(sessionStorage.getItem('zprime'))runPrime();else{const m=sessionStorage.getItem('zprimeMsg');if(m){sessionStorage.removeItem('zprimeMsg');try{const r=JSON.parse(m);note(px('d').replace('%n',r.ok)+(r.fail.length?' '+px('f').replace('%s',r.fail.join(', ')):''))}catch(e){}}}});
 if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").then(()=>navigator.serviceWorker.ready).then(()=>{if(!window.crossOriginIsolated&&!/noiso/.test(location.search)&&!sessionStorage.getItem('zeoiso')&&navigator.serviceWorker.controller){sessionStorage.setItem('zeoiso','1');location.reload()}}).catch(()=>{})}catch(e){}}
 </script>
 </body>
