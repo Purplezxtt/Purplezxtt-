@@ -567,7 +567,7 @@ const BTN={c:['C',8],z:['Z',11],l2:['L2',12],r2:['R2',13],a:['A',8],b:['B',0],x:
 const DIRS=[['▲',4],['▼',5],['◀',6],['▶',7]];
 const SN=['dpad','a','b','x','y','l','r','sel','sta'],MDK=['dpad','a','b','c','x','y','z','sel','sta'];
 const CPS={gba:['dpad','a','b','l','r','sel','sta'],gb:['dpad','a','b','sel','sta'],nes:['dpad','a','b','sel','sta'],snes:SN,nds:SN,psx:['dpad','a','b','x','y','l','r','l2','r2','sel','sta'],psp:SN,segaMD:MDK,sega32x:MDK,segaCD:MDK,segaMS:['dpad','a','b','sta'],segaGG:['dpad','a','b','sta'],pce:['dpad','a','b','sel','sta'],atari2600:['dpad','a','sel','sta'],atari7800:['dpad','a','b','sel','sta'],lynx:['dpad','a','b','sta']};
-const CN={gba:'GBA',gb:'Game Boy / GBC',nes:'NES',snes:'SNES',nds:'Nintendo DS',psx:'PlayStation',psp:'PSP',segaMD:'Mega Drive',sega32x:'Sega 32X',segaCD:'Sega CD',segaMS:'Master System',segaGG:'Game Gear',pce:'PC Engine',atari2600:'Atari 2600',atari7800:'Atari 7800',lynx:'Atari Lynx'};
+const CN={html:'Jogo HTML',gba:'GBA',gb:'Game Boy / GBC',nes:'NES',snes:'SNES',nds:'Nintendo DS',psx:'PlayStation',psp:'PSP',segaMD:'Mega Drive',sega32x:'Sega 32X',segaCD:'Sega CD',segaMS:'Master System',segaGG:'Game Gear',pce:'PC Engine',atari2600:'Atari 2600',atari7800:'Atari 7800',lynx:'Atari Lynx'};
 const PSL={a:'○',b:'✕',x:'△',y:'□',l:'L1',r:'R1'},MDL={a:'A',b:'B',c:'C',x:'X',y:'Y',z:'Z',sel:'Mode',sta:'Start'};
 const BLB={psx:PSL,psp:PSL,segaMD:MDL,sega32x:MDL,segaCD:MDL,segaMS:{b:'1',a:'2'},segaGG:{b:'1',a:'2'},pce:{a:'I',b:'II',sta:'Run'},atari2600:{a:'FIRE',sta:'Reset'},atari7800:{a:'2',b:'1',sta:'Pause'},lynx:{sta:'Pause'}};
 const MDI={a:1,b:0,c:8,x:10,y:9,z:11,sel:2,sta:3};
@@ -643,10 +643,19 @@ psp:{ppsspp_internal_resolution:'480x272',ppsspp_frameskip:'1',ppsspp_auto_frame
 segaSaturn:{yabause_frameskip:'enabled'}};
 const X2={gba:{mgba_frameskip:'fixed_interval',mgba_frameskip_interval:'1'},snes:{snes9x_hires_blend:'disabled'},psp:{ppsspp_frameskip:'3',ppsspp_lazy_texture_caching:'enabled'},psx:{pcsx_rearmed_frameskip:'2'},nds:{desmume_frameskip:'2'},n64:{'mupen64plus-EnableFBEmulation':'False'},sega32x:{picodrive_frameskip:'manual'}};
 const PERF2=Object.fromEntries(Object.keys(PERF).map(k=>[k,Object.assign({},PERF[k],X2[k]||{})]));
-const CORES={'.gba':'gba','.gb':'gb','.gbc':'gb','.nes':'nes','.sfc':'snes','.smc':'snes','.z64':'n64','.n64':'n64','.v64':'n64','.nds':'nds','.md':'segaMD','.gen':'segaMD','.smd':'segaMD','.sms':'segaMS','.gg':'segaGG','.32x':'sega32x','.a26':'atari2600','.a52':'a5200','.a78':'atari7800','.lnx':'lynx','.j64':'jaguar','.jag':'jaguar','.pce':'pce','.ngp':'ngp','.ngc':'ngp','.vb':'vb','.col':'coleco'};
+const CORES={'.html':'html','.htm':'html','.gba':'gba','.gb':'gb','.gbc':'gb','.nes':'nes','.sfc':'snes','.smc':'snes','.z64':'n64','.n64':'n64','.v64':'n64','.nds':'nds','.md':'segaMD','.gen':'segaMD','.smd':'segaMD','.sms':'segaMS','.gg':'segaGG','.32x':'sega32x','.a26':'atari2600','.a52':'a5200','.a78':'atari7800','.lnx':'lynx','.j64':'jaguar','.jag':'jaguar','.pce':'pce','.ngp':'ngp','.ngc':'ngp','.vb':'vb','.col':'coleco'};
+function playHtml(i){
+ cfg.htmlTrust=cfg.htmlTrust||{};if(cfg.htmlTrust[i.id]===undefined){cfg.htmlTrust[i.id]=confirm({pt:'Este jogo HTML poderá salvar progresso (localStorage) no navegador. Rode apenas jogos em que você confia.\n\nOK = permitir salvar progresso\nCancelar = modo isolado (mais seguro, sem salvar)',es:'Este juego HTML podrá guardar progreso (localStorage) en el navegador. Ejecuta solo juegos de confianza.\n\nAceptar = permitir guardar\nCancelar = modo aislado (más seguro, sin guardar)',en:'This HTML game will be able to save progress (localStorage) in the browser. Only run games you trust.\n\nOK = allow saving\nCancel = isolated mode (safer, no saving)'}[cfg.lang]||'Allow this HTML game to save progress (localStorage)? OK = yes, Cancel = isolated mode.');saveCfg()}
+ $('#player').classList.add('on');document.body.classList.add('ing');try{history.pushState({zg:1},'')}catch(e){}
+ if(!window.__prime){try{onPlay('html',i.name);gaPlay(i)}catch(e){}}try{wl()}catch(e){}
+ try{$('#pad').classList.remove('on')}catch(e){}
+ const g=$('#game');g.innerHTML='';const f=document.createElement('iframe');f.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;background:#000';f.setAttribute('allow','autoplay;fullscreen;gamepad;accelerometer;gyroscope');
+ f.setAttribute('sandbox','allow-scripts allow-pointer-lock allow-forms allow-modals'+(cfg.htmlTrust[i.id]?' allow-same-origin':''));
+ f.src=URL.createObjectURL(new Blob([i.blob],{type:'text/html'}));g.append(f);
+ const x=document.createElement('button');x.textContent='✕';x.setAttribute('aria-label','Exit');x.style.cssText='position:fixed;top:8px;left:8px;z-index:60;width:36px;height:36px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:16px;opacity:.6';x.onclick=()=>history.back();$('#player').append(x);setTimeout(()=>{try{f.focus()}catch(e){}},300)}
 async function play(i){try{if(!window.__prime){cfg.last=cfg.last||{};cfg.last[i.id]=Date.now();saveCfg();dmMark('play')}}catch(e){}
  const fd=fo(i.folder),core=(fd&&fd.core)||CORES[ext(i.name)];
- if(!core||core==='none'){say(t('uns'));return}
+ if(!core||core==='none'){say(t('uns'));return}if(core==='html'){playHtml(i);return}
  $('#player').classList.add('on');document.body.classList.add('ing');try{history.pushState({zg:1},'')}catch(e){}if(!window.__prime){onPlay(core,i.name);gaPlay(i)}wl();
  if(!window.__prime&&['psx','psp','segaSaturn','n64','nds'].includes(core))note(ta('heavy'));
  const heavy=['psp','psx','n64','nds','segaSaturn','sega32x','segaCD'].includes(core),lvRaw=cfg.opt[i.id]===undefined?3:cfg.opt[i.id],lv=lvRaw===3?(heavy?2:1):lvRaw;window.__zauto=lvRaw===3;window.__afsI=null;TN.s='warm';TN.t=0;TN.hist=[];TN.lg=0;TN.tries=0;
@@ -994,9 +1003,10 @@ const CH=[
 {id:'u-daily',pt:'Novo: Recompensa diária! Entre todo dia, pegue Vox coins e, no dia 31, escolha uma moldura ou fundo exclusivo.',es:'¡Nuevo: Recompensa diaria! Entra cada día, gana Vox coins y el día 31 elige un marco o fondo exclusivo.',en:'New: Daily reward! Log in every day for Vox coins and pick an exclusive frame or background on day 31.'},
 {id:'u-vox',pt:'O app agora se chama Vox Emulador!',es:'¡La app ahora se llama Vox Emulador!',en:'The app is now called Vox Emulador!'},
 {id:'u-ga',pt:'Novo: conquistas por jogo! Cada jogo tem as suas (o Pokémon FireRed lê insígnias, Pokédex e Liga direto do save). Veja em Perfil → Jogos ou no ⋮ do jogo.',es:'¡Nuevo: logros por juego! Cada juego tiene los suyos (Pokémon FireRed lee medallas, Pokédex y Liga del save). Míralos en Perfil → Juegos o en el ⋮ del juego.',en:'New: per-game achievements! Every game has its own (Pokémon FireRed reads badges, Pokédex and the League from the save). See them in Profile → Games or the game’s ⋮ menu.'},
-{id:'u-ga2',pt:'Conquistas por jogo agora têm pontos, dificuldade, secretas, maestria 100%, nível e XP, e aviso animado com som.',es:'Los logros por juego ahora tienen puntos, dificultad, secretos, maestría 100%, nivel y XP, y aviso animado con sonido.',en:'Per-game achievements now have points, difficulty, secrets, 100% mastery, level and XP, plus an animated popup with sound.'}];
+{id:'u-ga2',pt:'Conquistas por jogo agora têm pontos, dificuldade, secretas, maestria 100%, nível e XP, e aviso animado com som.',es:'Los logros por juego ahora tienen puntos, dificultad, secretos, maestría 100%, nivel y XP, y aviso animado con sonido.',en:'Per-game achievements now have points, difficulty, secrets, 100% mastery, level and XP, plus an animated popup with sound.'},
+{id:'u-html',pt:'Agora o Vox roda jogos em HTML! Adicione um arquivo .html em Adicionar jogos.',es:'¡Vox ahora ejecuta juegos HTML! Añade un archivo .html en Añadir juegos.',en:'Vox now runs HTML games! Add an .html file from Add games.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-18.7';let verSeen=APP_VER;
+const APP_VER='2026-10-18.8';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
