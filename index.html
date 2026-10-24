@@ -1024,7 +1024,7 @@ const CH=[
 {id:'u-html',pt:'Agora o Vox roda jogos em HTML! Adicione um arquivo .html em Adicionar jogos.',es:'¡Vox ahora ejecuta juegos HTML! Añade un archivo .html en Añadir juegos.',en:'Vox now runs HTML games! Add an .html file from Add games.'},
 {id:'u-pub',pt:'Novo na Loja: aba Jogos! Publique seus jogos, escolha se é grátis ou custa Vox coins, oculte ou remova quando quiser, e curta os jogos dos outros ❤️.',es:'Nuevo en la Tienda: ¡pestaña Juegos! Publica tus juegos, elige si son gratis o cuestan Vox coins, ocúltalos o quítalos cuando quieras y da ❤️ a los de otros.',en:'New in the Shop: Games tab! Publish your games, make them free or priced in Vox coins, hide or remove them anytime, and like other people’s games ❤️.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-24.3';let verSeen=APP_VER;
+const APP_VER='2026-10-24.4';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
@@ -1039,10 +1039,10 @@ function renderBell(hit){const b=$('#bell');if(!b)return;const n=cfg.nt.filter(x
 function openNC(){const l=$('#ncl');l.innerHTML='';$('#nct').textContent='🔔 '+nx('t');$('#ncc').textContent=nx('c');$('#ncx').textContent=nx('x');
  if(!cfg.nt.length){const e=document.createElement('p');e.textContent=nx('e');e.style.color='var(--mut)';l.append(e)}
  cfg.nt.forEach(n=>{const r=document.createElement('div');r.className='nrow'+(n.r?'':' un');const c=n.k==='upd'?CH.find(x=>x.id===n.u):null;
-  const ti=document.createElement('b');ti.textContent=(n.k==='msg'?'💬 ':n.k==='req'?'👥 ':n.k==='ver'?'⬆️ ':'✨ ')+(n.k==='upd'?(c&&c.code?kx('nc'):nx('u')):n.k==='ver'?cx('nv'):n.title);
+  const ti=document.createElement('b');ti.textContent=(n.k==='msg'?'💬 ':n.k==='req'?'👥 ':n.k==='like'?'❤️ ':n.k==='dl'?'⬇️ ':n.k==='ver'?'⬆️ ':'✨ ')+(n.k==='upd'?(c&&c.code?kx('nc'):nx('u')):n.k==='ver'?cx('nv'):n.title);
   const bo=document.createElement('div');bo.textContent=c?chT(c)+(c.code?' '+c.code:''):n.k==='ver'?cx('nvb'):n.body;const tm=document.createElement('small');tm.textContent=new Date(n.t).toLocaleString();
   r.append(ti,bo,tm);
-  if(n.k==='ver')r.onclick=()=>location.reload();else if(n.k!=='upd'&&n.k!=='ach')r.onclick=async()=>{$('#nc').classList.remove('on');if(!prof.pub){note(ta('f_need'));return}try{await startFr()}catch(e){note(ta('f_err'));return}frHome();$('#fr').classList.add('on');const q=n.k==='msg'?REQ.find(x=>x.id===n.tag):null;if(q)openChat(q)};
+  if(n.k==='ver')r.onclick=()=>location.reload();else if(n.k==='like'||n.k==='dl')r.onclick=()=>{$('#nc').classList.remove('on');STT='games';setView('shop');stMine()};else if(n.k!=='upd'&&n.k!=='ach')r.onclick=async()=>{$('#nc').classList.remove('on');if(!prof.pub){note(ta('f_need'));return}try{await startFr()}catch(e){note(ta('f_err'));return}frHome();$('#fr').classList.add('on');const q=n.k==='msg'?REQ.find(x=>x.id===n.tag):null;if(q)openChat(q)};
   l.append(r)});
  cfg.nt.forEach(n=>n.r=1);saveCfg();renderBell();$('#nc').classList.add('on')}
 $('#ns').onchange=e=>{cfg.nsound=e.target.checked;saveCfg();if(cfg.nsound)ding()};
@@ -1611,10 +1611,11 @@ function stCard(x){const c=document.createElement('div');c.className='sh-card';
  else{bt.className='p';if(got&&Math.max(1,x.v)>(cfg.sd[x.id]|0))bt.textContent='⬆ '+stx('upd');else if(got)bt.textContent=stx('again');else if(x.price>0)bt.innerHTML=coinImg(0,16)+' '+x.price;else bt.textContent='⬇ '+stx('get');
   bt.onclick=()=>stGet(x,bt)}
  c.append(bt);return c}
-async function stLike(x){const f=await initFb(),{doc,runTransaction,increment}=f.fs;
+async function stLike(x){const f=await initFb(),{doc,runTransaction,increment,setDoc}=f.fs;
  const on=await runTransaction(f.db,async tr=>{const lr=doc(f.db,'store',x.id,'likes',f.uid),gr=doc(f.db,'store',x.id),s=await tr.get(lr);
   if(s.exists()){tr.delete(lr);tr.update(gr,{likes:increment(-1)});return false}
   tr.set(lr,{t:Date.now()});tr.update(gr,{likes:increment(1)});return true});
+ if(on&&x.uid!==f.uid)setDoc(doc(f.db,'notifs','like_'+x.id+'_'+f.uid),{type:'like',gid:x.id,title:x.title,to:x.uid,from:f.uid,byName:String(prof.name||'').slice(0,40),byId:String(prof.id||'').slice(0,12),t:Date.now()}).catch(()=>{});
  cfg.sl=cfg.sl||{};if(on){cfg.sl[x.id]=1;x.likes++}else{delete cfg.sl[x.id];x.likes=Math.max(0,x.likes-1)}saveCfg()}
 async function stGet(x,btn){btn.disabled=true;
  try{const f=await initFb(),{doc,getDoc,setDoc,collection,getDocs,query,orderBy,updateDoc,increment}=f.fs;
@@ -1638,7 +1639,7 @@ async function stGet(x,btn){btn.disabled=true;
   else{rec={name:nm,size:blob.size,folder:tg,blob:new File([blob],nm),title:x.title};rec.id=await tx('games','readwrite',s=>s.add(rec));items.push(rec)}
   cfg.sg=cfg.sg||{};cfg.sg[x.id]=rec.id;
   if(x.cover){COV[rec.id]=x.cover;await saveCov()}
-  cfg.sd=cfg.sd||{};if(!cfg.sd[x.id]){updateDoc(doc(f.db,'store',x.id),{dl:increment(1)}).catch(()=>{});x.dl++}
+  cfg.sd=cfg.sd||{};if(!cfg.sd[x.id]){updateDoc(doc(f.db,'store',x.id),{dl:increment(1)}).catch(()=>{});x.dl++;if(!mine)setDoc(doc(f.db,'notifs','dl_'+x.id+'_'+f.uid),{type:'dl',gid:x.id,title:x.title,to:x.uid,from:f.uid,byName:String(prof.name||'').slice(0,40),byId:String(prof.id||'').slice(0,12),t:Date.now()}).catch(()=>{})}
   cfg.sd[x.id]=Math.max(1,x.v);saveCfg();dmMark('add');note(stx('added').replace('%s',x.title));draw()}
  catch(e){note(stErr(e))}
  finally{btn.disabled=false}}
@@ -1673,7 +1674,7 @@ async function stUpload(i,m,msg){const f=await initFb(),{doc,setDoc,updateDoc}=f
    const d=await stB64(i.blob.slice(k*ST_CH,(k+1)*ST_CH));await setDoc(doc(f.db,'store',id,'data','1_'+String(k).padStart(4,'0')),{i:k,d})}
   await updateDoc(ref,{hidden:false})}
  catch(e){stWipe(f,id).catch(()=>{});throw e}
- cfg.spub=1;saveCfg()}
+ cfg.spub=1;saveCfg();stNW()}
 function stMineDraw(rows){const l=$('#gml');if(!l||!$('#gm').classList.contains('on'))return;l.innerHTML='';
  if(!rows.length){const e=document.createElement('div');e.className='empty';e.textContent=stx('myE');l.append(e);return}
  rows.forEach(r=>{const c=document.createElement('div');c.className='st-m';
@@ -1725,6 +1726,22 @@ async function stMine(){
   const qs=await getDocs(query(collection(f.db,'store'),where('uid','==',f.uid)));
   const rows=qs.docs.map(stRow).sort((a,b)=>b.t-a.t);stMineDraw(rows);stClaim()}
  catch(e){const l=$('#gml');if(l&&$('#gm').classList.contains('on')){l.innerHTML='';const d=document.createElement('div');d.className='empty';d.textContent=stErr(e);l.append(d)}}}
+
+Object.assign(STXT.pt,{nLike:'%s curtiu o seu jogo ❤️',nDl:'%s baixou o seu jogo'});
+Object.assign(STXT.en,{nLike:'%s liked your game ❤️',nDl:'%s downloaded your game'});
+Object.assign(STXT.es,{nLike:'%s dio like a tu juego ❤️',nDl:'%s descargó tu juego'});
+function stNotify(k,title,body,tag){pushN({k,tag,title,body});if(!cfg.notif)return;
+ if(document.visibilityState==='visible'){note('🔔 '+title+': '+body);try{if(navigator.vibrate)navigator.vibrate(60)}catch(e){}}
+ else if('Notification' in window&&Notification.permission==='granted'&&navigator.serviceWorker){navigator.serviceWorker.ready.then(r=>r.showNotification(title,{body,icon:'icon-192.png',badge:'icon-192.png',tag,renotify:true})).catch(()=>{})}}
+let stNWon=0;
+async function stNW(){if(stNWon||!cfg.spub)return;stNWon=1;
+ try{const f=await initFb(),{collection,query,where,onSnapshot,deleteDoc}=f.fs;
+  onSnapshot(query(collection(f.db,'notifs'),where('to','==',f.uid)),s=>{s.docChanges().forEach(c=>{if(c.type!=='added')return;const x=c.doc.data(),who=(String(x.byName||'?').slice(0,40))+(x.byId?' #'+String(x.byId).slice(0,12):''),ttl=String(x.title||'').slice(0,60);
+    if(x.type==='like')stNotify('like','❤️ '+ttl,stx('nLike').replace('%s',who),'lk'+c.doc.id);
+    else if(x.type==='dl')stNotify('dl','⬇️ '+ttl,stx('nDl').replace('%s',who),'dl'+c.doc.id);
+    deleteDoc(c.doc.ref).catch(()=>{})})},()=>{stNWon=0})}
+ catch(e){stNWon=0}}
+setTimeout(stNW,9000);
 let stCl=0;
 async function stClaim(){if(stCl||!cfg.spub)return;stCl=1;
  try{const f=await initFb(),{collection,query,where,getDocs,runTransaction}=f.fs;
