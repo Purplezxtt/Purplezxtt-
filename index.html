@@ -291,6 +291,14 @@ body.bgpix:not(.ing)::after{z-index:15;height:120px;background:linear-gradient(t
 #pf .arow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #251560;background:none;border-radius:0}#pf .arow:last-child{border:0}#pf .arow b{color:#f1ecff;font-size:15px;display:block}#pf .arow small{color:#a99ad6;font-size:12.5px;margin:0}#pf .arow.lk{opacity:.55}.ai{font-size:24px}.ac{width:26px;height:26px;border-radius:50%;border:2px solid #7a4dff;display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px}
 #pf:not(.pfEd) .pfN,#pf:not(.pfEd) #psv{display:none}#pf .pfB{display:grid;gap:8px}#pf .pfB button{width:100%;padding:14px;border-radius:16px;font-weight:700;color:#fff;background:linear-gradient(180deg,#8a3dff,#5a1fd8);border:1px solid #c9a4ff;box-shadow:0 0 16px rgba(130,70,255,.4)}#pf #psv{background:linear-gradient(180deg,#1f9d63,#126b43);border-color:#4be09a}
 #pf .pfAv img.av{width:96px;height:96px}
+.stin{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:9px 14px;min-height:44px;width:100%}
+textarea.stin{min-height:84px;resize:vertical}
+.st-au{font-size:12px;color:var(--mut);overflow-wrap:anywhere}
+.st-ds{font-size:12px;color:var(--mut);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;margin:0}
+.st-row{display:flex;gap:6px;width:100%}
+.st-m{border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px;display:grid;gap:8px;background:var(--card)}
+.st-m .st-b{display:flex;gap:6px;flex-wrap:wrap}.st-m .st-b button{flex:1 1 90px;min-height:40px;padding:6px}
+.st-ck{display:flex;gap:10px;align-items:flex-start;margin:6px 0 12px;font-size:14px}.st-ck input{width:22px;height:22px;flex:none;margin-top:2px}
 </style>
 </head>
 <body>
@@ -1013,9 +1021,10 @@ const CH=[
 {id:'u-vox',pt:'O app agora se chama Vox Emulador!',es:'¡La app ahora se llama Vox Emulador!',en:'The app is now called Vox Emulador!'},
 {id:'u-ga',pt:'Novo: conquistas por jogo! Cada jogo tem as suas (o Pokémon FireRed lê insígnias, Pokédex e Liga direto do save). Veja em Perfil → Jogos ou no ⋮ do jogo.',es:'¡Nuevo: logros por juego! Cada juego tiene los suyos (Pokémon FireRed lee medallas, Pokédex y Liga del save). Míralos en Perfil → Juegos o en el ⋮ del juego.',en:'New: per-game achievements! Every game has its own (Pokémon FireRed reads badges, Pokédex and the League from the save). See them in Profile → Games or the game’s ⋮ menu.'},
 {id:'u-ga2',pt:'Conquistas por jogo agora têm pontos, dificuldade, secretas, maestria 100%, nível e XP, e aviso animado com som.',es:'Los logros por juego ahora tienen puntos, dificultad, secretos, maestría 100%, nivel y XP, y aviso animado con sonido.',en:'Per-game achievements now have points, difficulty, secrets, 100% mastery, level and XP, plus an animated popup with sound.'},
-{id:'u-html',pt:'Agora o Vox roda jogos em HTML! Adicione um arquivo .html em Adicionar jogos.',es:'¡Vox ahora ejecuta juegos HTML! Añade un archivo .html en Añadir juegos.',en:'Vox now runs HTML games! Add an .html file from Add games.'}];
+{id:'u-html',pt:'Agora o Vox roda jogos em HTML! Adicione um arquivo .html em Adicionar jogos.',es:'¡Vox ahora ejecuta juegos HTML! Añade un archivo .html en Añadir juegos.',en:'Vox now runs HTML games! Add an .html file from Add games.'},
+{id:'u-pub',pt:'Novo na Loja: aba Jogos! Publique seus jogos, escolha se é grátis ou custa Vox coins, oculte ou remova quando quiser, e curta os jogos dos outros ❤️.',es:'Nuevo en la Tienda: ¡pestaña Juegos! Publica tus juegos, elige si son gratis o cuestan Vox coins, ocúltalos o quítalos cuando quieras y da ❤️ a los de otros.',en:'New in the Shop: Games tab! Publish your games, make them free or priced in Vox coins, hide or remove them anytime, and like other people’s games ❤️.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-18.10';let verSeen=APP_VER;
+const APP_VER='2026-10-24.1';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
@@ -1233,7 +1242,8 @@ function gameMenu(i){openSheet(gtitle(i),(l,add)=>{  add('🏆 '+gaL('t'),()=>ga
  add('🖼 '+lx('cov'),()=>{covFor=i;$('#cvf').click()});
  if(COV[i.id])add('✕ '+lx('rcov'),async()=>{delete COV[i.id];await saveCov();draw()});
  if(HAS.has(i.id))add('↺ '+ta('f_restart'),async()=>{await tx('meta','readwrite',s=>s.delete('st:'+i.id)).catch(()=>{});HAS.delete(i.id);draw()});
- add('⬇ '+t('dl'),()=>{const a=document.createElement('a');a.href=URL.createObjectURL(i.blob);a.download=i.name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)});
+ add('🌐 '+stx('pubm'),()=>stPublish(i));
+  add('⬇ '+t('dl'),()=>{const a=document.createElement('a');a.href=URL.createObjectURL(i.blob);a.download=i.name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)});
  add('🗑 '+t('rm'),async()=>{if(!confirm(lx('delg').replace('%s',gtitle(i))))return;await tx('games','readwrite',s=>s.delete(i.id));tx('meta','readwrite',s=>s.delete('st:'+i.id)).catch(()=>{});HAS.delete(i.id);delete COV[i.id];items=items.filter(x=>x!==i);draw()})})}
 $('#cvf').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f||!covFor)return;
  try{const bm=await createImageBitmap(f),sc=Math.min(1,260/Math.max(bm.width,bm.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(bm.width*sc));c.height=Math.max(1,Math.round(bm.height*sc));c.getContext('2d').drawImage(bm,0,0,c.width,c.height);
@@ -1524,7 +1534,7 @@ function openBox(bx){if(!confirm(shx('confirmBox').replace('%s',shx(bx.id)).repl
  openSheet('🎁 '+shx(bx.id),(l)=>{const box=document.createElement('div');box.style.cssText='text-align:center;font-size:56px;padding:20px';box.append(chestImg(bx.id,1));l.append(box);
   setTimeout(()=>{box.style.fontSize='';box.innerHTML='';const t=document.createElement('div');t.textContent=shx('got');t.style.color='var(--mut)';const p=itemPrev(it),nm=document.createElement('b');nm.style.cssText='display:block;font-size:20px;margin:6px 0';nm.textContent=kx(it.id)+' · '+shx('t_'+it.t);
    box.append(t,p,rarBadge(it.r),nm);if(dup){const d=document.createElement('div');d.style.cssText='color:#ffe680;font-size:14px';d.textContent=shx('dup').replace('%n',ref);box.append(d)}drawShop()},1100)})}
-function drawShop(){const b=$('#shBody');if(!b)return;b.innerHTML='';$('#shT1').textContent=shx('sh');$('#shT2').textContent=shx('shs');coinUI();
+function drawShop(){const b=$('#shBody');if(!b)return;b.innerHTML='';$('#shT1').textContent=shx('sh');$('#shT2').textContent=shx('shs');coinUI();stTabs(b);if(STT==='games'){stDraw(b);return}
  const sec=(t,right)=>{const d=document.createElement('div');d.className='sh-sec';const h3=document.createElement('h3');h3.textContent=t;d.append(h3);if(right){const s=document.createElement('small');s.textContent=right;d.append(s)}return d};
  const of=shopOffers();b.append(sec('🔥 '+shx('offers'),shx('next').replace('%t',fmtT(SLOT-(Date.now()%SLOT)))));
  const g=document.createElement('div');g.className='sh-grid';let any=0;
@@ -1533,6 +1543,157 @@ function drawShop(){const b=$('#shBody');if(!b)return;b.innerHTML='';$('#shT1').
  if(!any){const e=document.createElement('div');e.className='empty';e.style.gridColumn='1/-1';e.textContent=shx('noOffer');g.append(e)}
  b.append(g);b.append(sec('🎁 '+shx('boxes')));const gb=document.createElement('div');gb.className='sh-grid';BOX.forEach(bx=>gb.append(boxCard(bx)));b.append(gb);
  [['frame','frames','🖼 '],['bg','bgs','🌈 ']].forEach(([t,k,ic])=>{b.append(sec(ic+shx(k)));const gg=document.createElement('div');gg.className='sh-grid';ITEMS.filter(i=>i.t===t).sort((x,y)=>x.r-y.r).forEach(it=>gg.append(itemCard(it,it.p,0)));b.append(gg)})}
+/* ===== Jogos da comunidade (publicar, preço em Vox coins, ocultar, curtir) ===== */
+const STXT={
+pt:{tabI:'🛍 Itens',tabG:'🎮 Jogos',cmT:'Jogos da comunidade',cmS:'Publique seus jogos e baixe os dos outros.',pub:'＋ Publicar jogo',mine:'📂 Meus jogos',recent:'Mais novos',liked:'Mais curtidos',free:'Grátis',get:'Baixar',again:'Adicionar de novo',by:'por %s',empty:'Nenhum jogo publicado ainda. Seja o primeiro!',more:'Carregar mais',load:'Carregando…',retry:'Tentar de novo',err:'Não deu para falar com a Loja de jogos. Tente de novo.',perm:'A Loja de jogos ainda não foi liberada no servidor (regras do Firestore).',pubm:'Publicar na Loja',pickT:'Qual jogo publicar?',pickE:'Sua biblioteca está vazia. Adicione um jogo primeiro.',formT:'Publicar na Loja',title:'Título',desc:'Descrição (opcional)',price:'Preço em Vox coins (0 = grátis)',rights:'Declaro que tenho o direito de distribuir este jogo (eu criei ou a licença permite).',send:'Publicar',sending:'⏳ Enviando %a/%b…',done:'✔ Jogo publicado na Loja!',big:'Arquivo grande demais para a Loja (máx. %m MB).',needR:'Marque a declaração de direitos para publicar.',myT:'Meus jogos publicados',myE:'Você ainda não publicou nenhum jogo.',hide:'🙈 Ocultar',show:'👁 Mostrar',hidden:'🙈 Oculto',visible:'👁 Visível',del:'🗑',delQ:'Remover “%s” da Loja? Quem já baixou continua com o jogo.',setP:'💰 Preço',priceQ:'Novo preço em Vox coins (0 = grátis):',gone:'Jogo removido da Loja.',buyQ:'Comprar “%s” por %p Vox coins?',nocoins:'Vox coins insuficientes.',added:'✔ “%s” foi para a sua Biblioteca',dling:'⏳ Baixando “%s”…',sale:'+%n Vox coins com vendas de jogos!',repQ:'Denunciar este jogo?',rep:'Denúncia enviada. Obrigado!',yours:'Seu jogo',bad:'O arquivo na Loja está incompleto.'},
+en:{tabI:'🛍 Items',tabG:'🎮 Games',cmT:'Community games',cmS:'Publish your games and download other people’s.',pub:'＋ Publish game',mine:'📂 My games',recent:'Newest',liked:'Most liked',free:'Free',get:'Download',again:'Add again',by:'by %s',empty:'No games published yet. Be the first!',more:'Load more',load:'Loading…',retry:'Try again',err:'Couldn’t reach the Games store. Try again.',perm:'The Games store isn’t enabled on the server yet (Firestore rules).',pubm:'Publish to Shop',pickT:'Which game to publish?',pickE:'Your library is empty. Add a game first.',formT:'Publish to Shop',title:'Title',desc:'Description (optional)',price:'Price in Vox coins (0 = free)',rights:'I confirm I have the right to distribute this game (I made it or its license allows it).',send:'Publish',sending:'⏳ Uploading %a/%b…',done:'✔ Game published!',big:'File too large for the Shop (max %m MB).',needR:'Tick the rights statement to publish.',myT:'My published games',myE:'You haven’t published any game yet.',hide:'🙈 Hide',show:'👁 Show',hidden:'🙈 Hidden',visible:'👁 Visible',del:'🗑',delQ:'Remove “%s” from the Shop? People who already downloaded it keep it.',setP:'💰 Price',priceQ:'New price in Vox coins (0 = free):',gone:'Game removed from the Shop.',buyQ:'Buy “%s” for %p Vox coins?',nocoins:'Not enough Vox coins.',added:'✔ “%s” added to your Library',dling:'⏳ Downloading “%s”…',sale:'+%n Vox coins from game sales!',repQ:'Report this game?',rep:'Report sent. Thanks!',yours:'Your game',bad:'The file in the Shop is incomplete.'},
+es:{tabI:'🛍 Objetos',tabG:'🎮 Juegos',cmT:'Juegos de la comunidad',cmS:'Publica tus juegos y descarga los de otros.',pub:'＋ Publicar juego',mine:'📂 Mis juegos',recent:'Más nuevos',liked:'Más gustados',free:'Gratis',get:'Descargar',again:'Añadir otra vez',by:'por %s',empty:'Aún no hay juegos publicados. ¡Sé el primero!',more:'Cargar más',load:'Cargando…',retry:'Reintentar',err:'No se pudo conectar con la Tienda de juegos.',perm:'La Tienda de juegos aún no está habilitada en el servidor (reglas de Firestore).',pubm:'Publicar en la Tienda',pickT:'¿Qué juego publicar?',pickE:'Tu biblioteca está vacía. Añade un juego primero.',formT:'Publicar en la Tienda',title:'Título',desc:'Descripción (opcional)',price:'Precio en Vox coins (0 = gratis)',rights:'Declaro que tengo derecho a distribuir este juego (lo creé yo o la licencia lo permite).',send:'Publicar',sending:'⏳ Subiendo %a/%b…',done:'✔ ¡Juego publicado!',big:'Archivo demasiado grande para la Tienda (máx. %m MB).',needR:'Marca la declaración de derechos para publicar.',myT:'Mis juegos publicados',myE:'Aún no has publicado ningún juego.',hide:'🙈 Ocultar',show:'👁 Mostrar',hidden:'🙈 Oculto',visible:'👁 Visible',del:'🗑',delQ:'¿Quitar “%s” de la Tienda? Quien ya lo descargó lo conserva.',setP:'💰 Precio',priceQ:'Nuevo precio en Vox coins (0 = gratis):',gone:'Juego retirado de la Tienda.',buyQ:'¿Comprar “%s” por %p Vox coins?',nocoins:'Vox coins insuficientes.',added:'✔ “%s” añadido a tu Biblioteca',dling:'⏳ Descargando “%s”…',sale:'+%n Vox coins por ventas de juegos.',repQ:'¿Denunciar este juego?',rep:'Denuncia enviada. ¡Gracias!',yours:'Tu juego',bad:'El archivo de la Tienda está incompleto.'}};
+const stx=k=>((STXT[cfg.lang]||STXT.en)[k])||STXT.en[k];
+Object.assign(SHX.pt,{s_sale:'Venda de jogo'});Object.assign(SHX.es,{s_sale:'Venta de juego'});Object.assign(SHX.en,{s_sale:'Game sale'});
+const ST_MAX=10*1048576,ST_CH=600000,ST_PG=30;
+let STT='items',STO={list:[],last:null,more:false,busy:false,err:'',et:0,sort:'new',t:0,loaded:false};
+const stErr=e=>{const c=e&&e.code||'',m=String(e&&e.message||e||'');if(c==='permission-denied'||/permission|insufficient/i.test(m))return stx('perm');if(m==='bad')return stx('bad');return stx('err')};
+const stId=()=>String(9e12-Date.now()).padStart(13,'0')+Math.random().toString(36).slice(2,7);
+const stB64=b=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(',')[1]||'');r.onerror=()=>no(r.error);r.readAsDataURL(b)});
+const stU8=s=>{const a=atob(s),u=new Uint8Array(a.length);for(let i=0;i<a.length;i++)u[i]=a.charCodeAt(i);return u};
+const stCov=c=>(typeof c==='string'&&c.length<200000&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(c))?c:'';
+const stSafeName=n=>String(n||'game').replace(/[\\\/:*?"<>|\u0000-\u001f]/g,'_').slice(0,120)||'game';
+function stRow(d){const x=d.data();return{id:d.id,uid:String(x.uid||''),author:String(x.author||'').slice(0,40),authorId:String(x.authorId||'').slice(0,12),title:String(x.title||'').slice(0,60)||'?',desc:String(x.desc||'').slice(0,200),price:Math.max(0,x.price|0),name:stSafeName(x.name),ext:String(x.ext||'').slice(0,12),size:Math.max(0,x.size|0),chunks:Math.max(0,x.chunks|0),cover:stCov(x.cover),likes:Math.max(0,x.likes|0),dl:Math.max(0,x.dl|0),hidden:!!x.hidden,t:+x.t||0}}
+function stTabs(b){const r=document.createElement('div');r.className='tabs';r.style.marginBottom='4px';
+ [['items',stx('tabI')],['games',stx('tabG')]].forEach(([k,n])=>{const x=document.createElement('button');x.className='tab';x.textContent=n;x.setAttribute('aria-pressed',STT===k);x.onclick=()=>{STT=k;drawShop()};r.append(x)});b.append(r)}
+async function stLoad(reset){if(STO.busy)return;STO.busy=true;STO.err='';
+ try{const f=await initFb(),{collection,query,where,limit,startAfter,getDocs}=f.fs;
+  const cs=[where('hidden','==',false)];if(!reset&&STO.last)cs.push(startAfter(STO.last));cs.push(limit(ST_PG));
+  const qs=await getDocs(query(collection(f.db,'store'),...cs));const rows=qs.docs.map(stRow);
+  STO.list=reset?rows:STO.list.concat(rows);if(qs.docs.length)STO.last=qs.docs[qs.docs.length-1];else if(reset)STO.last=null;
+  STO.more=qs.docs.length>=ST_PG;STO.loaded=true;STO.t=Date.now()}
+ catch(e){STO.err=stErr(e);STO.et=Date.now()}
+ STO.busy=false;if(VIEW==='shop'&&STT==='games')drawShop()}
+function stDraw(b){
+ const sec=document.createElement('div');sec.className='sh-sec';const h=document.createElement('h3');h.textContent='🎮 '+stx('cmT');sec.append(h);b.append(sec);
+ const sb=document.createElement('small');sb.style.cssText='display:block;margin:0 0 10px';sb.textContent=stx('cmS');b.append(sb);
+ const bar=document.createElement('div');bar.className='row';bar.style.marginBottom='12px';
+ const pb=document.createElement('button');pb.className='p';pb.textContent=stx('pub');pb.onclick=stPick;
+ const mb=document.createElement('button');mb.textContent=stx('mine');mb.onclick=stMine;
+ const so=document.createElement('select');so.setAttribute('aria-label',stx('recent'));[['new',stx('recent')],['likes',stx('liked')]].forEach(([k,n])=>so.add(new Option(n,k,false,k===STO.sort)));so.onchange=()=>{STO.sort=so.value;drawShop()};
+ bar.append(pb,mb,so);b.append(bar);
+ if(!STO.busy&&(!STO.err||Date.now()-STO.et>60000)&&(!STO.loaded||Date.now()-STO.t>90000))stLoad(true);
+ let v=STO.list.slice();if(STO.sort==='likes')v.sort((a,c)=>(c.likes-a.likes)||(c.t-a.t));
+ if(!v.length){const e=document.createElement('div');e.className='empty';
+  if(STO.err){e.textContent=STO.err;const r=document.createElement('button');r.textContent=stx('retry');r.style.cssText='display:block;margin:12px auto 0';r.onclick=()=>{stLoad(true);drawShop()};e.append(r)}
+  else e.textContent=(STO.busy||!STO.loaded)?stx('load'):stx('empty');b.append(e);return}
+ const g=document.createElement('div');g.className='sh-grid';v.forEach(x=>g.append(stCard(x)));b.append(g);
+ if(STO.err){const e=document.createElement('small');e.style.color='var(--acc)';e.textContent=STO.err;b.append(e)}
+ if(STO.more){const m=document.createElement('button');m.style.cssText='display:block;width:100%;margin-top:12px';m.textContent=STO.busy?stx('load'):stx('more');m.disabled=STO.busy;m.onclick=()=>{stLoad(false);drawShop()};b.append(m)}}
+function stCard(x){const c=document.createElement('div');c.className='sh-card';
+ const pv=document.createElement('div');pv.className='sh-pv';pv.style.cssText+=';height:96px;font-weight:800;font-size:22px;color:#fff';
+ if(x.cover)pv.style.background='center/cover no-repeat url("'+x.cover+'")';
+ else{const h=hue(x.title);pv.style.background='linear-gradient(145deg,hsl('+h+' 62% 44%),hsl('+((h+45)%360)+' 70% 22%))';pv.textContent=(x.ext||'').replace('.','').toUpperCase().slice(0,5)||'🎮'}
+ const nm=document.createElement('b');nm.textContent=x.title;
+ const au=document.createElement('div');au.className='st-au';au.textContent=stx('by').replace('%s',x.author||'?')+(x.authorId?' #'+x.authorId:'')+' · '+fmt(x.size)+' · ⬇ '+x.dl;
+ c.append(pv,nm,au);
+ if(x.desc){const d=document.createElement('p');d.className='st-ds';d.textContent=x.desc;c.append(d)}
+ const row=document.createElement('div');row.className='st-row';
+ const lk=document.createElement('button');lk.style.cssText='width:auto;flex:1';
+ const upd=()=>{const on=!!(cfg.sl&&cfg.sl[x.id]);lk.textContent=(on?'❤️ ':'🤍 ')+x.likes;lk.setAttribute('aria-pressed',on)};upd();
+ lk.onclick=async()=>{lk.disabled=true;try{await stLike(x);upd()}catch(e){note(stErr(e))}lk.disabled=false};
+ const rp=document.createElement('button');rp.style.cssText='width:44px;flex:none';rp.textContent='🚩';rp.setAttribute('aria-label',stx('repQ'));rp.onclick=()=>stReport(x);
+ row.append(lk,rp);c.append(row);
+ const mine=!!(FB&&FB.uid===x.uid),got=!!(cfg.sd&&cfg.sd[x.id]);
+ const bt=document.createElement('button');
+ if(mine){bt.textContent='✔ '+stx('yours');bt.disabled=true}
+ else{bt.className='p';if(got)bt.textContent=stx('again');else if(x.price>0)bt.innerHTML=coinImg(0,16)+' '+x.price;else bt.textContent='⬇ '+stx('get');
+  bt.onclick=()=>stGet(x,bt)}
+ c.append(bt);return c}
+async function stLike(x){const f=await initFb(),{doc,runTransaction,increment}=f.fs;
+ const on=await runTransaction(f.db,async tr=>{const lr=doc(f.db,'store',x.id,'likes',f.uid),gr=doc(f.db,'store',x.id),s=await tr.get(lr);
+  if(s.exists()){tr.delete(lr);tr.update(gr,{likes:increment(-1)});return false}
+  tr.set(lr,{t:Date.now()});tr.update(gr,{likes:increment(1)});return true});
+ cfg.sl=cfg.sl||{};if(on){cfg.sl[x.id]=1;x.likes++}else{delete cfg.sl[x.id];x.likes=Math.max(0,x.likes-1)}saveCfg()}
+async function stGet(x,btn){btn.disabled=true;
+ try{const f=await initFb(),{doc,getDoc,setDoc,collection,getDocs,query,orderBy,updateDoc,increment}=f.fs;
+  const mine=x.uid===f.uid;let ok=mine||x.price<=0;
+  if(!ok){const bs=await getDoc(doc(f.db,'store',x.id,'buyers',f.uid));ok=bs.exists()}
+  if(!ok){
+   if(!confirm(stx('buyQ').replace('%s',x.title).replace('%p',x.price)))return;
+   if(zcoins()<x.price){note(stx('nocoins'));return}
+   const t=Date.now();
+   await setDoc(doc(f.db,'store',x.id,'buyers',f.uid),{t,n:x.price,to:x.uid});
+   await setDoc(doc(f.db,'sales',x.id+'_'+f.uid),{to:x.uid,from:f.uid,gid:x.id,title:x.title,n:x.price,t,claimed:false});
+   spend(x.price)}
+  note(stx('dling').replace('%s',x.title));
+  const qs=await getDocs(query(collection(f.db,'store',x.id,'data'),orderBy('i')));
+  if(!x.chunks||qs.size!==x.chunks)throw new Error('bad');
+  const blob=new Blob(qs.docs.map(d=>stU8(String(d.data().d||''))),{type:'application/octet-stream'});
+  if(x.size&&blob.size!==x.size)throw new Error('bad');
+  const nm=stSafeName(x.name),e=ext(nm),ms=folders.filter(z=>z.exts&&z.exts.length&&z.exts.includes(e)),tg=ms.length===1?ms[0].name:'Sem pasta';
+  const rec={name:nm,size:blob.size,folder:tg,blob:new File([blob],nm),title:x.title};
+  rec.id=await tx('games','readwrite',s=>s.add(rec));items.push(rec);
+  if(x.cover){COV[rec.id]=x.cover;await saveCov()}
+  cfg.sd=cfg.sd||{};if(!cfg.sd[x.id]){updateDoc(doc(f.db,'store',x.id),{dl:increment(1)}).catch(()=>{});x.dl++}
+  cfg.sd[x.id]=1;saveCfg();dmMark('add');note(stx('added').replace('%s',x.title));draw()}
+ catch(e){note(stErr(e))}
+ finally{btn.disabled=false}}
+async function stReport(x){if(!confirm(stx('repQ')))return;
+ try{const f=await initFb(),{collection,addDoc}=f.fs;await addDoc(collection(f.db,'reports'),{gid:x.id,title:x.title,by:f.uid,t:Date.now()});note(stx('rep'))}catch(e){note(stErr(e))}}
+function stPick(){openSheet('🌐 '+stx('pickT'),l=>{
+ if(!items.length){const e=document.createElement('div');e.className='empty';e.textContent=stx('pickE');l.append(e);return}
+ items.slice().sort((a,b)=>gtitle(a).localeCompare(gtitle(b))).forEach(i=>{const b=document.createElement('button');b.style.cssText='display:block;width:100%;text-align:left;margin-bottom:8px';b.textContent=gtitle(i)+' · '+fmt(i.size);b.onclick=()=>stPublish(i);l.append(b)})})}
+function stPublish(i){
+ if(i.size>ST_MAX){note(stx('big').replace('%m',ST_MAX/1048576));return}
+ openSheet('🌐 '+stx('formT'),l=>{
+  const mk=(txt,el)=>{const lb=document.createElement('label');lb.style.cssText='display:grid;gap:4px;margin-bottom:10px';const s=document.createElement('span');s.textContent=txt;s.style.cssText='font-size:13px;color:var(--mut)';lb.append(s,el);return lb};
+  const ti=document.createElement('input');ti.type='text';ti.className='stin';ti.maxLength=60;ti.value=gtitle(i).slice(0,60);
+  const de=document.createElement('textarea');de.className='stin';de.maxLength=200;
+  const pr=document.createElement('input');pr.type='number';pr.className='stin';pr.min=0;pr.max=5000;pr.step=1;pr.value=0;pr.inputMode='numeric';
+  const ck=document.createElement('input');ck.type='checkbox';const cl=document.createElement('label');cl.className='st-ck';const cs=document.createElement('span');cs.textContent=stx('rights');cl.append(ck,cs);
+  const msg=document.createElement('div');msg.style.cssText='color:var(--acc);font-weight:600;min-height:22px;margin-bottom:8px';
+  const go=document.createElement('button');go.className='p';go.style.cssText='display:block;width:100%';go.textContent='🌐 '+stx('send');
+  go.onclick=async()=>{const price=Math.max(0,Math.min(5000,Math.floor(+pr.value||0))),title=ti.value.trim().slice(0,60);
+   if(!title){ti.focus();return}if(!ck.checked){msg.textContent=stx('needR');return}
+   go.disabled=true;
+   try{await stUpload(i,{title,desc:de.value.trim().slice(0,200),price},msg);$('#gm').classList.remove('on');note(stx('done'));STT='games';STO.t=0;if(VIEW==='shop')drawShop()}
+   catch(e){msg.textContent=stErr(e);go.disabled=false}};
+  l.append(mk(stx('title'),ti),mk(stx('desc'),de),mk(stx('price'),pr),cl,msg,go)})}
+async function stWipe(f,id){const {collection,getDocs,deleteDoc}=f.fs;
+ for(const sub of ['data','likes']){try{const qs=await getDocs(collection(f.db,'store',id,sub));for(const d of qs.docs)await deleteDoc(d.ref).catch(()=>{})}catch(e){}}
+ await f.fs.deleteDoc(f.fs.doc(f.db,'store',id))}
+async function stUpload(i,m,msg){const f=await initFb(),{doc,setDoc,updateDoc}=f.fs;
+ const id=stId(),n=Math.max(1,Math.ceil(i.blob.size/ST_CH)),t=Date.now(),cv=stCov(COV[i.id]),ref=doc(f.db,'store',id);
+ await setDoc(ref,{uid:f.uid,author:String(prof.name||'').slice(0,40),authorId:String(prof.id||'').slice(0,12),title:m.title,desc:m.desc,price:m.price,name:stSafeName(i.name),ext:ext(i.name),size:i.blob.size,chunks:n,cover:cv,likes:0,dl:0,hidden:true,t});
+ try{for(let k=0;k<n;k++){msg.textContent=stx('sending').replace('%a',k+1).replace('%b',n);
+   const d=await stB64(i.blob.slice(k*ST_CH,(k+1)*ST_CH));await setDoc(doc(f.db,'store',id,'data',String(k).padStart(4,'0')),{i:k,d})}
+  await updateDoc(ref,{hidden:false})}
+ catch(e){stWipe(f,id).catch(()=>{});throw e}
+ cfg.spub=1;saveCfg()}
+function stMineDraw(rows){const l=$('#gml');if(!l||!$('#gm').classList.contains('on'))return;l.innerHTML='';
+ if(!rows.length){const e=document.createElement('div');e.className='empty';e.textContent=stx('myE');l.append(e);return}
+ rows.forEach(r=>{const c=document.createElement('div');c.className='st-m';
+  const nm=document.createElement('b');nm.textContent=r.title;nm.style.overflowWrap='anywhere';
+  const sm=document.createElement('small');sm.style.margin='0';sm.textContent=fmt(r.size)+' · '+(r.price>0?r.price+' 🪙':stx('free'))+' · ❤ '+r.likes+' · ⬇ '+r.dl+' · '+(r.hidden?stx('hidden'):stx('visible'));
+  const bw=document.createElement('div');bw.className='st-b';
+  const hb=document.createElement('button');hb.textContent=r.hidden?stx('show'):stx('hide');
+  hb.onclick=async()=>{hb.disabled=true;try{const f=await initFb();await f.fs.updateDoc(f.fs.doc(f.db,'store',r.id),{hidden:!r.hidden});r.hidden=!r.hidden;STO.t=0;stMineDraw(rows)}catch(e){note(stErr(e));hb.disabled=false}};
+  const pb=document.createElement('button');pb.textContent=stx('setP');
+  pb.onclick=async()=>{const v=prompt(stx('priceQ'),r.price);if(v===null)return;const p=Math.max(0,Math.min(5000,Math.floor(+v||0)));try{const f=await initFb();await f.fs.updateDoc(f.fs.doc(f.db,'store',r.id),{price:p});r.price=p;STO.t=0;stMineDraw(rows)}catch(e){note(stErr(e))}};
+  const db=document.createElement('button');db.textContent=stx('del');db.setAttribute('aria-label',stx('del'));
+  db.onclick=async()=>{if(!confirm(stx('delQ').replace('%s',r.title)))return;db.disabled=true;try{const f=await initFb();await stWipe(f,r.id);const k=rows.indexOf(r);if(k>=0)rows.splice(k,1);STO.list=STO.list.filter(z=>z.id!==r.id);note(stx('gone'));stMineDraw(rows);if(VIEW==='shop'&&STT==='games')drawShop()}catch(e){note(stErr(e));db.disabled=false}};
+  bw.append(hb,pb,db);c.append(nm,sm,bw);l.append(c)})}
+async function stMine(){
+ openSheet('📂 '+stx('myT'),l=>{const e=document.createElement('div');e.className='empty';e.textContent=stx('load');l.append(e)});
+ try{const f=await initFb(),{collection,query,where,getDocs}=f.fs;
+  const qs=await getDocs(query(collection(f.db,'store'),where('uid','==',f.uid)));
+  const rows=qs.docs.map(stRow).sort((a,b)=>b.t-a.t);stMineDraw(rows);stClaim()}
+ catch(e){const l=$('#gml');if(l&&$('#gm').classList.contains('on')){l.innerHTML='';const d=document.createElement('div');d.className='empty';d.textContent=stErr(e);l.append(d)}}}
+let stCl=0;
+async function stClaim(){if(stCl||!cfg.spub)return;stCl=1;
+ try{const f=await initFb(),{collection,query,where,getDocs,runTransaction}=f.fs;
+  const qs=await getDocs(query(collection(f.db,'sales'),where('to','==',f.uid),where('claimed','==',false)));let tot=0;
+  for(const d of qs.docs){try{const g=await runTransaction(f.db,async tr=>{const s=await tr.get(d.ref);if(!s.exists()||s.data().claimed)return 0;tr.update(d.ref,{claimed:true});return Math.max(0,Math.min(5000,s.data().n|0))});if(g>0)tot+=g}catch(e){}}
+  if(tot>0){addCoins(tot,'sale');coinPop(tot);note(stx('sale').replace('%n',tot))}}
+ catch(e){}
+ stCl=0}
+setTimeout(stClaim,7000);setInterval(()=>{if(document.visibilityState==='visible')stClaim()},180000);
 let adTm=null;
 function renderMi(){const l=$('#mil');if(!l)return;clearInterval(adTm);l.innerHTML='';$('#mit').textContent='🪙 '+shx('miss');$('#mix').textContent=cx('cl');
  const top=document.createElement('div');top.style.cssText='display:flex;align-items:center;gap:10px;font-size:26px;font-weight:800;color:#ffe680;margin-bottom:6px';top.innerHTML=coinImg(0,32)+'<span>'+zcoins()+'</span>';l.append(top);
