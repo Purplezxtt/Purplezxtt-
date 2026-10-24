@@ -1027,7 +1027,7 @@ const CH=[
 {id:'u-html',pt:'Agora o Vox roda jogos em HTML! Adicione um arquivo .html em Adicionar jogos.',es:'¡Vox ahora ejecuta juegos HTML! Añade un archivo .html en Añadir juegos.',en:'Vox now runs HTML games! Add an .html file from Add games.'},
 {id:'u-pub',pt:'Novo na Loja: aba Jogos! Publique seus jogos, escolha se é grátis ou custa Vox coins, oculte ou remova quando quiser, e curta os jogos dos outros ❤️.',es:'Nuevo en la Tienda: ¡pestaña Juegos! Publica tus juegos, elige si son gratis o cuestan Vox coins, ocúltalos o quítalos cuando quieras y da ❤️ a los de otros.',en:'New in the Shop: Games tab! Publish your games, make them free or priced in Vox coins, hide or remove them anytime, and like other people’s games ❤️.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-24.5';let verSeen=APP_VER;
+const APP_VER='2026-10-24.6';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER){window.__newVer=m[1];try{window.__vxNew&&window.__vxNew()}catch(e){}}
@@ -1759,7 +1759,7 @@ setTimeout(stClaim,7000);setInterval(()=>{if(document.visibilityState==='visible
 (function(){const p=$('#player');if(!p)return;let was=false;
  const fsOn=()=>{const d=document;if(d.fullscreenElement)return;try{const r=d.documentElement.requestFullscreen&&d.documentElement.requestFullscreen({navigationUI:'hide'});if(r&&r.catch)r.catch(()=>{})}catch(x){}};
  const fsOff=()=>{try{if(document.fullscreenElement){const r=document.exitFullscreen();if(r&&r.catch)r.catch(()=>{})}}catch(x){}};
- new MutationObserver(()=>{const on=p.classList.contains('on');if(on&&!was){was=true;if(cfg.nfs!==false)fsOn()}else if(!on&&was){was=false;fsOff()}}).observe(p,{attributes:true,attributeFilter:['class']})})();
+ new MutationObserver(()=>{const on=p.classList.contains('on');if(on&&!was){was=true;if(cfg.nfs!==false)fsOn()}else if(!on&&was){was=false;if(cfg.fsAll===false)fsOff()}}).observe(p,{attributes:true,attributeFilter:['class']})})();
 let adTm=null;
 function renderMi(){const l=$('#mil');if(!l)return;clearInterval(adTm);l.innerHTML='';$('#mit').textContent='🪙 '+shx('miss');$('#mix').textContent=cx('cl');
  const top=document.createElement('div');top.style.cssText='display:flex;align-items:center;gap:10px;font-size:26px;font-weight:800;color:#ffe680;margin-bottom:6px';top.innerHTML=coinImg(0,32)+'<span>'+zcoins()+'</span>';l.append(top);
@@ -1819,6 +1819,17 @@ async function go(){busy=true;msg=u('doing');draw();
  location.reload()}
 bt.onclick=()=>{if(window.__newVer&&window.__newVer!==APP_VER)go();else check()};
 window.__vxNew=draw;const o=$('#set').onclick;$('#set').onclick=()=>{o();draw()};$('#lg').addEventListener('change',()=>setTimeout(draw,0));draw()})();
+(function(){const d=document,el=d.documentElement;
+ const TX={pt:'Tela cheia (esconder a barra do navegador)',es:'Pantalla completa (ocultar la barra del navegador)',en:'Fullscreen (hide the browser bar)'};
+ const want=()=>cfg.fsAll!==false;
+ const enter=()=>{if(!want()||d.fullscreenElement||!el.requestFullscreen)return;try{const r=el.requestFullscreen({navigationUI:'hide'});if(r&&r.catch)r.catch(()=>{})}catch(e){}};
+ ['touchend','click'].forEach(ev=>addEventListener(ev,enter,{passive:true,capture:true}));
+ const lb=document.createElement('label');lb.className='row';const ck=document.createElement('input');ck.type='checkbox';const sp=document.createElement('span');lb.append(ck,sp);
+ const sync=()=>{ck.checked=want();sp.textContent=TX[cfg.lang]||TX.en};sync();
+ ck.onchange=()=>{cfg.fsAll=ck.checked;saveCfg();if(ck.checked)enter();else if(d.fullscreenElement){try{d.exitFullscreen()}catch(e){}}};
+ if(window.__stG)window.__stG.append(lb);
+ const o=$('#set').onclick;$('#set').onclick=()=>{o();sync()};$('#lg').addEventListener('change',()=>setTimeout(sync,0))})();
+
 
 (function(){const TX={pt:['Música ambiente','Volume da música','Música: ligada','Música: desligada'],es:['Música ambiental','Volumen de la música','Música: activada','Música: desactivada'],en:['Ambient music','Music volume','Music: on','Music: off']};
 const tt=i=>(TX[cfg.lang]||TX.en)[i];let C,M,wet,pad,bus,run=0,T1,T2,paused=0,ug=0;
