@@ -1024,7 +1024,7 @@ const CH=[
 {id:'u-html',pt:'Agora o Vox roda jogos em HTML! Adicione um arquivo .html em Adicionar jogos.',es:'¡Vox ahora ejecuta juegos HTML! Añade un archivo .html en Añadir juegos.',en:'Vox now runs HTML games! Add an .html file from Add games.'},
 {id:'u-pub',pt:'Novo na Loja: aba Jogos! Publique seus jogos, escolha se é grátis ou custa Vox coins, oculte ou remova quando quiser, e curta os jogos dos outros ❤️.',es:'Nuevo en la Tienda: ¡pestaña Juegos! Publica tus juegos, elige si son gratis o cuestan Vox coins, ocúltalos o quítalos cuando quieras y da ❤️ a los de otros.',en:'New in the Shop: Games tab! Publish your games, make them free or priced in Vox coins, hide or remove them anytime, and like other people’s games ❤️.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-24.1';let verSeen=APP_VER;
+const APP_VER='2026-10-24.2';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
@@ -1694,6 +1694,11 @@ async function stClaim(){if(stCl||!cfg.spub)return;stCl=1;
  catch(e){}
  stCl=0}
 setTimeout(stClaim,7000);setInterval(()=>{if(document.visibilityState==='visible')stClaim()},180000);
+/* Tela cheia automática ao jogar */
+(function(){const p=$('#player');if(!p)return;let was=false;
+ const fsOn=()=>{const d=document;if(d.fullscreenElement)return;try{const r=d.documentElement.requestFullscreen&&d.documentElement.requestFullscreen({navigationUI:'hide'});if(r&&r.catch)r.catch(()=>{})}catch(x){}};
+ const fsOff=()=>{try{if(document.fullscreenElement){const r=document.exitFullscreen();if(r&&r.catch)r.catch(()=>{})}}catch(x){}};
+ new MutationObserver(()=>{const on=p.classList.contains('on');if(on&&!was){was=true;if(cfg.nfs!==false)fsOn()}else if(!on&&was){was=false;fsOff()}}).observe(p,{attributes:true,attributeFilter:['class']})})();
 let adTm=null;
 function renderMi(){const l=$('#mil');if(!l)return;clearInterval(adTm);l.innerHTML='';$('#mit').textContent='🪙 '+shx('miss');$('#mix').textContent=cx('cl');
  const top=document.createElement('div');top.style.cssText='display:flex;align-items:center;gap:10px;font-size:26px;font-weight:800;color:#ffe680;margin-bottom:6px';top.innerHTML=coinImg(0,32)+'<span>'+zcoins()+'</span>';l.append(top);
