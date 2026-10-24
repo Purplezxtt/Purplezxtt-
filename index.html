@@ -1024,7 +1024,7 @@ const CH=[
 {id:'u-html',pt:'Agora o Vox roda jogos em HTML! Adicione um arquivo .html em Adicionar jogos.',es:'¡Vox ahora ejecuta juegos HTML! Añade un archivo .html en Añadir juegos.',en:'Vox now runs HTML games! Add an .html file from Add games.'},
 {id:'u-pub',pt:'Novo na Loja: aba Jogos! Publique seus jogos, escolha se é grátis ou custa Vox coins, oculte ou remova quando quiser, e curta os jogos dos outros ❤️.',es:'Nuevo en la Tienda: ¡pestaña Juegos! Publica tus juegos, elige si son gratis o cuestan Vox coins, ocúltalos o quítalos cuando quieras y da ❤️ a los de otros.',en:'New in the Shop: Games tab! Publish your games, make them free or priced in Vox coins, hide or remove them anytime, and like other people’s games ❤️.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-24.2';let verSeen=APP_VER;
+const APP_VER='2026-10-24.3';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
@@ -1548,6 +1548,9 @@ const STXT={
 pt:{tabI:'🛍 Itens',tabG:'🎮 Jogos',cmT:'Jogos da comunidade',cmS:'Publique seus jogos e baixe os dos outros.',pub:'＋ Publicar jogo',mine:'📂 Meus jogos',recent:'Mais novos',liked:'Mais curtidos',free:'Grátis',get:'Baixar',again:'Adicionar de novo',by:'por %s',empty:'Nenhum jogo publicado ainda. Seja o primeiro!',more:'Carregar mais',load:'Carregando…',retry:'Tentar de novo',err:'Não deu para falar com a Loja de jogos. Tente de novo.',perm:'A Loja de jogos ainda não foi liberada no servidor (regras do Firestore).',pubm:'Publicar na Loja',pickT:'Qual jogo publicar?',pickE:'Sua biblioteca está vazia. Adicione um jogo primeiro.',formT:'Publicar na Loja',title:'Título',desc:'Descrição (opcional)',price:'Preço em Vox coins (0 = grátis)',rights:'Declaro que tenho o direito de distribuir este jogo (eu criei ou a licença permite).',send:'Publicar',sending:'⏳ Enviando %a/%b…',done:'✔ Jogo publicado na Loja!',big:'Arquivo grande demais para a Loja (máx. %m MB).',needR:'Marque a declaração de direitos para publicar.',myT:'Meus jogos publicados',myE:'Você ainda não publicou nenhum jogo.',hide:'🙈 Ocultar',show:'👁 Mostrar',hidden:'🙈 Oculto',visible:'👁 Visível',del:'🗑',delQ:'Remover “%s” da Loja? Quem já baixou continua com o jogo.',setP:'💰 Preço',priceQ:'Novo preço em Vox coins (0 = grátis):',gone:'Jogo removido da Loja.',buyQ:'Comprar “%s” por %p Vox coins?',nocoins:'Vox coins insuficientes.',added:'✔ “%s” foi para a sua Biblioteca',dling:'⏳ Baixando “%s”…',sale:'+%n Vox coins com vendas de jogos!',repQ:'Denunciar este jogo?',rep:'Denúncia enviada. Obrigado!',yours:'Seu jogo',bad:'O arquivo na Loja está incompleto.'},
 en:{tabI:'🛍 Items',tabG:'🎮 Games',cmT:'Community games',cmS:'Publish your games and download other people’s.',pub:'＋ Publish game',mine:'📂 My games',recent:'Newest',liked:'Most liked',free:'Free',get:'Download',again:'Add again',by:'by %s',empty:'No games published yet. Be the first!',more:'Load more',load:'Loading…',retry:'Try again',err:'Couldn’t reach the Games store. Try again.',perm:'The Games store isn’t enabled on the server yet (Firestore rules).',pubm:'Publish to Shop',pickT:'Which game to publish?',pickE:'Your library is empty. Add a game first.',formT:'Publish to Shop',title:'Title',desc:'Description (optional)',price:'Price in Vox coins (0 = free)',rights:'I confirm I have the right to distribute this game (I made it or its license allows it).',send:'Publish',sending:'⏳ Uploading %a/%b…',done:'✔ Game published!',big:'File too large for the Shop (max %m MB).',needR:'Tick the rights statement to publish.',myT:'My published games',myE:'You haven’t published any game yet.',hide:'🙈 Hide',show:'👁 Show',hidden:'🙈 Hidden',visible:'👁 Visible',del:'🗑',delQ:'Remove “%s” from the Shop? People who already downloaded it keep it.',setP:'💰 Price',priceQ:'New price in Vox coins (0 = free):',gone:'Game removed from the Shop.',buyQ:'Buy “%s” for %p Vox coins?',nocoins:'Not enough Vox coins.',added:'✔ “%s” added to your Library',dling:'⏳ Downloading “%s”…',sale:'+%n Vox coins from game sales!',repQ:'Report this game?',rep:'Report sent. Thanks!',yours:'Your game',bad:'The file in the Shop is incomplete.'},
 es:{tabI:'🛍 Objetos',tabG:'🎮 Juegos',cmT:'Juegos de la comunidad',cmS:'Publica tus juegos y descarga los de otros.',pub:'＋ Publicar juego',mine:'📂 Mis juegos',recent:'Más nuevos',liked:'Más gustados',free:'Gratis',get:'Descargar',again:'Añadir otra vez',by:'por %s',empty:'Aún no hay juegos publicados. ¡Sé el primero!',more:'Cargar más',load:'Cargando…',retry:'Reintentar',err:'No se pudo conectar con la Tienda de juegos.',perm:'La Tienda de juegos aún no está habilitada en el servidor (reglas de Firestore).',pubm:'Publicar en la Tienda',pickT:'¿Qué juego publicar?',pickE:'Tu biblioteca está vacía. Añade un juego primero.',formT:'Publicar en la Tienda',title:'Título',desc:'Descripción (opcional)',price:'Precio en Vox coins (0 = gratis)',rights:'Declaro que tengo derecho a distribuir este juego (lo creé yo o la licencia lo permite).',send:'Publicar',sending:'⏳ Subiendo %a/%b…',done:'✔ ¡Juego publicado!',big:'Archivo demasiado grande para la Tienda (máx. %m MB).',needR:'Marca la declaración de derechos para publicar.',myT:'Mis juegos publicados',myE:'Aún no has publicado ningún juego.',hide:'🙈 Ocultar',show:'👁 Mostrar',hidden:'🙈 Oculto',visible:'👁 Visible',del:'🗑',delQ:'¿Quitar “%s” de la Tienda? Quien ya lo descargó lo conserva.',setP:'💰 Precio',priceQ:'Nuevo precio en Vox coins (0 = gratis):',gone:'Juego retirado de la Tienda.',buyQ:'¿Comprar “%s” por %p Vox coins?',nocoins:'Vox coins insuficientes.',added:'✔ “%s” añadido a tu Biblioteca',dling:'⏳ Descargando “%s”…',sale:'+%n Vox coins por ventas de juegos.',repQ:'¿Denunciar este juego?',rep:'Denuncia enviada. ¡Gracias!',yours:'Tu juego',bad:'El archivo de la Tienda está incompleto.'}};
+Object.assign(STXT.pt,{edit:'✏️ Editar',editT:'Atualizar jogo',icon:'🖼 Trocar ícone',keepF:'Manter o arquivo atual',newF:'Atualizar o arquivo com uma versão da minha Biblioteca',upd:'Atualizar',upOk:'✔ Jogo atualizado!',save:'Salvar alterações'});
+Object.assign(STXT.en,{edit:'✏️ Edit',editT:'Update game',icon:'🖼 Change icon',keepF:'Keep the current file',newF:'Update the file with a version from my Library',upd:'Update',upOk:'✔ Game updated!',save:'Save changes'});
+Object.assign(STXT.es,{edit:'✏️ Editar',editT:'Actualizar juego',icon:'🖼 Cambiar icono',keepF:'Mantener el archivo actual',newF:'Actualizar el archivo con una versión de mi Biblioteca',upd:'Actualizar',upOk:'✔ ¡Juego actualizado!',save:'Guardar cambios'});
 const stx=k=>((STXT[cfg.lang]||STXT.en)[k])||STXT.en[k];
 Object.assign(SHX.pt,{s_sale:'Venda de jogo'});Object.assign(SHX.es,{s_sale:'Venta de juego'});Object.assign(SHX.en,{s_sale:'Game sale'});
 const ST_MAX=10*1048576,ST_CH=600000,ST_PG=30;
@@ -1558,7 +1561,10 @@ const stB64=b=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(St
 const stU8=s=>{const a=atob(s),u=new Uint8Array(a.length);for(let i=0;i<a.length;i++)u[i]=a.charCodeAt(i);return u};
 const stCov=c=>(typeof c==='string'&&c.length<200000&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(c))?c:'';
 const stSafeName=n=>String(n||'game').replace(/[\\\/:*?"<>|\u0000-\u001f]/g,'_').slice(0,120)||'game';
-function stRow(d){const x=d.data();return{id:d.id,uid:String(x.uid||''),author:String(x.author||'').slice(0,40),authorId:String(x.authorId||'').slice(0,12),title:String(x.title||'').slice(0,60)||'?',desc:String(x.desc||'').slice(0,200),price:Math.max(0,x.price|0),name:stSafeName(x.name),ext:String(x.ext||'').slice(0,12),size:Math.max(0,x.size|0),chunks:Math.max(0,x.chunks|0),cover:stCov(x.cover),likes:Math.max(0,x.likes|0),dl:Math.max(0,x.dl|0),hidden:!!x.hidden,t:+x.t||0}}
+function stRow(d){const x=d.data();return{id:d.id,uid:String(x.uid||''),author:String(x.author||'').slice(0,40),authorId:String(x.authorId||'').slice(0,12),title:String(x.title||'').slice(0,60)||'?',desc:String(x.desc||'').slice(0,200),price:Math.max(0,x.price|0),name:stSafeName(x.name),ext:String(x.ext||'').slice(0,12),size:Math.max(0,x.size|0),chunks:Math.max(0,x.chunks|0),cover:stCov(x.cover),likes:Math.max(0,x.likes|0),dl:Math.max(0,x.dl|0),hidden:!!x.hidden,v:Math.max(0,x.v|0),t:+x.t||0}}
+const stPre=v=>v>0?v+'_':'';
+function stChunks(f,id,v){const {collection,query,where,documentId}=f.fs,c=collection(f.db,'store',id,'data'),p=stPre(v);return p?query(c,where(documentId(),'>=',p),where(documentId(),'<',p+'\uf8ff')):c}
+const stCoverFrom=async file=>{const bm=await createImageBitmap(file),sc=Math.min(1,260/Math.max(bm.width,bm.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(bm.width*sc));c.height=Math.max(1,Math.round(bm.height*sc));c.getContext('2d').drawImage(bm,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.85)};
 function stTabs(b){const r=document.createElement('div');r.className='tabs';r.style.marginBottom='4px';
  [['items',stx('tabI')],['games',stx('tabG')]].forEach(([k,n])=>{const x=document.createElement('button');x.className='tab';x.textContent=n;x.setAttribute('aria-pressed',STT===k);x.onclick=()=>{STT=k;drawShop()};r.append(x)});b.append(r)}
 async function stLoad(reset){if(STO.busy)return;STO.busy=true;STO.err='';
@@ -1602,7 +1608,7 @@ function stCard(x){const c=document.createElement('div');c.className='sh-card';
  const mine=!!(FB&&FB.uid===x.uid),got=!!(cfg.sd&&cfg.sd[x.id]);
  const bt=document.createElement('button');
  if(mine){bt.textContent='✔ '+stx('yours');bt.disabled=true}
- else{bt.className='p';if(got)bt.textContent=stx('again');else if(x.price>0)bt.innerHTML=coinImg(0,16)+' '+x.price;else bt.textContent='⬇ '+stx('get');
+ else{bt.className='p';if(got&&Math.max(1,x.v)>(cfg.sd[x.id]|0))bt.textContent='⬆ '+stx('upd');else if(got)bt.textContent=stx('again');else if(x.price>0)bt.innerHTML=coinImg(0,16)+' '+x.price;else bt.textContent='⬇ '+stx('get');
   bt.onclick=()=>stGet(x,bt)}
  c.append(bt);return c}
 async function stLike(x){const f=await initFb(),{doc,runTransaction,increment}=f.fs;
@@ -1622,16 +1628,18 @@ async function stGet(x,btn){btn.disabled=true;
    await setDoc(doc(f.db,'sales',x.id+'_'+f.uid),{to:x.uid,from:f.uid,gid:x.id,title:x.title,n:x.price,t,claimed:false});
    spend(x.price)}
   note(stx('dling').replace('%s',x.title));
-  const qs=await getDocs(query(collection(f.db,'store',x.id,'data'),orderBy('i')));
+  const qs=await getDocs(stChunks(f,x.id,x.v));
   if(!x.chunks||qs.size!==x.chunks)throw new Error('bad');
   const blob=new Blob(qs.docs.map(d=>stU8(String(d.data().d||''))),{type:'application/octet-stream'});
   if(x.size&&blob.size!==x.size)throw new Error('bad');
   const nm=stSafeName(x.name),e=ext(nm),ms=folders.filter(z=>z.exts&&z.exts.length&&z.exts.includes(e)),tg=ms.length===1?ms[0].name:'Sem pasta';
-  const rec={name:nm,size:blob.size,folder:tg,blob:new File([blob],nm),title:x.title};
-  rec.id=await tx('games','readwrite',s=>s.add(rec));items.push(rec);
+  let rec=cfg.sg&&cfg.sg[x.id]&&items.find(z=>z.id===cfg.sg[x.id]);
+  if(rec){rec.name=nm;rec.size=blob.size;rec.blob=new File([blob],nm);rec.title=x.title;await putGame(rec)}
+  else{rec={name:nm,size:blob.size,folder:tg,blob:new File([blob],nm),title:x.title};rec.id=await tx('games','readwrite',s=>s.add(rec));items.push(rec)}
+  cfg.sg=cfg.sg||{};cfg.sg[x.id]=rec.id;
   if(x.cover){COV[rec.id]=x.cover;await saveCov()}
   cfg.sd=cfg.sd||{};if(!cfg.sd[x.id]){updateDoc(doc(f.db,'store',x.id),{dl:increment(1)}).catch(()=>{});x.dl++}
-  cfg.sd[x.id]=1;saveCfg();dmMark('add');note(stx('added').replace('%s',x.title));draw()}
+  cfg.sd[x.id]=Math.max(1,x.v);saveCfg();dmMark('add');note(stx('added').replace('%s',x.title));draw()}
  catch(e){note(stErr(e))}
  finally{btn.disabled=false}}
 async function stReport(x){if(!confirm(stx('repQ')))return;
@@ -1660,9 +1668,9 @@ async function stWipe(f,id){const {collection,getDocs,deleteDoc}=f.fs;
  await f.fs.deleteDoc(f.fs.doc(f.db,'store',id))}
 async function stUpload(i,m,msg){const f=await initFb(),{doc,setDoc,updateDoc}=f.fs;
  const id=stId(),n=Math.max(1,Math.ceil(i.blob.size/ST_CH)),t=Date.now(),cv=stCov(COV[i.id]),ref=doc(f.db,'store',id);
- await setDoc(ref,{uid:f.uid,author:String(prof.name||'').slice(0,40),authorId:String(prof.id||'').slice(0,12),title:m.title,desc:m.desc,price:m.price,name:stSafeName(i.name),ext:ext(i.name),size:i.blob.size,chunks:n,cover:cv,likes:0,dl:0,hidden:true,t});
+ await setDoc(ref,{uid:f.uid,author:String(prof.name||'').slice(0,40),authorId:String(prof.id||'').slice(0,12),title:m.title,desc:m.desc,price:m.price,name:stSafeName(i.name),ext:ext(i.name),size:i.blob.size,chunks:n,cover:cv,likes:0,dl:0,hidden:true,v:1,t});
  try{for(let k=0;k<n;k++){msg.textContent=stx('sending').replace('%a',k+1).replace('%b',n);
-   const d=await stB64(i.blob.slice(k*ST_CH,(k+1)*ST_CH));await setDoc(doc(f.db,'store',id,'data',String(k).padStart(4,'0')),{i:k,d})}
+   const d=await stB64(i.blob.slice(k*ST_CH,(k+1)*ST_CH));await setDoc(doc(f.db,'store',id,'data','1_'+String(k).padStart(4,'0')),{i:k,d})}
   await updateDoc(ref,{hidden:false})}
  catch(e){stWipe(f,id).catch(()=>{});throw e}
  cfg.spub=1;saveCfg()}
@@ -1678,7 +1686,39 @@ function stMineDraw(rows){const l=$('#gml');if(!l||!$('#gm').classList.contains(
   pb.onclick=async()=>{const v=prompt(stx('priceQ'),r.price);if(v===null)return;const p=Math.max(0,Math.min(5000,Math.floor(+v||0)));try{const f=await initFb();await f.fs.updateDoc(f.fs.doc(f.db,'store',r.id),{price:p});r.price=p;STO.t=0;stMineDraw(rows)}catch(e){note(stErr(e))}};
   const db=document.createElement('button');db.textContent=stx('del');db.setAttribute('aria-label',stx('del'));
   db.onclick=async()=>{if(!confirm(stx('delQ').replace('%s',r.title)))return;db.disabled=true;try{const f=await initFb();await stWipe(f,r.id);const k=rows.indexOf(r);if(k>=0)rows.splice(k,1);STO.list=STO.list.filter(z=>z.id!==r.id);note(stx('gone'));stMineDraw(rows);if(VIEW==='shop'&&STT==='games')drawShop()}catch(e){note(stErr(e));db.disabled=false}};
-  bw.append(hb,pb,db);c.append(nm,sm,bw);l.append(c)})}
+  const eb=document.createElement('button');eb.textContent=stx('edit');eb.onclick=()=>stEdit(r);
+  bw.append(eb,hb,pb,db);c.append(nm,sm,bw);l.append(c)})}
+
+function stEdit(r){openSheet('✏️ '+stx('editT'),l=>{
+ const mk=(txt,el)=>{const lb=document.createElement('label');lb.style.cssText='display:grid;gap:4px;margin-bottom:10px';const s=document.createElement('span');s.textContent=txt;s.style.cssText='font-size:13px;color:var(--mut)';lb.append(s,el);return lb};
+ let cv=r.cover;
+ const prev=document.createElement('div');prev.style.cssText='width:96px;height:96px;border-radius:12px;background:#2a1a55 center/cover no-repeat;flex:none';
+ const setPv=()=>{prev.style.backgroundImage=cv?'url("'+cv+'")':'none'};setPv();
+ const cin=document.createElement('input');cin.type='file';cin.accept='image/*';cin.hidden=true;
+ cin.onchange=async()=>{const fl=cin.files[0];cin.value='';if(!fl)return;try{cv=await stCoverFrom(fl);setPv()}catch(e){note(stx('err'))}};
+ const cb=document.createElement('button');cb.textContent=stx('icon');cb.onclick=()=>cin.click();
+ const cx0=document.createElement('button');cx0.textContent='✕';cx0.setAttribute('aria-label','✕');cx0.style.width='44px';cx0.onclick=()=>{cv='';setPv()};
+ const cr=document.createElement('div');cr.className='row';cr.style.marginBottom='12px';cr.append(prev,cb,cx0,cin);
+ const ti=document.createElement('input');ti.type='text';ti.className='stin';ti.maxLength=60;ti.value=r.title;
+ const de=document.createElement('textarea');de.className='stin';de.maxLength=200;de.value=r.desc;
+ const pr=document.createElement('input');pr.type='number';pr.className='stin';pr.min=0;pr.max=5000;pr.step=1;pr.value=r.price;pr.inputMode='numeric';
+ const sel=document.createElement('select');sel.className='stin';sel.add(new Option(stx('keepF'),''));
+ items.filter(i=>i.size<=ST_MAX).sort((a,b)=>gtitle(a).localeCompare(gtitle(b))).forEach(i=>sel.add(new Option(gtitle(i)+' · '+fmt(i.size),String(i.id))));
+ const msg=document.createElement('div');msg.style.cssText='color:var(--acc);font-weight:600;min-height:22px;margin-bottom:8px';
+ const go=document.createElement('button');go.className='p';go.style.cssText='display:block;width:100%';go.textContent='💾 '+stx('save');
+ go.onclick=async()=>{const price=Math.max(0,Math.min(5000,Math.floor(+pr.value||0))),title=ti.value.trim().slice(0,60);if(!title){ti.focus();return}
+  go.disabled=true;
+  try{const f=await initFb(),{doc,updateDoc,setDoc,deleteDoc,getDocs}=f.fs,ref=doc(f.db,'store',r.id),up={title,desc:de.value.trim().slice(0,200),price,cover:stCov(cv)};
+   const src=sel.value?items.find(z=>String(z.id)===sel.value):null;let nv=0;
+   if(src){nv=Math.max(1,r.v)+1;const n=Math.max(1,Math.ceil(src.blob.size/ST_CH));
+    for(let k=0;k<n;k++){msg.textContent=stx('sending').replace('%a',k+1).replace('%b',n);
+     const d=await stB64(src.blob.slice(k*ST_CH,(k+1)*ST_CH));await setDoc(doc(f.db,'store',r.id,'data',nv+'_'+String(k).padStart(4,'0')),{i:k,d})}
+    Object.assign(up,{name:stSafeName(src.name),ext:ext(src.name),size:src.blob.size,chunks:n,v:nv})}
+   await updateDoc(ref,up);
+   if(src){try{const qs=await getDocs(stChunks(f,r.id,r.v));for(const d of qs.docs){if(!r.v&&d.id.startsWith(nv+'_'))continue;await deleteDoc(d.ref).catch(()=>{})}}catch(e){}}
+   STO.t=0;note(stx('upOk'));stMine()}
+  catch(e){msg.textContent=stErr(e);go.disabled=false}};
+ l.append(cr,mk(stx('title'),ti),mk(stx('desc'),de),mk(stx('price'),pr),mk(stx('newF'),sel),msg,go)})}
 async function stMine(){
  openSheet('📂 '+stx('myT'),l=>{const e=document.createElement('div');e.className='empty';e.textContent=stx('load');l.append(e)});
  try{const f=await initFb(),{collection,query,where,getDocs}=f.fs;
