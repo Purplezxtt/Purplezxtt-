@@ -302,6 +302,9 @@ textarea.stin{min-height:84px;resize:vertical}
 .stU{display:grid;gap:10px;margin-top:12px;padding:16px;border:1px solid var(--line);border-radius:18px;background:var(--card);text-align:center}
 .stU small{margin:0;display:block;color:var(--mut)}.stU .stS{font-weight:600;min-height:22px}.stU .stS.nw{color:#ffd23f}
 .stU button{width:100%}.stN button.nv{position:relative}.stN button.nv::after{content:"";position:absolute;top:8px;right:14px;width:11px;height:11px;border-radius:50%;background:#ff4d4d;box-shadow:0 0 0 2px #0b0614}
+:root{padding-top:0!important}
+main{padding-top:calc(20px + env(safe-area-inset-top,0px))}
+#bnr{margin-top:calc(-20px - env(safe-area-inset-top,0px))}
 </style>
 </head>
 <body>
@@ -1027,7 +1030,7 @@ const CH=[
 {id:'u-html',pt:'Agora o Vox roda jogos em HTML! Adicione um arquivo .html em Adicionar jogos.',es:'¡Vox ahora ejecuta juegos HTML! Añade un archivo .html en Añadir juegos.',en:'Vox now runs HTML games! Add an .html file from Add games.'},
 {id:'u-pub',pt:'Novo na Loja: aba Jogos! Publique seus jogos, escolha se é grátis ou custa Vox coins, oculte ou remova quando quiser, e curta os jogos dos outros ❤️.',es:'Nuevo en la Tienda: ¡pestaña Juegos! Publica tus juegos, elige si son gratis o cuestan Vox coins, ocúltalos o quítalos cuando quieras y da ❤️ a los de otros.',en:'New in the Shop: Games tab! Publish your games, make them free or priced in Vox coins, hide or remove them anytime, and like other people’s games ❤️.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-24.6';let verSeen=APP_VER;
+const APP_VER='2026-10-24.7';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER){window.__newVer=m[1];try{window.__vxNew&&window.__vxNew()}catch(e){}}
@@ -1821,14 +1824,18 @@ bt.onclick=()=>{if(window.__newVer&&window.__newVer!==APP_VER)go();else check()}
 window.__vxNew=draw;const o=$('#set').onclick;$('#set').onclick=()=>{o();draw()};$('#lg').addEventListener('change',()=>setTimeout(draw,0));draw()})();
 (function(){const d=document,el=d.documentElement;
  const TX={pt:'Tela cheia (esconder a barra do navegador)',es:'Pantalla completa (ocultar la barra del navegador)',en:'Fullscreen (hide the browser bar)'};
- const want=()=>cfg.fsAll!==false;
- const enter=()=>{if(!want()||d.fullscreenElement||!el.requestFullscreen)return;try{const r=el.requestFullscreen({navigationUI:'hide'});if(r&&r.catch)r.catch(()=>{})}catch(e){}};
+ const HN={pt:'Toque na tela para esconder a barra do navegador',es:'Toca la pantalla para ocultar la barra del navegador',en:'Tap the screen to hide the browser bar'};
+ let manual=false,mine=false;const want=()=>cfg.fsAll!==false;
+ const enter=()=>{if(manual||!want()||d.fullscreenElement||!el.requestFullscreen)return;try{const r=el.requestFullscreen({navigationUI:'hide'});if(r&&r.catch)r.catch(()=>{})}catch(e){}};
+ const leave=()=>{if(d.fullscreenElement){mine=true;try{const r=d.exitFullscreen();if(r&&r.catch)r.catch(()=>{})}catch(e){}}};
+ d.addEventListener('fullscreenchange',()=>{if(!d.fullscreenElement){if(mine)mine=false;else manual=true}});
  ['touchend','click'].forEach(ev=>addEventListener(ev,enter,{passive:true,capture:true}));
  const lb=document.createElement('label');lb.className='row';const ck=document.createElement('input');ck.type='checkbox';const sp=document.createElement('span');lb.append(ck,sp);
  const sync=()=>{ck.checked=want();sp.textContent=TX[cfg.lang]||TX.en};sync();
- ck.onchange=()=>{cfg.fsAll=ck.checked;saveCfg();if(ck.checked)enter();else if(d.fullscreenElement){try{d.exitFullscreen()}catch(e){}}};
+ ck.onchange=()=>{cfg.fsAll=ck.checked;saveCfg();if(ck.checked){manual=false;enter()}else leave()};
  if(window.__stG)window.__stG.append(lb);
- const o=$('#set').onclick;$('#set').onclick=()=>{o();sync()};$('#lg').addEventListener('change',()=>setTimeout(sync,0))})();
+ const o=$('#set').onclick;$('#set').onclick=()=>{o();sync()};$('#lg').addEventListener('change',()=>setTimeout(sync,0));
+ const sl=$('#spl');if(sl&&want()&&!d.fullscreenElement&&!matchMedia('(display-mode: standalone)').matches&&!matchMedia('(display-mode: fullscreen)').matches){const h=document.createElement('div');h.style.cssText='font-size:12px;color:#a99ad6;margin-top:8px;text-align:center';h.textContent=HN[cfg.lang]||HN.en;sl.append(h)}})();
 
 
 (function(){const TX={pt:['Música ambiente','Volume da música','Música: ligada','Música: desligada'],es:['Música ambiental','Volumen de la música','Música: activada','Música: desactivada'],en:['Ambient music','Music volume','Music: on','Music: off']};
