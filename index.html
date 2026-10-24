@@ -299,6 +299,9 @@ textarea.stin{min-height:84px;resize:vertical}
 .st-m{border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px;display:grid;gap:8px;background:var(--card)}
 .st-m .st-b{display:flex;gap:6px;flex-wrap:wrap}.st-m .st-b button{flex:1 1 90px;min-height:40px;padding:6px}
 .st-ck{display:flex;gap:10px;align-items:flex-start;margin:6px 0 12px;font-size:14px}.st-ck input{width:22px;height:22px;flex:none;margin-top:2px}
+.stU{display:grid;gap:10px;margin-top:12px;padding:16px;border:1px solid var(--line);border-radius:18px;background:var(--card);text-align:center}
+.stU small{margin:0;display:block;color:var(--mut)}.stU .stS{font-weight:600;min-height:22px}.stU .stS.nw{color:#ffd23f}
+.stU button{width:100%}.stN button.nv{position:relative}.stN button.nv::after{content:"";position:absolute;top:8px;right:14px;width:11px;height:11px;border-radius:50%;background:#ff4d4d;box-shadow:0 0 0 2px #0b0614}
 </style>
 </head>
 <body>
@@ -1024,10 +1027,11 @@ const CH=[
 {id:'u-html',pt:'Agora o Vox roda jogos em HTML! Adicione um arquivo .html em Adicionar jogos.',es:'¡Vox ahora ejecuta juegos HTML! Añade un archivo .html en Añadir juegos.',en:'Vox now runs HTML games! Add an .html file from Add games.'},
 {id:'u-pub',pt:'Novo na Loja: aba Jogos! Publique seus jogos, escolha se é grátis ou custa Vox coins, oculte ou remova quando quiser, e curta os jogos dos outros ❤️.',es:'Nuevo en la Tienda: ¡pestaña Juegos! Publica tus juegos, elige si son gratis o cuestan Vox coins, ocúltalos o quítalos cuando quieras y da ❤️ a los de otros.',en:'New in the Shop: Games tab! Publish your games, make them free or priced in Vox coins, hide or remove them anytime, and like other people’s games ❤️.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-24.4';let verSeen=APP_VER;
+const APP_VER='2026-10-24.5';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
-  if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
+  if(m&&m[1]!==APP_VER){window.__newVer=m[1];try{window.__vxNew&&window.__vxNew()}catch(e){}}
+   if(m&&m[1]!==APP_VER&&m[1]!==verSeen){verSeen=m[1];pushN({k:'ver',tag:'ver'});note(cx('nv'))}}catch(e){}}
 setInterval(chkVer,120000);setTimeout(chkVer,5000);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(chkVer,1500)});
 function pushN(n,q){n.t=Date.now();n.r=0;if(n.tag){const i=cfg.nt.findIndex(x=>x.tag===n.tag&&!x.r);if(i>=0)cfg.nt.splice(i,1)}
  cfg.nt.unshift(n);cfg.nt=cfg.nt.slice(0,60);saveCfg();renderBell(!q)}
@@ -1795,6 +1799,27 @@ window.__stG=ps[0];window.__stA=ps[4];const ab=document.createElement('div');ab.
 const cz=g('cz');if(cz){cz.style.display='none';R.append(cz)}const ft=document.createElement('div');ft.className='stF';ft.append($('#sx'));R.append(ft);body.append(nav,R);card.replaceChildren(hd,body);
 function lab(){const k=T[cfg.lang]?cfg.lang:'en';bs.forEach((b,i)=>b.lastChild.textContent=T[k][i]);sub.textContent=SUB[k]||SUB.en;ab.lastChild.textContent=ABT[k]||ABT.en}
 lab();const o=$('#set').onclick;$('#set').onclick=()=>{o();lab()};$('#lg').addEventListener('change',()=>setTimeout(lab,0))})();
+(function(){const U={pt:{ver:'Versão',chk:'🔄 Verificar atualização',chking:'Verificando…',ok:'✔ Você está na versão mais recente.',nw:'⬆️ Nova versão disponível!',go:'⬆️ Atualizar agora',doing:'Atualizando…',off:'Sem internet. Conecte-se para verificar.',err:'Não deu para verificar. Tente de novo.',keep:'Seus jogos, saves e moedas não são apagados.'},
+en:{ver:'Version',chk:'🔄 Check for updates',chking:'Checking…',ok:'✔ You have the latest version.',nw:'⬆️ New version available!',go:'⬆️ Update now',doing:'Updating…',off:'No internet. Connect to check.',err:'Couldn’t check. Try again.',keep:'Your games, saves and coins are not erased.'},
+es:{ver:'Versión',chk:'🔄 Buscar actualización',chking:'Buscando…',ok:'✔ Tienes la última versión.',nw:'⬆️ ¡Nueva versión disponible!',go:'⬆️ Actualizar ahora',doing:'Actualizando…',off:'Sin internet. Conéctate para buscar.',err:'No se pudo comprobar. Inténtalo de nuevo.',keep:'Tus juegos, partidas y monedas no se borran.'}};
+const u=k=>(U[cfg.lang]||U.en)[k];const a=document.querySelector('#st .stA');if(!a)return;
+const box=document.createElement('div');box.className='stU';const vl=document.createElement('small'),stt=document.createElement('div'),kp=document.createElement('small'),bt=document.createElement('button');stt.className='stS';box.append(vl,stt,bt,kp);a.after(box);
+const tab=()=>document.querySelector('#st .stN button:last-child');
+let busy=false,msg='';
+function draw(){const nw=window.__newVer&&window.__newVer!==APP_VER;vl.textContent=u('ver')+' '+APP_VER;kp.textContent=u('keep');
+ stt.className='stS'+(nw?' nw':'');stt.textContent=busy?msg:(nw?u('nw'):msg);bt.disabled=busy;bt.className=nw?'p':'';bt.textContent=nw?u('go'):u('chk');
+ const t=tab();if(t)t.classList.toggle('nv',!!nw)}
+async function check(){if(!navigator.onLine){msg=u('off');return}busy=true;msg=u('chking');draw();
+ try{const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const m=(await r.text()).match(/const APP_VER='([^']+)'/);if(!m)throw 0;
+  if(m[1]!==APP_VER){window.__newVer=m[1];msg=u('nw')}else{window.__newVer=null;msg=u('ok')}}
+ catch(e){msg=u('err')}busy=false;draw()}
+async function go(){busy=true;msg=u('doing');draw();
+ try{if(navigator.serviceWorker){const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.update().catch(()=>{})))}}catch(e){}
+ try{if(window.caches){const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)))}}catch(e){}
+ location.reload()}
+bt.onclick=()=>{if(window.__newVer&&window.__newVer!==APP_VER)go();else check()};
+window.__vxNew=draw;const o=$('#set').onclick;$('#set').onclick=()=>{o();draw()};$('#lg').addEventListener('change',()=>setTimeout(draw,0));draw()})();
+
 (function(){const TX={pt:['Música ambiente','Volume da música','Música: ligada','Música: desligada'],es:['Música ambiental','Volumen de la música','Música: activada','Música: desactivada'],en:['Ambient music','Music volume','Music: on','Music: off']};
 const tt=i=>(TX[cfg.lang]||TX.en)[i];let C,M,wet,pad,bus,run=0,T1,T2,paused=0,ug=0;
 const on=()=>cfg.mus!==false,vol=()=>(cfg.musV==null?70:cfg.musV)/100*3.4;
