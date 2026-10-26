@@ -1,0 +1,184 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /saves/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+    match /meta/counter {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.n == 1;
+      allow update: if request.auth != null && request.resource.data.n == resource.data.n + 1;
+    }
+    match /ids/{id} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && id.matches('^[0-9]{1,7}$') && request.resource.data.uid == request.auth.uid && getAfter(/databases/$(database)/documents/meta/counter).data.n == int(id);
+      allow update: if request.auth != null && resource.data.uid == request.auth.uid && request.resource.data.uid == request.auth.uid;
+      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
+    }
+    match /reqs/{pair} {
+      allow read: if request.auth != null && (request.auth.uid == resource.data.fromUid || request.auth.uid == resource.data.toUid);
+      allow create: if request.auth != null
+        && request.resource.data.fromUid == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && get(/databases/$(database)/documents/ids/$(request.resource.data.from)).data.uid == request.auth.uid
+        && get(/databases/$(database)/documents/ids/$(request.resource.data.to)).data.uid == request.resource.data.toUid;
+      allow update: if request.auth != null
+        && (request.auth.uid == resource.data.fromUid || request.auth.uid == resource.data.toUid)
+        && request.resource.data.fromUid == resource.data.fromUid
+        && request.resource.data.toUid == resource.data.toUid
+        && request.resource.data.from == resource.data.from
+        && request.resource.data.to == resource.data.to
+        && ((request.resource.data.status == 'blocked' && resource.data.status != 'blocked' && request.resource.data.blockedBy == request.auth.uid)
+          || (request.resource.data.status == 'accepted' && resource.data.status == 'pending' && request.auth.uid == resource.data.toUid));
+      allow delete: if request.auth != null
+        && (request.auth.uid == resource.data.fromUid || request.auth.uid == resource.data.toUid)
+        && (resource.data.status != 'blocked' || resource.data.blockedBy == request.auth.uid);
+      match /msgs/{m} {
+        allow read: if request.auth != null
+          && get(/databases/$(database)/documents/reqs/$(pair)).data.status == 'accepted'
+          && (request.auth.uid == get(/databases/$(database)/documents/reqs/$(pair)).data.fromUid
+              || request.auth.uid == get(/databases/$(database)/documents/reqs/$(pair)).data.toUid);
+        allow create: if request.auth != null
+          && get(/databases/$(database)/documents/reqs/$(pair)).data.status == 'accepted'
+          && (request.auth.uid == get(/databases/$(database)/documents/reqs/$(pair)).data.fromUid
+              || request.auth.uid == get(/databases/$(database)/documents/reqs/$(pair)).data.toUid)
+          && request.resource.data.fromUid == request.auth.uid
+          && ((request.resource.data.text is string
+                && request.resource.data.text.size() > 0
+                && request.resource.data.text.size() <= 500)
+              || (request.resource.data.text == ''
+                && request.resource.data.aud is string
+                && request.resource.data.aud.size() <= 450000
+                && request.resource.data.dur is number
+                && request.resource.data.dur <= 61));
+        allow delete: if request.auth != null && resource.data.fromUid == request.auth.uid;
+      }
+    }
+    match /groups/{g} {
+      allow read: if request.auth != null && request.auth.uid in resource.data.members;
+      allow create: if request.auth != null
+        && request.resource.data.owner == request.auth.uid
+        && request.auth.uid in request.resource.data.members
+        && request.resource.data.members.size() >= 2
+        && request.resource.data.members.size() <= 20
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 40;
+      allow update: if request.auth != null
+        && request.auth.uid in resource.data.members
+        && (
+          ((request.auth.uid == resource.data.owner
+              || ('roles' in resource.data
+                  && request.auth.uid in resource.data.roles
+                  && resource.data.roles[request.auth.uid] in ['adm','vice']))
+            && request.resource.data.owner == resource.data.owner
+            && resource.data.owner in request.resource.data.members
+            && request.resource.data.members.size() <= 20
+            && request.resource.data.name is string
+            && request.resource.data.name.size() > 0
+            && request.resource.data.name.size() <= 40
+            && (!('photo' in request.resource.data)
+                || (request.resource.data.photo is string
+                    && request.resource.data.photo.size() <= 250000)))
+          ||
+          (request.auth.uid != resource.data.owner
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['members','roles','mem'])
+            && !(request.auth.uid in request.resource.data.members)
+            && request.resource.data.members.size() == resource.data.members.size() - 1)
+        );
+      allow delete: if request.auth != null && request.auth.uid == resource.data.owner;
+      match /msgs/{m} {
+        allow read: if request.auth != null
+          && request.auth.uid in get(/databases/$(database)/documents/groups/$(g)).data.members;
+        allow create: if request.auth != null
+          && request.auth.uid in get(/databases/$(database)/documents/groups/$(g)).data.members
+          && request.resource.data.fromUid == request.auth.uid
+          && ((request.resource.data.text is string
+                && request.resource.data.text.size() > 0
+                && request.resource.data.text.size() <= 500)
+              || (request.resource.data.text == ''
+                && request.resource.data.aud is string
+                && request.resource.data.aud.size() <= 450000
+                && request.resource.data.dur is number
+                && request.resource.data.dur <= 61));
+        allow delete: if request.auth != null && resource.data.fromUid == request.auth.uid;
+      }
+    }
+
+    // ---------- NOVO: Jogos publicados na Loja ----------
+    match /store/{gid} {
+      allow read: if request.auth != null
+        && (resource.data.hidden == false || resource.data.uid == request.auth.uid);
+
+      allow create: if request.auth != null
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.price is int
+        && request.resource.data.price >= 0 && request.resource.data.price <= 5000
+        && request.resource.data.size <= 10485760
+        && request.resource.data.likes == 0
+        && request.resource.data.hidden == true;
+
+      allow update: if request.auth != null && (
+        resource.data.uid == request.auth.uid
+        || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes','dl']));
+
+      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
+
+      match /data/{cid} {
+        allow read: if request.auth != null && (
+          get(/databases/$(database)/documents/store/$(gid)).data.price == 0
+          || get(/databases/$(database)/documents/store/$(gid)).data.uid == request.auth.uid
+          || exists(/databases/$(database)/documents/store/$(gid)/buyers/$(request.auth.uid)));
+        allow write: if request.auth != null
+          && get(/databases/$(database)/documents/store/$(gid)).data.uid == request.auth.uid;
+      }
+
+      match /likes/{uid} {
+        allow read: if request.auth != null && (request.auth.uid == uid
+          || get(/databases/$(database)/documents/store/$(gid)).data.uid == request.auth.uid);
+        allow create: if request.auth != null && request.auth.uid == uid;
+        allow delete: if request.auth != null && (request.auth.uid == uid
+          || get(/databases/$(database)/documents/store/$(gid)).data.uid == request.auth.uid);
+      }
+
+      match /buyers/{uid} {
+        allow read: if request.auth != null && request.auth.uid == uid;
+        allow create: if request.auth != null && request.auth.uid == uid
+          && request.resource.data.n == get(/databases/$(database)/documents/store/$(gid)).data.price;
+      }
+    }
+
+    // ---------- NOVO: Vendas (vendedor recebe as Vox coins) ----------
+    match /sales/{sid} {
+      allow create: if request.auth != null
+        && sid == request.resource.data.gid + '_' + request.auth.uid
+        && request.resource.data.from == request.auth.uid
+        && request.resource.data.claimed == false
+        && request.resource.data.n == get(/databases/$(database)/documents/store/$(request.resource.data.gid)).data.price
+        && request.resource.data.to == get(/databases/$(database)/documents/store/$(request.resource.data.gid)).data.uid
+        && exists(/databases/$(database)/documents/store/$(request.resource.data.gid)/buyers/$(request.auth.uid));
+      allow read: if request.auth != null && resource.data.to == request.auth.uid;
+      allow update: if request.auth != null && resource.data.to == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['claimed']);
+    }
+
+    // ---------- NOVO: avisos de curtida e download ----------
+    match /notifs/{nid} {
+      allow create: if request.auth != null
+        && request.resource.data.from == request.auth.uid
+        && request.resource.data.type in ['like','dl']
+        && nid == request.resource.data.type + '_' + request.resource.data.gid + '_' + request.auth.uid
+        && request.resource.data.to == get(/databases/$(database)/documents/store/$(request.resource.data.gid)).data.uid;
+      allow read, delete: if request.auth != null && resource.data.to == request.auth.uid;
+    }
+
+    // ---------- NOVO: tokens de notificação push ----------
+    match /tokens/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    match /reports/{r} {
+      allow create: if request.auth != null;
+    }
+  }
+}
