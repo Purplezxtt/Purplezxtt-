@@ -1030,7 +1030,7 @@ const CH=[
 {id:'u-html',pt:'Agora o Vox roda jogos em HTML! Adicione um arquivo .html em Adicionar jogos.',es:'¡Vox ahora ejecuta juegos HTML! Añade un archivo .html en Añadir juegos.',en:'Vox now runs HTML games! Add an .html file from Add games.'},
 {id:'u-pub',pt:'Novo na Loja: aba Jogos! Publique seus jogos, escolha se é grátis ou custa Vox coins, oculte ou remova quando quiser, e curta os jogos dos outros ❤️.',es:'Nuevo en la Tienda: ¡pestaña Juegos! Publica tus juegos, elige si son gratis o cuestan Vox coins, ocúltalos o quítalos cuando quieras y da ❤️ a los de otros.',en:'New in the Shop: Games tab! Publish your games, make them free or priced in Vox coins, hide or remove them anytime, and like other people’s games ❤️.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-24.8';let verSeen=APP_VER;
+const APP_VER='2026-10-24.9';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER){window.__newVer=m[1];try{window.__vxNew&&window.__vxNew()}catch(e){}}
@@ -1853,6 +1853,22 @@ es:{t:'🔔 Probar notificación',ok:'¡Notificación enviada! Si no apareció, 
    await ask();if(Notification.permission!=='granted'){note(u('den'));return}
    try{const r=await navigator.serviceWorker.ready;await r.showNotification('Vox Emulador',{body:u('body'),icon:NI,badge:NB,tag:'vox-test',renotify:true});note(u('ok'))}catch(e){note(u('un'))}};
   pn.append(b);const o=$('#set').onclick;$('#set').onclick=()=>{o();lab()};$('#lg').addEventListener('change',()=>setTimeout(lab,0))}})();
+
+(function(){const VOX_VAPID='';
+ const B='https://www.gstatic.com/firebasejs/10.14.1/';
+ const waitAct=reg=>new Promise(ok=>{if(reg.active)return ok();const w=reg.installing||reg.waiting;if(!w)return ok();w.addEventListener('statechange',()=>{if(w.state==='activated')ok()})});
+ async function pushReg(){
+  if(!VOX_VAPID||!('serviceWorker' in navigator)||!('Notification' in window)||Notification.permission!=='granted'||cfg.notif===false)return;
+  try{const ms=await import(B+'firebase-messaging.js');if(!(await ms.isSupported()))return;
+   const f=await initFb(),{getApp}=await import(B+'firebase-app.js');
+   const reg=await navigator.serviceWorker.register('firebase-messaging-sw.js',{scope:'firebase-cloud-messaging-push-scope'});await waitAct(reg);
+   const tok=await ms.getToken(ms.getMessaging(getApp()),{vapidKey:VOX_VAPID,serviceWorkerRegistration:reg});
+   if(tok&&cfg.ptok!==tok){const {doc,setDoc,arrayUnion}=f.fs;await setDoc(doc(f.db,'tokens',f.uid),{tokens:arrayUnion(tok),t:Date.now()},{merge:true});cfg.ptok=tok;saveCfg()}
+  }catch(e){}}
+ async function pushOff(){try{if(!cfg.ptok)return;const f=await initFb(),{doc,updateDoc,arrayRemove}=f.fs;await updateDoc(doc(f.db,'tokens',f.uid),{tokens:arrayRemove(cfg.ptok)});cfg.ptok='';saveCfg()}catch(e){}}
+ setTimeout(pushReg,6000);
+ ['touchend','click'].forEach(ev=>addEventListener(ev,()=>setTimeout(pushReg,1500),{passive:true,capture:true,once:true}));
+ const nt=$('#nt');if(nt)nt.addEventListener('change',()=>{if(nt.checked){setTimeout(pushReg,1500);setTimeout(pushReg,6000)}else pushOff()})})();
 
 
 (function(){const TX={pt:['Música ambiente','Volume da música','Música: ligada','Música: desligada'],es:['Música ambiental','Volumen de la música','Música: activada','Música: desactivada'],en:['Ambient music','Music volume','Music: on','Music: off']};

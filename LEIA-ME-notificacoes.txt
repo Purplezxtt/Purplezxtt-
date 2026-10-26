@@ -1,0 +1,30 @@
+NOTIFICAÇÕES COM O VOX FECHADO - PASSO A PASSO
+==============================================
+Por que não funcionava: com o Vox fechado ou em segundo plano o Android "congela" o app,
+então ele não consegue ouvir o Firebase. Só um servidor consegue mandar o aviso (push).
+
+PRECISA DE: computador, e o plano Blaze (pago por uso, tem cota grátis grande) do projeto zeo-emulador.
+
+1) Chave VAPID
+   Firebase Console > Configurações do projeto (engrenagem) > Cloud Messaging >
+   "Certificados push da Web" > Gerar par de chaves. Copie a chave pública (começa com B...).
+   -> Me mande essa chave que eu coloco no index.html (ou troque você mesmo
+      const VOX_VAPID='' pela sua chave).
+
+2) Suba para o GitHub, na mesma pasta do index.html:
+   - index.html (novo)
+   - firebase-messaging-sw.js
+
+3) Regras do Firestore: cole o firestore.rules novo (só foi acrescentado o bloco "tokens").
+
+4) Cloud Functions (no computador):
+   npm install -g firebase-tools
+   firebase login
+   mkdir vox-functions && cd vox-functions
+   firebase init functions     (escolha o projeto zeo-emulador, JavaScript, Node 20)
+   Troque functions/index.js e functions/package.json pelos arquivos da pasta "functions".
+   No index.js, ajuste REGION para a região do seu Firestore.
+   firebase deploy --only functions
+
+5) No celular: abra o Vox, aceite a permissão de notificações e use
+   Configurações > Avisos > "Testar notificação".
