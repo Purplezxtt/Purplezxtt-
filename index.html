@@ -305,6 +305,19 @@ textarea.stin{min-height:84px;resize:vertical}
 :root{padding-top:0!important}
 main{padding-top:calc(20px + env(safe-area-inset-top,0px))}
 #bnr{margin-top:calc(-20px - env(safe-area-inset-top,0px))}
+@media (min-width:960px) and (pointer:fine){
+main{max-width:1120px;padding-left:40px;padding-right:40px;padding-bottom:110px}
+#bnr{margin-left:-40px;margin-right:-40px;padding-left:40px;border-radius:0 0 28px 28px}
+#list,#llist{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));column-gap:14px;align-items:start}
+#list>:not(.gi),#llist>:not(.gi){grid-column:1/-1}
+.sh-grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+#bn{left:50%;right:auto;transform:translateX(-50%);width:min(680px,calc(100% - 48px));bottom:14px;border:1px solid #3a2478;border-radius:22px;padding-bottom:6px}
+#bell,#help{right:24px}
+button,.gi,.sd,.sh-card{cursor:pointer}.sh-card{cursor:default}
+.gi{transition:border-color .15s,transform .15s}.gi:hover{border-color:#8a4dff;transform:translateY(-1px)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid #c9a4ff;outline-offset:2px}
+}
+#inst{display:inline-flex;align-items:center;justify-content:center;gap:6px}
 </style>
 </head>
 <body>
@@ -1030,7 +1043,7 @@ const CH=[
 {id:'u-html',pt:'Agora o Vox roda jogos em HTML! Adicione um arquivo .html em Adicionar jogos.',es:'¡Vox ahora ejecuta juegos HTML! Añade un archivo .html en Añadir juegos.',en:'Vox now runs HTML games! Add an .html file from Add games.'},
 {id:'u-pub',pt:'Novo na Loja: aba Jogos! Publique seus jogos, escolha se é grátis ou custa Vox coins, oculte ou remova quando quiser, e curta os jogos dos outros ❤️.',es:'Nuevo en la Tienda: ¡pestaña Juegos! Publica tus juegos, elige si son gratis o cuestan Vox coins, ocúltalos o quítalos cuando quieras y da ❤️ a los de otros.',en:'New in the Shop: Games tab! Publish your games, make them free or priced in Vox coins, hide or remove them anytime, and like other people’s games ❤️.'}];
 const chT=c=>c[cfg.lang]||c.en;
-const APP_VER='2026-10-24.9';let verSeen=APP_VER;
+const APP_VER='2026-10-24.10';let verSeen=APP_VER;
 async function chkVer(){if(!navigator.onLine||document.visibilityState!=='visible'||$('#player').classList.contains('on'))return;
  try{const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'});if(!r.ok)return;const m=(await r.text()).match(/const APP_VER='([^']+)'/);
   if(m&&m[1]!==APP_VER){window.__newVer=m[1];try{window.__vxNew&&window.__vxNew()}catch(e){}}
@@ -1827,12 +1840,12 @@ window.__vxNew=draw;const o=$('#set').onclick;$('#set').onclick=()=>{o();draw()}
 (function(){const d=document,el=d.documentElement;
  const TX={pt:'Tela cheia (esconder a barra do navegador)',es:'Pantalla completa (ocultar la barra del navegador)',en:'Fullscreen (hide the browser bar)'};
  const HN={pt:'Toque na tela para esconder a barra do navegador',es:'Toca la pantalla para ocultar la barra del navegador',en:'Tap the screen to hide the browser bar'};
- let manual=false,mine=false;const want=()=>cfg.fsAll!==false;
+ let manual=false,mine=false;const DESK=matchMedia('(pointer:fine)').matches&&matchMedia('(min-width:960px)').matches;const want=()=>cfg.fsAll!==false&&!DESK;
  const enter=()=>{if(manual||!want()||d.fullscreenElement||!el.requestFullscreen)return;try{const r=el.requestFullscreen({navigationUI:'hide'});if(r&&r.catch)r.catch(()=>{})}catch(e){}};
  const leave=()=>{if(d.fullscreenElement){mine=true;try{const r=d.exitFullscreen();if(r&&r.catch)r.catch(()=>{})}catch(e){}}};
  d.addEventListener('fullscreenchange',()=>{if(!d.fullscreenElement){if(mine)mine=false;else manual=true}});
  ['touchend','click'].forEach(ev=>addEventListener(ev,enter,{passive:true,capture:true}));
- const lb=document.createElement('label');lb.className='row';const ck=document.createElement('input');ck.type='checkbox';const sp=document.createElement('span');lb.append(ck,sp);
+ const lb=document.createElement('label');lb.className='row';const ck=document.createElement('input');ck.type='checkbox';const sp=document.createElement('span');lb.append(ck,sp);if(DESK)lb.hidden=true;
  const sync=()=>{ck.checked=want();sp.textContent=TX[cfg.lang]||TX.en};sync();
  ck.onchange=()=>{cfg.fsAll=ck.checked;saveCfg();if(ck.checked){manual=false;enter()}else leave()};
  if(window.__stG)window.__stG.append(lb);
@@ -1869,6 +1882,22 @@ es:{t:'🔔 Probar notificación',ok:'¡Notificación enviada! Si no apareció, 
  setTimeout(pushReg,6000);
  ['touchend','click'].forEach(ev=>addEventListener(ev,()=>setTimeout(pushReg,1500),{passive:true,capture:true,once:true}));
  const nt=$('#nt');if(nt)nt.addEventListener('change',()=>{if(nt.checked){setTimeout(pushReg,1500);setTimeout(pushReg,6000)}else pushOff()})})();
+
+(function(){const T={pt:{b:'⬇ Instalar o Vox',ok:'✔ Vox instalado!',ios:'No Safari: toque em Compartilhar → Adicionar à Tela de Início.',edge:'No Edge: menu ⋯ → Aplicativos → Instalar este site como aplicativo (ou o ícone ⊕ na barra de endereço).',chr:'No Chrome: clique no ícone de instalar ⊕ na barra de endereço, ou menu ⋮ → Salvar e compartilhar → Instalar Vox Emulador.',ff:'O Firefox no computador não instala apps. Use o Chrome ou o Edge.'},
+en:{b:'⬇ Install Vox',ok:'✔ Vox installed!',ios:'In Safari: tap Share → Add to Home Screen.',edge:'In Edge: ⋯ menu → Apps → Install this site as an app (or the ⊕ icon in the address bar).',chr:'In Chrome: click the install ⊕ icon in the address bar, or ⋮ menu → Save and share → Install Vox Emulador.',ff:'Desktop Firefox can’t install apps. Use Chrome or Edge.'},
+es:{b:'⬇ Instalar Vox',ok:'✔ ¡Vox instalado!',ios:'En Safari: toca Compartir → Añadir a pantalla de inicio.',edge:'En Edge: menú ⋯ → Aplicaciones → Instalar este sitio como aplicación (o el icono ⊕ de la barra de direcciones).',chr:'En Chrome: haz clic en el icono de instalar ⊕ de la barra de direcciones, o menú ⋮ → Guardar y compartir → Instalar Vox Emulador.',ff:'Firefox de escritorio no instala apps. Usa Chrome o Edge.'}};
+ const u=k=>(T[cfg.lang]||T.en)[k];
+ const std=()=>['standalone','fullscreen','minimal-ui','window-controls-overlay'].some(m=>matchMedia('(display-mode: '+m+')').matches)||navigator.standalone===true;
+ let dip=null;const btns=[];
+ const how=()=>{const ua=navigator.userAgent;return /iPhone|iPad|iPod/.test(ua)?u('ios'):/Edg\//.test(ua)?u('edge'):/Firefox\//.test(ua)?u('ff'):u('chr')};
+ async function inst(){if(dip){const p=dip;dip=null;try{p.prompt();await p.userChoice}catch(e){}draw();return}note(how())}
+ function mk(){const b=document.createElement('button');b.className='p';b.id=btns.length?'':'inst';b.onclick=inst;btns.push(b);return b}
+ function draw(){btns.forEach(b=>{b.textContent=u('b');b.hidden=std()})}
+ const bar=document.querySelector('#vHome .bar'),nf=$('#nf');if(bar){const b=mk();bar.insertBefore(b,nf?nf.nextSibling:null)}
+ const box=document.querySelector('.stU');if(box){const b=mk();b.style.width='100%';box.insertBefore(b,box.lastElementChild)}
+ addEventListener('beforeinstallprompt',e=>{e.preventDefault();dip=e;draw()});
+ addEventListener('appinstalled',()=>{dip=null;btns.forEach(b=>b.hidden=true);note(u('ok'))});
+ const o=$('#set').onclick;$('#set').onclick=()=>{o();draw()};$('#lg').addEventListener('change',()=>setTimeout(draw,0));draw()})();
 
 
 (function(){const TX={pt:['Música ambiente','Volume da música','Música: ligada','Música: desligada'],es:['Música ambiental','Volumen de la música','Música: activada','Música: desactivada'],en:['Ambient music','Music volume','Music: on','Music: off']};
